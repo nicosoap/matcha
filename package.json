@@ -1,0 +1,39 @@
+{
+  "name": "matcha",
+  "version": "1.0.0",
+  "description": "Online dating service",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nicosoap/matcha.git"
+  },
+  "keywords": [
+    "dating",
+    "sex",
+    "meet",
+    "webapp",
+    "node",
+    "react",
+    "express",
+    "mysql"
+  ],
+  "author": "Olivier Pichou",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/nicosoap/matcha/issues"
+  },
+  "homepage": "https://github.com/nicosoap/matcha#readme",
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "express": "^4.14.0",
+    "jquery": "^3.1.0",
+    "mysql": "^2.11.1",
+    "passport": "^0.3.2",
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1",
+    "sendmail": "^1.0.0"
+  }
+}
