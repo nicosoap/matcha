@@ -6,7 +6,7 @@ import bodyParser from 'body-parser';
 import session from 'express-session';
 import user from './controllers/user';
 import userProfile from './controllers/userProfile';
-import interactions from './controllers/interations';
+import interactions from './controllers/interactions';
 
 var app = express();
 
@@ -67,7 +67,7 @@ app.use(function(req, res){
     res.send('Error 404');
 });
 
-app.use(function(err, req, res, next){
+app.use(function(err, req, res){
     console.error(err.stack);
     res.status(500);
     res.send('Error 500');

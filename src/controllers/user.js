@@ -12,6 +12,8 @@ import bcrypt from 'bcrypt';
 const saltRounds = 10;
 
 module.exports = {
+    //this methods check in database for a user with both specified login and password. The latter being hashed
+    //and salted. It then fires a callback.
     authenticate(login, password, callback){
         console.log("Connection attempt...");
         var temp2 = "opichou";

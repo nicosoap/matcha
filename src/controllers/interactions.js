@@ -19,7 +19,7 @@ module.exports = {
 
     match(userId, otherId, callback){
         //this method checks, giver two user ids if mutual likes exist and fires callback
-        doesLike(userId, oherId, function(err, res){
+        doesLike(userId, otherId, function(err, res){
             if(err){
                 callback(err, false);
             } else if(res){

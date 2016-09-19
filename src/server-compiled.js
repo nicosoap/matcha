@@ -32,9 +32,9 @@ var _userProfile = require('./controllers/userProfile');
 
 var _userProfile2 = _interopRequireDefault(_userProfile);
 
-var _interations = require('./controllers/interations');
+var _interactions = require('./controllers/interactions');
 
-var _interations2 = _interopRequireDefault(_interations);
+var _interactions2 = _interopRequireDefault(_interactions);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -95,7 +95,7 @@ app.use(function (req, res) {
     res.send('Error 404');
 });
 
-app.use(function (err, req, res, next) {
+app.use(function (err, req, res) {
     console.error(err.stack);
     res.status(500);
     res.send('Error 500');
