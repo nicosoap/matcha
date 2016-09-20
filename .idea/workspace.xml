@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e4287c19-5cb7-4316-9fcc-e43d4f858ffb" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/interactions-compiled.js" afterPath="$PROJECT_DIR$/src/controllers/interactions-compiled.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/interactions-compiled.js.map" afterPath="$PROJECT_DIR$/src/controllers/interactions-compiled.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/interactions.js" afterPath="$PROJECT_DIR$/src/controllers/interactions.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/user.js" afterPath="$PROJECT_DIR$/src/controllers/user.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server-compiled.js" afterPath="$PROJECT_DIR$/src/server-compiled.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server-compiled.js.map" afterPath="$PROJECT_DIR$/src/server-compiled.js.map" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server.js" afterPath="$PROJECT_DIR$/src/server.js" />
-    </list>
+    <list default="true" id="e4287c19-5cb7-4316-9fcc-e43d4f858ffb" name="Default" comment="" />
     <ignored path="matcha.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -31,7 +23,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="server.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/server.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="120">
@@ -73,7 +65,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="interactions.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="interactions.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controllers/interactions.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="555">
@@ -331,12 +323,12 @@
       <updated>1474267061799</updated>
       <workItem from="1474267063060" duration="865000" />
       <workItem from="1474268415435" duration="4546000" />
-      <workItem from="1474284095567" duration="14366000" />
+      <workItem from="1474284095567" duration="14755000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="19777000" />
+    <option name="totallyTimeSpent" value="20166000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1303" height="1336" extended-state="0" />
@@ -478,6 +470,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/controllers/interactions.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="39" column="2" selection-start-line="39" selection-start-column="2" selection-end-line="39" selection-end-column="2" />
+          <folding>
+            <element signature="e#42#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/controllers/userProfile.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -500,16 +502,6 @@
             <element signature="e#913#952#0" expanded="false" />
             <element signature="e#1565#1643#0" expanded="false" />
             <element signature="e#1801#1910#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/interactions.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="39" column="2" selection-start-line="39" selection-start-column="2" selection-end-line="39" selection-end-column="2" />
-          <folding>
-            <element signature="e#42#72#0" expanded="true" />
           </folding>
         </state>
       </provider>
