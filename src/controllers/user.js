@@ -8,6 +8,9 @@ import parseurl from 'parseurl';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import bcrypt from 'bcrypt';
+import db from './dbConnect';
+import credentials from '../credentials'
+var async = require('async');
 
 const saltRounds = 10;
 
@@ -24,7 +27,18 @@ module.exports = {
         });
     },
 
-    checkLogin(login, callback){
+    checkLogin: async (login) => {
+        let db = await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password +
+            "@82.251.11.24:" + port + "/" + dbName);
+        try {
+            let collection = db.collection('users');
+            let userCount = (await collection.find({
+                login: login
+            }).limit(1).count());
+            return userCount > 0;
+        } finally {
+            db.close();
+        }
         //this method checks if Login already exists in database
     },
 

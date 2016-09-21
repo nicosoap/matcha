@@ -36,20 +36,26 @@ var _interactions = require('./controllers/interactions');
 
 var _interactions2 = _interopRequireDefault(_interactions);
 
+var _dbConnect = require('./controllers/dbConnect');
+
+var _dbConnect2 = _interopRequireDefault(_dbConnect);
+
+var _credentials = require('./credentials');
+
+var _credentials2 = _interopRequireDefault(_credentials);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var app = (0, _express2.default)();
 
 app.disable('X-Powerd-By');
 
-var credentials = require('./credentials.js');
-
-app.use(require('cookie-parser')(credentials.cookieSecret));
+app.use(require('cookie-parser')(_credentials2.default.cookieSecret));
 
 app.use((0, _expressSession2.default)({
     resave: false,
     saveUninitialized: true,
-    secret: credentials.cookieSecret
+    secret: _credentials2.default.cookieSecret
 
 }));
 
@@ -71,7 +77,6 @@ app.get('/', function (req, res) {
 });
 
 app.post('/login', function (req, res) {
-    console.log(req.body);
     if (req.body.login && req.body.password) {
         _user2.default.authenticate(req.body.login, req.body.password, function (err, ret) {
             if (err) {
@@ -88,6 +93,10 @@ app.post('/login', function (req, res) {
 });
 
 app.get('/user', function (req, res) {});
+
+app.get("/testdb", function (req, res) {
+    _user2.default.checkLogin("opichou");
+});
 
 app.use(function (req, res) {
     res.type('text/html');

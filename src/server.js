@@ -7,12 +7,14 @@ import session from 'express-session';
 import user from './controllers/user';
 import userProfile from './controllers/userProfile';
 import interactions from './controllers/interactions';
+import dbc from "./controllers/dbConnect";
+import credentials from './credentials'
+var async = require('async');
 
 var app = express();
 
-app.disable('X-Powerd-By');
 
-var credentials = require('./credentials.js');
+app.disable('X-Powerd-By');
 
 app.use(require('cookie-parser')(credentials.cookieSecret));
 
@@ -41,7 +43,6 @@ app.get('/', function(req, res){
 });
 
 app.post('/login', function(req, res) {
-    console.log(req.body);
     if(req.body.login && req.body.password) {
         user.authenticate(req.body.login, req.body.password, function (err, ret) {
             if (err) {
@@ -60,6 +61,10 @@ app.post('/login', function(req, res) {
 app.get('/user', function(req, res){
 
 });
+
+app.get("/testdb", function(req, res){
+    res.send(await user.checkLogin("opichou"));
+})
 
 app.use(function(req, res){
     res.type('text/html');
