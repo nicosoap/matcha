@@ -15,11 +15,6 @@ import credentials from '../credentials';
 
 var MongoClient = mongodb.MongoClient;
 
-export default async function LOConnect(){
-    try {
-        let db = await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@82.251.11.24:" + port + "/" + dbName);
-        console.log("Connected to database asynchronously");
-    } finally {
-        db.close();
-    }
+export default async function connect(){
+    return await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@82.251.11.24:" + credentials.port + "/" + credentials.dbName);
 }

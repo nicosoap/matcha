@@ -36,10 +36,6 @@ var _interactions = require('./controllers/interactions');
 
 var _interactions2 = _interopRequireDefault(_interactions);
 
-var _dbConnect = require('./controllers/dbConnect');
-
-var _dbConnect2 = _interopRequireDefault(_dbConnect);
-
 var _credentials = require('./credentials');
 
 var _credentials2 = _interopRequireDefault(_credentials);

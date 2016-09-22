@@ -8,7 +8,7 @@ import parseurl from 'parseurl';
 import bodyParser from 'body-parser';
 import session from 'express-session';
 import bcrypt from 'bcrypt';
-import LOConnect from './dbConnect';
+import * as dbl from "./dbConnect";
 import credentials from '../credentials';
 import mongodb from 'mongodb';
 
@@ -18,9 +18,14 @@ var MongoClient = mongodb.MongoClient;
 
 //this methods check in database for a user with both specified login and password. The latter being hashed
 //and salted. It then fires a callback.
-export function authenticate(login, password, callback){
+export async function authenticate(login, password, callback){
     console.log("Connection attempt...");
-    var temp2 = "opichou";
+    let db = await dbl.connect();
+    let collection = db.collection('users');
+    let userCount = (await collection.find({
+        login: login
+    }).count())
+    }))
     bcrypt.hash(password, saltRounds, function(err, hash){
         bcrypt.compare(temp2, hash, function(err, ret) {
             callback(err, ret);
@@ -60,9 +65,9 @@ export async function checkEmail(email){
         if (userCount == 0 && (email.match(/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ig))) {
             return {valid: true, message: "Email " + email + " is available"};
         } else if(userCount == 0){
-            return {valid: false, message: "Email " + email + " is incorrect"};
+            return {valid: false, error: 1, message: "Email " + email + " is incorrect"};
         } else {
-            return {valid: false, message: "Email " + email + " is unavailable"};
+            return {valid: false, error: 2, message: "A profile already exists for " + email};
         }
     } finally {
         db.close();

@@ -7,7 +7,6 @@ import session from 'express-session';
 import * as user from './controllers/user';
 import userProfile from './controllers/userProfile';
 import interactions from './controllers/interactions';
-import LOConnect from "./controllers/dbConnect";
 import credentials from './credentials';
 
 var app = express();
