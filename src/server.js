@@ -4,12 +4,11 @@ import fs from 'fs';
 import parseurl from 'parseurl';
 import bodyParser from 'body-parser';
 import session from 'express-session';
-import user from './controllers/user';
+import * as user from './controllers/user';
 import userProfile from './controllers/userProfile';
 import interactions from './controllers/interactions';
-import dbc from "./controllers/dbConnect";
-import credentials from './credentials'
-var async = require('async');
+import LOConnect from "./controllers/dbConnect";
+import credentials from './credentials';
 
 var app = express();
 
@@ -62,9 +61,16 @@ app.get('/user', function(req, res){
 
 });
 
-app.get("/testdb", function(req, res){
-    res.send(await user.checkLogin("opichou"));
-})
+app.get("/test/login/:login", async (req, res, next) => {
+    try {
+        let valid = await user.checkLogin(req.params.login);
+        if(valid != true){
+            res.send("Login " + req.params.login + " already used");
+        } else {
+            res.send("Login " + req.params.login + " available");
+        }
+    } catch(err) { next(err)}
+});
 
 app.use(function(req, res){
     res.type('text/html');
