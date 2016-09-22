@@ -26,7 +26,7 @@ export function authenticate(login, password, callback){
             callback(err, ret);
         });
     });
-};
+}
 
 export async function checkLogin(login){
     let db = await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@82.251.11.24:" + credentials.port + "/" + credentials.dbName);
@@ -36,17 +36,39 @@ export async function checkLogin(login){
         let userCount = (await collection.find({
             login: login
         }).limit(1).count());
-        return userCount == 0;
+        if (userCount == 0 && !(/([ ])/.exec(login))) {
+            return {valid: true, message: "Login " + login + " is available"};
+        } else if((/([ ])/.exec(login))){
+            return {valid: false, message: "Login " + login + " contains whitespace"};
+        } else {
+            return {valid: false, message: "Login " + login + " is unavailable"};
+        }
     } finally {
         db.close();
     }
     //this method checks if Login already exists in database
-};
+}
 
-function checkEmail(login){
+export async function checkEmail(email){
+    let db = await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@82.251.11.24:" + credentials.port + "/" + credentials.dbName);
+    try {
+        let collection = db.collection('users');
+        console.log(collection);
+        let userCount = (await collection.find({
+            email: email
+        }).limit(1).count());
+        if (userCount == 0 && (email.match(/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ig))) {
+            return {valid: true, message: "Email " + email + " is available"};
+        } else if(userCount == 0){
+            return {valid: false, message: "Email " + email + " is incorrect"};
+        } else {
+            return {valid: false, message: "Email " + email + " is unavailable"};
+        }
+    } finally {
+        db.close();
+    }
     //this method checks if Email already exists in database
-    return 0;
-};
+}
 
 function requireNewPassword(userId, callback){
     //this methods sends an email with a temporary link for the user to create a new password

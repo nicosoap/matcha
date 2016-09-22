@@ -25,6 +25,7 @@ app.use(session({
 }));
 
 app.set('port', process.env.PORT || 8081);
+
 app.use(express.static(__dirname + '/public'));
 
 app.use(bodyParser.json());
@@ -63,12 +64,17 @@ app.get('/user', function(req, res){
 
 app.get("/test/login/:login", async (req, res, next) => {
     try {
-        let valid = await user.checkLogin(req.params.login);
-        if(valid != true){
-            res.send("Login " + req.params.login + " already used");
-        } else {
-            res.send("Login " + req.params.login + " available");
-        }
+        let test = await user.checkLogin(req.params.login);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(test));
+    } catch(err) { next(err)}
+});
+
+app.get("/test/email/:email", async (req, res, next) => {
+    try {
+        let test = await user.checkEmail(req.params.email);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(test));
     } catch(err) { next(err)}
 });
 

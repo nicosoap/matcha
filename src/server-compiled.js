@@ -64,6 +64,7 @@ app.use((0, _expressSession2.default)({
 }));
 
 app.set('port', process.env.PORT || 8081);
+
 app.use(_express2.default.static(__dirname + '/public'));
 
 app.use(_bodyParser2.default.json());
@@ -100,7 +101,7 @@ app.get('/user', function (req, res) {});
 
 app.get("/test/login/:login", function () {
     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(req, res, next) {
-        var valid;
+        var test;
         return regeneratorRuntime.wrap(function _callee$(_context) {
             while (1) {
                 switch (_context.prev = _context.next) {
@@ -110,30 +111,63 @@ app.get("/test/login/:login", function () {
                         return user.checkLogin(req.params.login);
 
                     case 3:
-                        valid = _context.sent;
+                        test = _context.sent;
 
-                        if (valid != true) {
-                            res.send("Login " + req.params.login + " already used");
-                        } else {
-                            res.send("Login " + req.params.login + " available");
-                        }
-                        _context.next = 10;
+                        res.setHeader('Content-Type', 'application/json');
+                        res.send(JSON.stringify(test));
+                        _context.next = 11;
                         break;
 
-                    case 7:
-                        _context.prev = 7;
+                    case 8:
+                        _context.prev = 8;
                         _context.t0 = _context['catch'](0);
                         next(_context.t0);
-                    case 10:
+                    case 11:
                     case 'end':
                         return _context.stop();
                 }
             }
-        }, _callee, undefined, [[0, 7]]);
+        }, _callee, undefined, [[0, 8]]);
     }));
 
     return function (_x, _x2, _x3) {
         return _ref.apply(this, arguments);
+    };
+}());
+
+app.get("/test/email/:email", function () {
+    var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(req, res, next) {
+        var test;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        _context2.prev = 0;
+                        _context2.next = 3;
+                        return user.checkEmail(req.params.email);
+
+                    case 3:
+                        test = _context2.sent;
+
+                        res.setHeader('Content-Type', 'application/json');
+                        res.send(JSON.stringify(test));
+                        _context2.next = 11;
+                        break;
+
+                    case 8:
+                        _context2.prev = 8;
+                        _context2.t0 = _context2['catch'](0);
+                        next(_context2.t0);
+                    case 11:
+                    case 'end':
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, undefined, [[0, 8]]);
+    }));
+
+    return function (_x4, _x5, _x6) {
+        return _ref2.apply(this, arguments);
     };
 }());
 
