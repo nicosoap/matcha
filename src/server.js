@@ -8,6 +8,8 @@ import * as user from './controllers/user';
 import userProfile from './controllers/userProfile';
 import interactions from './controllers/interactions';
 import credentials from './credentials';
+import jwt from 'jsonwebtoken';
+import expressJWT from 'express-jwt';
 
 var app = express();
 
@@ -33,28 +35,14 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+app.use(expressJWT({secret: credentials.jwtSecret}).unless({path: ['/login', '/test/email/:email', '/test/email/', '/test/email', '/test/*']}));
+
 app.get('/', function(req, res){
     if(req.session.isLogedIn){
         res.send('You are signed-in !');
     } else {
         res.redirect('/login');
     }
-});
-
-app.post('/login', function(req, res) {
-    if(req.body.login && req.body.password) {
-        user.authenticate(req.body.login, req.body.password, function (err, ret) {
-            if (err) {
-                console.error(err);
-                res.send('You are not signed in.');
-            } else if (ret) {
-                res.send('You are signed-in');
-            } else {
-                res.send('You are not signed in.');
-            }
-        });
-    }
-    console.log("Authentication finished");
 });
 
 app.get('/user', function(req, res){
@@ -75,6 +63,18 @@ app.get("/test/email/:email", async (req, res, next) => {
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(test));
     } catch(err) { next(err)}
+});
+
+app.post('/login', function(req, res) {
+    user.authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, function (err, ret) {
+        if (err && device == false) {
+            console.error(err);
+            res.redirect('/login').json(ret);
+        } else {
+            res.status(200).json(ret);
+        }
+    });
+    console.log("Authentication finished");
 });
 
 app.use(function(req, res){

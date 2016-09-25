@@ -40,6 +40,14 @@ var _credentials = require('./credentials');
 
 var _credentials2 = _interopRequireDefault(_credentials);
 
+var _jsonwebtoken = require('jsonwebtoken');
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
+var _expressJwt = require('express-jwt');
+
+var _expressJwt2 = _interopRequireDefault(_expressJwt);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -69,28 +77,14 @@ app.use(_bodyParser2.default.urlencoded({
     extended: true
 }));
 
+app.use((0, _expressJwt2.default)({ secret: _credentials2.default.jwtSecret }).unless({ path: ['/login', '/test/email/:email', '/test/email/', '/test/email', '/test/*'] }));
+
 app.get('/', function (req, res) {
     if (req.session.isLogedIn) {
         res.send('You are signed-in !');
     } else {
         res.redirect('/login');
     }
-});
-
-app.post('/login', function (req, res) {
-    if (req.body.login && req.body.password) {
-        user.authenticate(req.body.login, req.body.password, function (err, ret) {
-            if (err) {
-                console.error(err);
-                res.send('You are not signed in.');
-            } else if (ret) {
-                res.send('You are signed-in');
-            } else {
-                res.send('You are not signed in.');
-            }
-        });
-    }
-    console.log("Authentication finished");
 });
 
 app.get('/user', function (req, res) {});
@@ -166,6 +160,18 @@ app.get("/test/email/:email", function () {
         return _ref2.apply(this, arguments);
     };
 }());
+
+app.post('/login', function (req, res) {
+    user.authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, function (err, ret) {
+        if (err && device == false) {
+            console.error(err);
+            res.redirect('/login').json(ret);
+        } else {
+            res.status(200).json(ret);
+        }
+    });
+    console.log("Authentication finished");
+});
 
 app.use(function (req, res) {
     res.type('text/html');
