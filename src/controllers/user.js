@@ -227,7 +227,15 @@ export async function authenticate(login, password, token, fingerprint, callback
     }
 }
 
-export async function checkLogin(login){
+export async function checkLogin(req, res, next){
+    try {
+        let test = await checkLoginHlp(req.params.login);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(test));
+    } catch(err) { next(err)}
+}
+
+async function checkLoginHlp(login){
     let db = await dbl.connect();
     try {
         const collection = db.collection('users');
@@ -268,59 +276,91 @@ export async function checkEmail(email){
     //this method checks if Email already exists in database
 }
 
-export async function changePassword(token, password){
-    var email = jwt.decode(credentials.jwtSecret, token, function(err, dec){
-        if (err) {
-            return console.error(err.name, err.message);
+async function changePasswordHlp(token, password){
+    var returnValue = null;
+    await jwt.verify(token, credentials.jwtSecret, async function(err, ret){
+        console.log(err.message);
+        if (err){
+            returnValue = ({ success: false, message: 'token is corrupted' });
         } else {
-            console.log(dec);
-            return dec.email;
+            var password2 = await bcrypt.hashSync(password, saltRounds);
+            const email = ret.email;
+            const db = await dbl.connect();
+            var update = await db.collection('users').updateOne({email: email}, {$set: {password: password2}});
+            try {
+                if (update.modifiedCount == 1){
+                    returnValue =({success: true, message: "Password updated successfully"});
+                } else {
+                    returnValue =({success: false, message: "An error happened while updating the password"});
+                }
+            } catch (err) {
+                returnValue =({success: false, message: "Database error"});
+            } finally {
+                db.close();
+            }
         }
     });
-    const db = await dbl.connect();
-    var update = await db.collection('users').updateOne({email: email}, {$set: {password: password}});
-    try {
-        if (update.modifiedCount == 1){
-            return({success: true, message: "Password updated successfully"});
-        } else {
-            return({success: false, message: "An error happened while updating the password"});
+    return (returnValue);
+}
+export async function changePassword(req, res) {
+    var token = req.body.token;
+    if (req.body.password === req.body.password2){
+        const password = req.body.password;
+        var response = await changePasswordHlp(token, password);
+        console.log(response);
+        try {
+            console.log(response);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(response);
+        } catch (err) {
+            console.log(err);
+            console.error(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(response));
         }
-    } catch (err) {
-        console.error(err);
-    } finally {
-        db.close();
+    }else {
+        res.setHeader('Content-Type', 'application/json');
+        res.send({success: false, message: "Passwords didn't match"});
     }
 }
-export async function requireNewPassword(email){
+
+async function requireNewPassword(email){
     //this methods sends an email with a temporary link for the user to create a new password
-    var myToken = jwt.sign({email: email}, credentials.jwtSecret);
+    var myToken = jwt.sign({email: email}, credentials.jwtSecret, {expiresIn: 900});
     const db = await dbl.connect();
-    const user = db.collection('users').finOne({email: email});
+    const user = await db.collection('users').findOne({email: email});
     try {
-        if (!user){
-            return({success: "false", message: "User wasn't found"});
+        if (!user || !user.firstName ) {
+            return ({success: "false", message: "User wasn't found"});
         } else {
             var mailOptions = {
                 from: '"liveoption" <customer-success@liveoption.io>', // sender address
                 to: '"' + user.firstName + ' ' + user.lastName + '" <' + user.email + '>', // list of receivers
                 subject: 'Password reset requested for ' + user.firstName + ' ' + user.lastName + ' on liveoption',
-                html: '<b>Hello ' + user.firstName + '</b></br><p>A password recovery procedure has been requested ' +
-                'in your name on liveoption.io. If you requested a new password to connect to the platform, please' +
+                html: '<b>Hello ' + user.firstName + ',</b></br><p>A password recovery procedure has been requested ' +
+                'in your name on liveoption.io. If you requested a new password, please' +
                 ' click on the following link to proceed.</p>' +
-                '<a href="http://www.liveoption.io/password?token=' + user.token + '">Change my password now</a>' +
+                '<a href="http://www.liveoption.io/password?token=' + myToken + '">Change my password now</a>' +
                 '<p>If you didn\'t request a password reset, please disregard this email</p>' // html body
             };
-            transporter.sendMail(mailOptions, function(error, info){
-                if(error){
-                    return console.log(error);
-                }
-                return console.log('Message sent: ' + info.response);
-            });
+            return await transporter.sendMail(mailOptions);
         }
+    }catch (err) {
+        console.log(err);
+    } finally {
+        db.close();
+    }
+}
+export async function retrievePassword(req, res){
+    var email = req.body.email;
+    var response = await requireNewPassword(email, res);
+    try {
+        console.log(response);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(response);
+        console.log(response);
     } catch (err) {
-        return console.error(err);
-    }finally {
-            db.close();
+        console.error(err);
     }
 }
 
@@ -328,7 +368,7 @@ function verifyEmail(userId, token, callback){
     //this method verifies the user email by confronting a token
 };
 
-function Delete(user_id, login, password, callback){
+function Delete(login, password, callback){
     //this methods allow deletion of a user account after validating password
     authenticate(login, password, function(err, ret){
         //remove from database and callback to feedback user in the UI

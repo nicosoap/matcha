@@ -2,24 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e4287c19-5cb7-4316-9fcc-e43d4f858ffb" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/sendmail/.npmignore" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/sendmail/Readme.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/sendmail/examples/attachmentFile.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/sendmail/examples/meetingRequest.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/sendmail/examples/simple.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/sendmail/package.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/node_modules/sendmail/sendmail.js" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/addressparser/package.json" afterPath="$PROJECT_DIR$/node_modules/addressparser/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/buildmail/package.json" afterPath="$PROJECT_DIR$/node_modules/buildmail/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/libbase64/package.json" afterPath="$PROJECT_DIR$/node_modules/libbase64/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/libmime/package.json" afterPath="$PROJECT_DIR$/node_modules/libmime/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/libqp/package.json" afterPath="$PROJECT_DIR$/node_modules/libqp/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/mailcomposer/package.json" afterPath="$PROJECT_DIR$/node_modules/mailcomposer/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nodemailer-fetch/package.json" afterPath="$PROJECT_DIR$/node_modules/nodemailer-fetch/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/node_modules/nodemailer-shared/package.json" afterPath="$PROJECT_DIR$/node_modules/nodemailer-shared/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/dbConnect.js" afterPath="$PROJECT_DIR$/src/controllers/dbConnect.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/user.js" afterPath="$PROJECT_DIR$/src/controllers/user.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server.js" afterPath="$PROJECT_DIR$/src/server.js" />
     </list>
@@ -47,30 +29,24 @@
       <file leaf-file-name="user.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/controllers/user.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="767">
-              <caret line="316" column="69" selection-start-line="316" selection-start-column="69" selection-end-line="316" selection-end-column="69" />
+            <state relative-caret-position="480">
+              <caret line="229" column="48" selection-start-line="229" selection-start-column="48" selection-end-line="229" selection-end-column="48" />
               <folding>
                 <element signature="e#42#72#0" expanded="true" />
+                <element signature="n#!!block;n#genToken#0" expanded="false" />
                 <element signature="n#!!block;n#contains#0" expanded="false" />
                 <element signature="n#!!block;n#newDevice#0" expanded="false" />
                 <element signature="n#!!block;n#basicAuth#0" expanded="false" />
                 <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
                 <element signature="n#!!block;n#authenticate#0" expanded="false" />
                 <element signature="n#!!block;n#checkLogin#0" expanded="false" />
+                <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
                 <element signature="n#!!block;n#checkEmail#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="dbConnect.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/controllers/dbConnect.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="19" column="0" selection-start-line="18" selection-start-column="125" selection-end-line="19" selection-end-column="0" />
-              <folding>
-                <element signature="e#42#83#0" expanded="false" />
-                <element signature="e#84#114#0" expanded="true" />
+                <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+                <element signature="n#!!block;n#changePassword#0" expanded="false" />
+                <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
+                <element signature="e#12795#13623#0" expanded="false" />
+                <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -79,24 +55,19 @@
       <file leaf-file-name="server.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="697">
-              <caret line="74" column="120" selection-start-line="74" selection-start-column="120" selection-end-line="74" selection-end-column="120" />
+            <state relative-caret-position="540">
+              <caret line="51" column="45" selection-start-line="51" selection-start-column="45" selection-end-line="51" selection-end-column="45" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
                 <element signature="e#593#683#0" expanded="false" />
                 <element signature="e#840#862#0" expanded="false" />
+                <element signature="e#992#1118#0" expanded="false" />
                 <element signature="e#1023#1071#0" expanded="false" />
+                <element signature="e#1157#1161#0" expanded="false" />
+                <element signature="e#1270#1472#0" expanded="false" />
+                <element signature="e#1520#2295#0" expanded="false" />
+                <element signature="e#2433#2511#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name=".babelrc" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.babelrc">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="1" column="34" selection-start-line="1" selection-start-column="34" selection-end-line="1" selection-end-column="34" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -104,7 +75,7 @@
       <file leaf-file-name="userProfile.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controllers/userProfile.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
+            <state relative-caret-position="255">
               <caret line="19" column="2" selection-start-line="19" selection-start-column="2" selection-end-line="19" selection-end-column="2" />
               <folding>
                 <element signature="e#42#72#0" expanded="true" />
@@ -140,15 +111,7 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="825">
               <caret line="55" column="1" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
-              <folding>
-                <marker date="1474890756233" expanded="true" signature="0:1329" ph="{&quot;name&quot;: &quot;matcha&quot;...}" />
-                <marker date="1474890756233" expanded="true" signature="126:264" ph="{&quot;dev&quot;: &quot;nodemon --exec babel-node src/server.js&quot;...}" />
-                <marker date="1474890756233" expanded="true" signature="282:362" ph="{&quot;type&quot;: &quot;git&quot;...}" />
-                <marker date="1474890756233" expanded="true" signature="378:486" ph="[...]" />
-                <marker date="1474890756233" expanded="true" signature="555:615" ph="{&quot;url&quot;: &quot;https://github.com/nicosoap/matcha/issues&quot;...}" />
-                <marker date="1474890756233" expanded="true" signature="694:1195" ph="{&quot;bcrypt&quot;: &quot;^0.8.7&quot;...}" />
-                <marker date="1474890756233" expanded="true" signature="1218:1327" ph="{&quot;babel-cli&quot;: &quot;^6.14.0&quot;...}" />
-              </folding>
+              <folding />
             </state>
           </provider>
         </entry>
@@ -181,8 +144,8 @@
         <option value="$PROJECT_DIR$/src/controllers/tokenMGMT.js" />
         <option value="$PROJECT_DIR$/src/credentials.js" />
         <option value="$PROJECT_DIR$/src/controllers/dbConnect.js" />
-        <option value="$PROJECT_DIR$/src/server.js" />
         <option value="$PROJECT_DIR$/package.json" />
+        <option value="$PROJECT_DIR$/src/server.js" />
         <option value="$PROJECT_DIR$/src/controllers/user.js" />
       </list>
     </option>
@@ -196,8 +159,8 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-5" />
-    <option name="y" value="27" />
+    <option name="x" value="-9" />
+    <option name="y" value="23" />
     <option name="width" value="1355" />
     <option name="height" value="1336" />
   </component>
@@ -397,15 +360,15 @@
       <workItem from="1474554643860" duration="6319000" />
       <workItem from="1474821421199" duration="6077000" />
       <workItem from="1474832397160" duration="5932000" />
-      <workItem from="1474876027607" duration="12194000" />
+      <workItem from="1474876027607" duration="26024000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="62628000" />
+    <option name="totallyTimeSpent" value="76458000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-5" y="27" width="1355" height="1336" extended-state="0" />
+    <frame x="-9" y="23" width="1355" height="1336" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27601478" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -478,13 +441,20 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
+            <element signature="n#!!block;n#genToken#0" expanded="false" />
             <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
             <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
+            <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
+            <element signature="e#12795#13623#0" expanded="false" />
+            <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -494,7 +464,7 @@
         <state relative-caret-position="15">
           <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
           <folding>
-            <element signature="e#42#70#0" expanded="true" />
+            <element signature="e#42#70#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -505,7 +475,7 @@
           <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
           <folding>
             <element signature="e#42#83#0" expanded="false" />
-            <element signature="e#84#114#0" expanded="true" />
+            <element signature="e#84#114#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -518,7 +488,12 @@
             <element signature="e#0#30#0" expanded="true" />
             <element signature="e#593#683#0" expanded="false" />
             <element signature="e#840#862#0" expanded="false" />
+            <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
+            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#1270#1472#0" expanded="false" />
+            <element signature="e#1520#2295#0" expanded="false" />
+            <element signature="e#2433#2511#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -535,15 +510,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="675">
           <caret line="45" column="23" selection-start-line="45" selection-start-column="23" selection-end-line="45" selection-end-column="23" />
-          <folding>
-            <marker date="1474890756233" expanded="true" signature="0:1329" ph="{&quot;name&quot;: &quot;matcha&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="126:264" ph="{&quot;dev&quot;: &quot;nodemon --exec babel-node src/server.js&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="282:362" ph="{&quot;type&quot;: &quot;git&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="378:486" ph="[...]" />
-            <marker date="1474890756233" expanded="true" signature="555:615" ph="{&quot;url&quot;: &quot;https://github.com/nicosoap/matcha/issues&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="694:1195" ph="{&quot;bcrypt&quot;: &quot;^0.8.7&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="1218:1327" ph="{&quot;babel-cli&quot;: &quot;^6.14.0&quot;...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -581,13 +548,20 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
+            <element signature="n#!!block;n#genToken#0" expanded="false" />
             <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
             <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
+            <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
+            <element signature="e#12795#13623#0" expanded="false" />
+            <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -598,7 +572,7 @@
           <caret line="18" column="11" selection-start-line="18" selection-start-column="11" selection-end-line="18" selection-end-column="11" />
           <folding>
             <element signature="e#42#83#0" expanded="false" />
-            <element signature="e#84#114#0" expanded="true" />
+            <element signature="e#84#114#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -611,7 +585,12 @@
             <element signature="e#0#30#0" expanded="true" />
             <element signature="e#593#683#0" expanded="false" />
             <element signature="e#840#862#0" expanded="false" />
+            <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
+            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#1270#1472#0" expanded="false" />
+            <element signature="e#1520#2295#0" expanded="false" />
+            <element signature="e#2433#2511#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -628,15 +607,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="645">
           <caret line="43" column="23" selection-start-line="43" selection-start-column="23" selection-end-line="43" selection-end-column="23" />
-          <folding>
-            <marker date="1474890756233" expanded="true" signature="0:1329" ph="{&quot;name&quot;: &quot;matcha&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="126:264" ph="{&quot;dev&quot;: &quot;nodemon --exec babel-node src/server.js&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="282:362" ph="{&quot;type&quot;: &quot;git&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="378:486" ph="[...]" />
-            <marker date="1474890756233" expanded="true" signature="555:615" ph="{&quot;url&quot;: &quot;https://github.com/nicosoap/matcha/issues&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="694:1195" ph="{&quot;bcrypt&quot;: &quot;^0.8.7&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="1218:1327" ph="{&quot;babel-cli&quot;: &quot;^6.14.0&quot;...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -674,13 +645,20 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
+            <element signature="n#!!block;n#genToken#0" expanded="false" />
             <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
             <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
+            <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
+            <element signature="e#12795#13623#0" expanded="false" />
+            <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -691,7 +669,7 @@
           <caret line="25" column="1" selection-start-line="25" selection-start-column="1" selection-end-line="25" selection-end-column="1" />
           <folding>
             <element signature="e#42#83#0" expanded="false" />
-            <element signature="e#84#114#0" expanded="true" />
+            <element signature="e#84#114#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -708,15 +686,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="645">
           <caret line="43" column="23" selection-start-line="43" selection-start-column="23" selection-end-line="43" selection-end-column="23" />
-          <folding>
-            <marker date="1474890756233" expanded="true" signature="0:1329" ph="{&quot;name&quot;: &quot;matcha&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="126:264" ph="{&quot;dev&quot;: &quot;nodemon --exec babel-node src/server.js&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="282:362" ph="{&quot;type&quot;: &quot;git&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="378:486" ph="[...]" />
-            <marker date="1474890756233" expanded="true" signature="555:615" ph="{&quot;url&quot;: &quot;https://github.com/nicosoap/matcha/issues&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="694:1195" ph="{&quot;bcrypt&quot;: &quot;^0.8.7&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="1218:1327" ph="{&quot;babel-cli&quot;: &quot;^6.14.0&quot;...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -756,7 +726,12 @@
             <element signature="e#0#30#0" expanded="true" />
             <element signature="e#593#683#0" expanded="false" />
             <element signature="e#840#862#0" expanded="false" />
+            <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
+            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#1270#1472#0" expanded="false" />
+            <element signature="e#1520#2295#0" expanded="false" />
+            <element signature="e#2433#2511#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -767,13 +742,20 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
+            <element signature="n#!!block;n#genToken#0" expanded="false" />
             <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
             <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
+            <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
+            <element signature="e#12795#13623#0" expanded="false" />
+            <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -796,7 +778,12 @@
             <element signature="e#0#30#0" expanded="true" />
             <element signature="e#593#683#0" expanded="false" />
             <element signature="e#840#862#0" expanded="false" />
+            <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
+            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#1270#1472#0" expanded="false" />
+            <element signature="e#1520#2295#0" expanded="false" />
+            <element signature="e#2433#2511#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -807,13 +794,20 @@
           <caret line="48" column="0" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
+            <element signature="n#!!block;n#genToken#0" expanded="false" />
             <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
             <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
+            <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
+            <element signature="e#12795#13623#0" expanded="false" />
+            <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -842,15 +836,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="7" column="36" selection-start-line="7" selection-start-column="36" selection-end-line="7" selection-end-column="36" />
-          <folding>
-            <marker date="1474890756233" expanded="true" signature="0:1329" ph="{&quot;name&quot;: &quot;matcha&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="126:264" ph="{&quot;dev&quot;: &quot;nodemon --exec babel-node src/server.js&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="282:362" ph="{&quot;type&quot;: &quot;git&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="378:486" ph="[...]" />
-            <marker date="1474890756233" expanded="true" signature="555:615" ph="{&quot;url&quot;: &quot;https://github.com/nicosoap/matcha/issues&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="694:1195" ph="{&quot;bcrypt&quot;: &quot;^0.8.7&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="1218:1327" ph="{&quot;babel-cli&quot;: &quot;^6.14.0&quot;...}" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
@@ -862,7 +848,12 @@
             <element signature="e#0#30#0" expanded="true" />
             <element signature="e#593#683#0" expanded="false" />
             <element signature="e#840#862#0" expanded="false" />
+            <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
+            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#1270#1472#0" expanded="false" />
+            <element signature="e#1520#2295#0" expanded="false" />
+            <element signature="e#2433#2511#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -897,24 +888,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/.babelrc">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="34" selection-start-line="1" selection-start-column="34" selection-end-line="1" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/userProfile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="19" column="2" selection-start-line="19" selection-start-column="2" selection-end-line="19" selection-end-column="2" />
-          <folding>
-            <element signature="e#42#72#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/credentials.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -928,31 +901,7 @@
         <state relative-caret-position="45">
           <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
           <folding>
-            <element signature="e#42#70#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/dbConnect.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="19" column="0" selection-start-line="18" selection-start-column="125" selection-end-line="19" selection-end-column="0" />
-          <folding>
-            <element signature="e#42#83#0" expanded="false" />
-            <element signature="e#84#114#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="697">
-          <caret line="74" column="120" selection-start-line="74" selection-start-column="120" selection-end-line="74" selection-end-column="120" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#593#683#0" expanded="false" />
-            <element signature="e#840#862#0" expanded="false" />
-            <element signature="e#1023#1071#0" expanded="false" />
+            <element signature="e#42#70#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -967,35 +916,80 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/controllers/userProfile.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="19" column="2" selection-start-line="19" selection-start-column="2" selection-end-line="19" selection-end-column="2" />
+          <folding>
+            <element signature="e#42#72#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/controllers/dbConnect.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="19" column="0" selection-start-line="18" selection-start-column="125" selection-end-line="19" selection-end-column="0" />
+          <folding>
+            <element signature="e#42#83#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.babelrc">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="34" selection-start-line="1" selection-start-column="34" selection-end-line="1" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="825">
           <caret line="55" column="1" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="51" column="45" selection-start-line="51" selection-start-column="45" selection-end-line="51" selection-end-column="45" />
           <folding>
-            <marker date="1474890756233" expanded="true" signature="0:1329" ph="{&quot;name&quot;: &quot;matcha&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="126:264" ph="{&quot;dev&quot;: &quot;nodemon --exec babel-node src/server.js&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="282:362" ph="{&quot;type&quot;: &quot;git&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="378:486" ph="[...]" />
-            <marker date="1474890756233" expanded="true" signature="555:615" ph="{&quot;url&quot;: &quot;https://github.com/nicosoap/matcha/issues&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="694:1195" ph="{&quot;bcrypt&quot;: &quot;^0.8.7&quot;...}" />
-            <marker date="1474890756233" expanded="true" signature="1218:1327" ph="{&quot;babel-cli&quot;: &quot;^6.14.0&quot;...}" />
+            <element signature="e#0#30#0" expanded="true" />
+            <element signature="e#593#683#0" expanded="false" />
+            <element signature="e#840#862#0" expanded="false" />
+            <element signature="e#992#1118#0" expanded="false" />
+            <element signature="e#1023#1071#0" expanded="false" />
+            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#1270#1472#0" expanded="false" />
+            <element signature="e#1520#2295#0" expanded="false" />
+            <element signature="e#2433#2511#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/controllers/user.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="767">
-          <caret line="316" column="69" selection-start-line="316" selection-start-column="69" selection-end-line="316" selection-end-column="69" />
+        <state relative-caret-position="480">
+          <caret line="229" column="48" selection-start-line="229" selection-start-column="48" selection-end-line="229" selection-end-column="48" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
+            <element signature="n#!!block;n#genToken#0" expanded="false" />
             <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
             <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
+            <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
+            <element signature="e#12795#13623#0" expanded="false" />
+            <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
       </provider>
