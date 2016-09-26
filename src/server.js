@@ -35,7 +35,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-app.use(expressJWT({secret: credentials.jwtSecret}).unless({path: ['/login', '/test/email/:email', '/test/email/', '/test/email', '/test/*']}));
+app.use(expressJWT({secret: credentials.jwtSecret}).unless({path: ['/login', /^\/test/i]}));
 
 app.get('/', function(req, res){
     if(req.session.isLogedIn){
@@ -65,14 +65,16 @@ app.get("/test/email/:email", async (req, res, next) => {
     } catch(err) { next(err)}
 });
 
-app.post('/login', function(req, res) {
-    user.authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, function (err, ret) {
-        if (err && device == false) {
-            console.error(err);
-            res.redirect('/login').json(ret);
-        } else {
-            res.status(200).json(ret);
-        }
+app.post('/login', async function(req, res) {
+    await user.authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, function (err, ret) {
+            if (err || ret.auth.fingerprint == false) {
+                console.log("Error: " + err + ", auth: " + ret.auth.success + ", fingerprint: " + ret.auth.fingerprint);
+                console.error(err);
+                res.redirect('/login');
+            } else {
+                console.log("Error: " + err + ", auth: " + ret.auth.success + ", fingerprint: " + ret.auth.fingerprint);
+                res.status(200).json(ret);
+            }
     });
     console.log("Authentication finished");
 });

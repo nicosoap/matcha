@@ -13,41 +13,63 @@ import credentials from '../credentials';
 import mongodb from 'mongodb';
 import jwt from 'jsonwebtoken';
 import expressJWT from 'express-jwt';
+import nodemailer from 'nodemailer';
 const saltRounds = 10;
 
 var MongoClient = mongodb.MongoClient;
+var transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com');
 
 
-async function genToken(login){
-    var myToken = jwt.sign({username: login}, credentials.jwtSecret);
+async function genToken(user){
+    var myToken = jwt.sign({username: user.login}, credentials.jwtSecret);
+    user.token = myToken;
     const db = await dbl.connect();
+    try {
+        const update = await db.collection('users').updateOne({login: user.login},{$set: {token: myToken}});
         try {
-            const update = await db.collection('users').update({login: login},{token: myToken});
-            try {
-                if (update.nModified == 1){
-                    return myToken;
-                } else { console.log("Error associating token to user " + login);}
-            } catch (err) {
-                console.log(err);
-                return false;
-            }
+            if (update.modifiedCount == 1){
+                return user;
+            } else { console.log("Error associating token to user " + user.login);}
+        } catch (err) {
+            console.log(err);
+            return false;
+        }
     } catch (err) {
         console.log(err);
             return false;
+    } finally {
+        db.close();
     }
 }
 
+function contains(a, obj) {
+    for (var i = 0; i < a.length; i++) {
+        if (a[i] === obj) {
+            return true;
+        }
+    }
+    return false;
+}
+
 async function newDevice(userObj, callback){
-    userObj.user.fingerprint.push(userObj.auth.fingerprint);
+    console.log("adding fingerprint to user record");
+    console.log(userObj);
+    if (userObj.user.fingerprint) {
+        userObj.user.fingerprint.push(userObj.auth.fingerprint);
+    } else {
+        userObj.user.fingerprint = [userObj.auth.fingerprint];
+    }
     const db = await dbl.connect();
     try {
-        const update = await db.collection('users').update({login: userObj.user.login}, userObj.user);
+        const update = await db.collection('users').updateOne({login: userObj.user.login},
+            {$set: {fingerprint: userObj.user.fingerprint}});
         try {
-            if (update.nModified == 1){
+            if (update.modifiedCount == 1){
+                console.log(userObj.user);
                 callback(false, userObj);
             } else {
-                console.log("Error associating token to user " + login);
-                callback({"message" : "Error associating token to user"}, userObj);
+                console.log("Error associating fingerprint to user " + login);
+                callback({"message" : "Error associating fingerprint to user"}, userObj);
             }
         } catch (err) {
             console.log(err);
@@ -56,12 +78,136 @@ async function newDevice(userObj, callback){
     } catch (err) {
         console.log(err);
         callback(err, userObj);
+    } finally {
+        db.close();
+    }
+}
+
+async function basicAuth(login, password,fingerprint, callback){
+    console.log("Connecting " + login + " with basic stategy");
+    let db = await dbl.connect();
+    try {
+        let user = await db.collection('users').findOne({login: login});
+        try {
+            if (!user) {
+                callback({message: "an error occured"}, {
+                    auth: {
+                        success: false,
+                        message: "no user with this login found"
+                    }
+                });
+            } else {
+                console.log("user found");
+                bcrypt.compare(password, user.password, async function (err, res) {
+                    if (!err) {
+                        console.log("password ok");
+                        user = await genToken(user);
+                        console.log(user);
+                        if (user.fingerprint && contains(user.fingerprint, fingerprint)) {
+                            console.log("known fingerprint");
+                            const ret = {
+                                auth: {
+                                    method: "basic",
+                                    success: true,
+                                    fingerprint: fingerprint,
+                                    token: user.token,
+                                    message: "You successfully logged in"
+                                },
+                                user: user
+                            };
+                            callback(err, ret);
+                        } else {
+                            console.log("unknown fingerprint");
+                            const ret = {
+                                auth: {
+                                    method: "basic",
+                                    success: true,
+                                    fingerprint: fingerprint,
+                                    token: user.token,
+                                    message: "You successfully logged in"
+                                },
+                                user: user
+                            };
+                            db.close();
+                            newDevice(ret, callback);
+                        }
+                    } else {
+                        console.log("wrong password");
+                        const ret = {
+                            auth: {
+                                method: "basic",
+                                success: false,
+                                fingerprint: fingerprint,
+                                message: "Log in attempt failed: incorrect password"
+                            }
+                        };
+                        callback(err, ret);
+                    }
+                });
+            }
+        }
+        catch (err) {
+            callback(err, false);
+        } finally {
+            console.log("database connection closed");
+            db.close();
+        }
+    } catch(err) {
+        console.error(err);
+    }
+}
+
+async function tokenAuth(token, fingerprint, callback){
+    console.log("Connecting with token based strategy");
+    let db = await dbl.connect();
+    let user = (await db.collection('users').findOne({token: token}));
+    try {
+        if (!user) {
+            const ret = {
+                auth:{
+                    method: "token",
+                    success: false,
+                    fingerprint: fingerprint,
+                    message: "Log in attempt failed"}};
+                    console.log(user);
+            callback(true, ret);
+        } else if (user.fingerprint && contains(user.fingerprint, fingerprint)){
+            const ret = {
+                auth:{
+                    method: "token",
+                    success: true,
+                    fingerprint: fingerprint,
+                    message: "You successfully logged in"},
+                user: user};
+            console.log(user);
+            callback(false, ret);
+        } else {
+            const ret = {
+                auth:{
+                    method: "token",
+                    success: true,
+                    fingerprint: false,
+                    message: "Authentication succeeded but device is unknown"},
+                user: user};
+            callback(true, ret);
+        }
+    }
+    catch (err){
+        const ret = {
+            auth:{
+                method: "token",
+                success: false,
+                fingerprint: fingerprint,
+                message: "Log in attempt failed"}};
+        callback(err, ret);
+    } finally {
+        db.close();
     }
 }
 
 export async function authenticate(login, password, token, fingerprint, callback){
     //This method authenticates user using basic strategy (username and password) or token based strategy.
-    //The first strategy uses bcrypt to hash and salt the password.
+    //The first strategy uses Bcrypt to hash and salt the password.
     //The latter uses JWT to validate the token.
     //In any case, if a token doesn't exist, one is generated upon authentication success.
     //After authenticating, if the device fingerprint isn't recognized, user will be required to confirm his identity
@@ -70,109 +216,21 @@ export async function authenticate(login, password, token, fingerprint, callback
     // containing every info about the authentication and its eventual success, if such, user info and details about
     // device fingerprint status.
 
-    console.log("Connection attempt from: " + login + ' ' + token);
-    const db = await dbl.connect();
+    console.log("Connection attempt from: " + login + ' (token: ' + token + ')');
     if (login && password && fingerprint) {
-        console.log("Connecting " + login + " with stategy: basic");
-        let user = (await db.collection('users').find({
-            login: login
-        }));
-        try {
-            if (user.count() != 1) {
-                callback(true, false);
-            } else {
-                bcrypt.compare(password, user.password, async function (err, res) {
-                        if (res) {
-                            const myToken = await genToken(login);
-                            if (user.fingerprint.contains(fingerprint)){
-                                const ret = {
-                                    auth: {
-                                        method: "basic",
-                                        success: true,
-                                        device: fingerprint,
-                                        token: myToken,
-                                        message: "You successfully logged in"},
-                                    user: user};
-                                callback(err, ret);
-                            } else {
-                                const ret = {
-                                    auth:{
-                                        method: "basic",
-                                        success: true,
-                                        device: fingerprint,
-                                        token: myToken,
-                                        message: "You successfully logged in"},
-                                    user: user};
-                                newDevice(ret, callback);
-                            }
-                        } else {
-                            const ret = {
-                                auth:{
-                                    method: "basic",
-                                    success: false,
-                                    device: fingerprint,
-                                    message: "Log in attempt failed"}};
-                            callback(err, ret);
-                        }
-                });
-            }
-        }
-        catch (err){
-            callback(err, false);
-        }
+        basicAuth(login, password,fingerprint, callback);
     } else if (token && fingerprint) {
-        console.log("Connecting " + login + " with stategy: basic");
-        let user = (await db.collection('users').find({
-            token: token
-        }));
-        try {
-            if (user.count() != 1) {
-                const ret = {
-                    auth:{
-                        method: "token",
-                        success: false,
-                        device: fingerprint,
-                        message: "Log in attempt failed"}};
-                callback(true, ret);
-            } else if (user.fingerprint.contains(fingerprint)){
-                const ret = {
-                    auth:{
-                        method: "token",
-                        success: true,
-                        device: fingerprint,
-                        message: "You successfully logged in"},
-                    user: user};
-                callback(false, ret);
-            } else {
-                const ret = {
-                        auth:{
-                            method: "token",
-                            success: true,
-                            device: false,
-                            message: "Authentication succeeded but device is unknown"},
-                        user: user};
-                callback(true, ret);
-            }
-        }
-        catch (err){
-            const ret = {
-            auth:{
-                method: "token",
-                success: false,
-                device: fingerprint,
-                message: "Log in attempt failed"}};
-            callback(err, ret);
-        }
+        tokenAuth(token, fingerprint, callback);
     }else {
-        callback({message: "Data provided insufficient for authentication"}, false);
+        callback({message: "Data provided is insufficient for authentication"},
+            {auth:{success: false, message: "Data provided is insufficient for authentication"}});
     }
 }
 
 export async function checkLogin(login){
-    let db = await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@82.251.11.24:" + credentials.port + "/" + credentials.dbName);
+    let db = await dbl.connect();
     try {
-        let collection = db.collection('users');
-        console.log(collection);
+        const collection = db.collection('users');
         let userCount = (await collection.find({
             login: login
         }).limit(1).count());
@@ -181,7 +239,7 @@ export async function checkLogin(login){
         } else if((/([ ])/.exec(login))){
             return {valid: false, message: "Login " + login + " contains whitespace"};
         } else {
-            return {valid: false, message: "Login " + login + " is unavailable"};
+            return {valid: false, message: "Login " + login + " isn't available"};
         }
     } finally {
         db.close();
@@ -210,9 +268,61 @@ export async function checkEmail(email){
     //this method checks if Email already exists in database
 }
 
-function requireNewPassword(userId, callback){
+export async function changePassword(token, password){
+    var email = jwt.decode(credentials.jwtSecret, token, function(err, dec){
+        if (err) {
+            return console.error(err.name, err.message);
+        } else {
+            console.log(dec);
+            return dec.email;
+        }
+    });
+    const db = await dbl.connect();
+    var update = await db.collection('users').updateOne({email: email}, {$set: {password: password}});
+    try {
+        if (update.modifiedCount == 1){
+            return({success: true, message: "Password updated successfully"});
+        } else {
+            return({success: false, message: "An error happened while updating the password"});
+        }
+    } catch (err) {
+        console.error(err);
+    } finally {
+        db.close();
+    }
+}
+export async function requireNewPassword(email){
     //this methods sends an email with a temporary link for the user to create a new password
-};
+    var myToken = jwt.sign({email: email}, credentials.jwtSecret);
+    const db = await dbl.connect();
+    const user = db.collection('users').finOne({email: email});
+    try {
+        if (!user){
+            return({success: "false", message: "User wasn't found"});
+        } else {
+            var mailOptions = {
+                from: '"liveoption" <customer-success@liveoption.io>', // sender address
+                to: '"' + user.firstName + ' ' + user.lastName + '" <' + user.email + '>', // list of receivers
+                subject: 'Password reset requested for ' + user.firstName + ' ' + user.lastName + ' on liveoption',
+                html: '<b>Hello ' + user.firstName + '</b></br><p>A password recovery procedure has been requested ' +
+                'in your name on liveoption.io. If you requested a new password to connect to the platform, please' +
+                ' click on the following link to proceed.</p>' +
+                '<a href="http://www.liveoption.io/password?token=' + user.token + '">Change my password now</a>' +
+                '<p>If you didn\'t request a password reset, please disregard this email</p>' // html body
+            };
+            transporter.sendMail(mailOptions, function(error, info){
+                if(error){
+                    return console.log(error);
+                }
+                return console.log('Message sent: ' + info.response);
+            });
+        }
+    } catch (err) {
+        return console.error(err);
+    }finally {
+            db.close();
+    }
+}
 
 function verifyEmail(userId, token, callback){
     //this method verifies the user email by confronting a token
@@ -230,6 +340,6 @@ function create(args, callback){
 };
 
 function isVerified(userId, callback){
-    //this method makes sure the user hs confirmed his account via email
+    //this method makes sure the user has authorized his account via email
     return (true);
 };
