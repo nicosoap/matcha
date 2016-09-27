@@ -14,14 +14,15 @@ import mongodb from 'mongodb';
 import jwt from 'jsonwebtoken';
 import expressJWT from 'express-jwt';
 import nodemailer from 'nodemailer';
+import ERROR from 'errno_code';
 const saltRounds = 10;
 
-var MongoClient = mongodb.MongoClient;
-var transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com');
+let MongoClient = mongodb.MongoClient;
+let transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com');
 
 
 async function genToken(user){
-    var myToken = jwt.sign({username: user.login}, credentials.jwtSecret);
+    let myToken = jwt.sign({username: user.login}, credentials.jwtSecret);
     user.token = myToken;
     const db = await dbl.connect();
     try {
@@ -29,7 +30,7 @@ async function genToken(user){
         try {
             if (update.modifiedCount == 1){
                 return user;
-            } else { console.log("Error associating token to user " + user.login);}
+            } else { console.log(ERROR.TOKEN_ERROR + user.login);}
         } catch (err) {
             console.log(err);
             return false;
@@ -43,7 +44,7 @@ async function genToken(user){
 }
 
 function contains(a, obj) {
-    for (var i = 0; i < a.length; i++) {
+    for (let i = 0; i < a.length; i++) {
         if (a[i] === obj) {
             return true;
         }
@@ -52,8 +53,6 @@ function contains(a, obj) {
 }
 
 async function newDevice(userObj, callback){
-    console.log("adding fingerprint to user record");
-    console.log(userObj);
     if (userObj.user.fingerprint) {
         userObj.user.fingerprint.push(userObj.auth.fingerprint);
     } else {
@@ -65,11 +64,10 @@ async function newDevice(userObj, callback){
             {$set: {fingerprint: userObj.user.fingerprint}});
         try {
             if (update.modifiedCount == 1){
-                console.log(userObj.user);
                 callback(false, userObj);
             } else {
-                console.log("Error associating fingerprint to user " + login);
-                callback({"message" : "Error associating fingerprint to user"}, userObj);
+                console.log(ERROR.FINGERPRINT_ERROR + login);
+                callback({success: false, message: ERROR.FINGERPRINT_ERROR}, userObj);
             }
         } catch (err) {
             console.log(err);
@@ -84,47 +82,41 @@ async function newDevice(userObj, callback){
 }
 
 async function basicAuth(login, password,fingerprint, callback){
-    console.log("Connecting " + login + " with basic stategy");
     let db = await dbl.connect();
     try {
         let user = await db.collection('users').findOne({login: login, active: true});
         try {
             if (!user) {
-                callback({message: "an error occured"}, {
+                callback({success: false, message: ERROR.AUTH_ERROR}, {
                     auth: {
                         success: false,
-                        message: "no user with this login found"
+                        message: ERROR.AUTH_ERROR
                     }
                 });
             } else {
-                console.log("user found");
                 bcrypt.compare(password, user.password, async function (err, res) {
                     if (!err) {
-                        console.log("password ok");
                         user = await genToken(user);
-                        console.log(user);
                         if (user.fingerprint && contains(user.fingerprint, fingerprint)) {
-                            console.log("known fingerprint");
                             const ret = {
                                 auth: {
                                     method: "basic",
                                     success: true,
                                     fingerprint: fingerprint,
                                     token: user.token,
-                                    message: "You successfully logged in"
+                                    message: ERROR.LOGIN_SUCCESS_INFO
                                 },
                                 user: user
                             };
                             callback(err, ret);
                         } else {
-                            console.log("unknown fingerprint");
                             const ret = {
                                 auth: {
                                     method: "basic",
                                     success: true,
                                     fingerprint: fingerprint,
                                     token: user.token,
-                                    message: "You successfully logged in"
+                                    message: ERROR.LOGIN_SUCCESS_INFO
                                 },
                                 user: user
                             };
@@ -138,7 +130,7 @@ async function basicAuth(login, password,fingerprint, callback){
                                 method: "basic",
                                 success: false,
                                 fingerprint: fingerprint,
-                                message: "Log in attempt failed: incorrect password"
+                                message: ERROR.AUTH_PASSWORD_ERROR
                             }
                         };
                         callback(err, ret);
@@ -149,7 +141,6 @@ async function basicAuth(login, password,fingerprint, callback){
         catch (err) {
             callback(err, false);
         } finally {
-            console.log("database connection closed");
             db.close();
         }
     } catch(err) {
@@ -158,7 +149,6 @@ async function basicAuth(login, password,fingerprint, callback){
 }
 
 async function tokenAuth(token, fingerprint, callback){
-    console.log("Connecting with token based strategy");
     let db = await dbl.connect();
     let user = (await db.collection('users').findOne({token: token, active : true}));
     try {
@@ -168,7 +158,7 @@ async function tokenAuth(token, fingerprint, callback){
                     method: "token",
                     success: false,
                     fingerprint: fingerprint,
-                    message: "Log in attempt failed"}};
+                    message: ERROR.AUTH_ERROR}};
                     console.log(user);
             callback(true, ret);
         } else if (user.fingerprint && contains(user.fingerprint, fingerprint)){
@@ -177,9 +167,8 @@ async function tokenAuth(token, fingerprint, callback){
                     method: "token",
                     success: true,
                     fingerprint: fingerprint,
-                    message: "You successfully logged in"},
+                    message: ERROR.LOGIN_SUCCESS_INFO},
                 user: user};
-            console.log(user);
             callback(false, ret);
         } else {
             const ret = {
@@ -187,7 +176,7 @@ async function tokenAuth(token, fingerprint, callback){
                     method: "token",
                     success: true,
                     fingerprint: false,
-                    message: "Authentication succeeded but device is unknown"},
+                    message: ERROR.AUTH_DEVICE_ERROR},
                 user: user};
             callback(true, ret);
         }
@@ -198,7 +187,7 @@ async function tokenAuth(token, fingerprint, callback){
                 method: "token",
                 success: false,
                 fingerprint: fingerprint,
-                message: "Log in attempt failed"}};
+                message: ERROR.AUTH_ERROR}};
         callback(err, ret);
     } finally {
         db.close();
@@ -208,12 +197,10 @@ async function tokenAuth(token, fingerprint, callback){
 export async function userLogin(req, res) {
     await authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, (err, ret) => {
         if (err || ret.auth.fingerprint == false) {
-            console.log("Error: " + err + ", auth: " + ret.auth.success + ", fingerprint: " + ret.auth.fingerprint);
             console.error(err);
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(ret));
         } else {
-            console.log("Error: " + err + ", auth: " + ret.auth.success + ", fingerprint: " + ret.auth.fingerprint);
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(ret));
         }
@@ -237,8 +224,8 @@ async function authenticate(login, password, token, fingerprint, callback){
     } else if (token && fingerprint) {
         tokenAuth(token, fingerprint, callback);
     }else {
-        callback({message: "Data provided is insufficient for authentication"},
-            {auth:{success: false, message: "Data provided is insufficient for authentication"}});
+        callback({message: ERROR.AUTH_ERROR},
+            {auth:{success: false, message: ERROR.AUTH_ERROR}});
     }
 }
 
@@ -270,7 +257,7 @@ async function checkLoginHlp(login){
     //this method checks if Login already exists in database
 }
 
-export async function checkEmail(email){
+async function checkEmailHlp(email){
     let db = await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@82.251.11.24:" + credentials.port + "/" + credentials.dbName);
     try {
         let collection = db.collection('users');
@@ -291,17 +278,25 @@ export async function checkEmail(email){
     //this method checks if Email already exists in database
 }
 
+export async function checkEmail(req, res, next) => {
+    try {
+        let test = await checkEmailHlp(req.params.email);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(test));
+    } catch(err) { next(err)}
+}
+
 async function changePasswordHlp(token, password){
-    var returnValue = null;
+    let returnValue = null;
     await jwt.verify(token, credentials.jwtSecret, async function(err, ret){
         console.log(err.message);
         if (err){
             returnValue = ({ success: false, message: 'token is corrupted' });
         } else {
-            var password2 = await bcrypt.hashSync(password, saltRounds);
+            let password2 = await bcrypt.hashSync(password, saltRounds);
             const email = ret.email;
             const db = await dbl.connect();
-            var update = await db.collection('users').updateOne({email: email}, {$set: {password: password2}});
+            let update = await db.collection('users').updateOne({email: email}, {$set: {password: password2}});
             try {
                 if (update.modifiedCount == 1){
                     returnValue =({success: true, message: "Password updated successfully"});
@@ -317,11 +312,12 @@ async function changePasswordHlp(token, password){
     });
     return (returnValue);
 }
+
 export async function changePassword(req, res) {
-    var token = req.body.token;
+    let token = req.body.token;
     if (req.body.password === req.body.password2){
         const password = req.body.password;
-        var response = await changePasswordHlp(token, password);
+        let response = await changePasswordHlp(token, password);
         console.log(response);
         try {
             console.log(response);
@@ -341,14 +337,14 @@ export async function changePassword(req, res) {
 
 async function requireNewPassword(email){
     //this methods sends an email with a temporary link for the user to create a new password
-    var myToken = jwt.sign({email: email}, credentials.jwtSecret, {expiresIn: 900});
+    let myToken = jwt.sign({email: email}, credentials.jwtSecret, {expiresIn: 900});
     const db = await dbl.connect();
     const user = await db.collection('users').findOne({email: email});
     try {
         if (!user || !user.firstName ) {
             return ({success: "false", message: "User wasn't found"});
         } else {
-            var mailOptions = {
+            let mailOptions = {
                 from: '"liveoption" <customer-success@liveoption.io>', // sender address
                 to: '"' + user.firstName + ' ' + user.lastName + '" <' + user.email + '>', // list of receivers
                 subject: 'Password reset requested for ' + user.firstName + ' ' + user.lastName + ' on liveoption',
@@ -366,9 +362,10 @@ async function requireNewPassword(email){
         db.close();
     }
 }
+
 export async function retrievePassword(req, res){
-    var email = req.body.email;
-    var response = await requireNewPassword(email, res);
+    let email = req.body.email;
+    let response = await requireNewPassword(email, res);
     try {
         console.log(response);
         res.setHeader('Content-Type', 'application/json');
@@ -379,21 +376,37 @@ export async function retrievePassword(req, res){
     }
 }
 
-function verifyEmail(userId, token, callback){
+function verifyEmail(token){
     //this method verifies the user email by confronting a token
-};
+}
 
-function Delete(login, password, fingerprint){
+export async function Delete(res, req){
+    login = req.body.login;
+    password = req.body.password;
+    fingerprint = req.body.fingerprint;
+    let returnValue = null;
     //this methods allow deletion of a user account after validating password
-    authenticate(login, password, '', fingerprint, async (err, ret) => {
+    await authenticate(login, password, '', fingerprint, async (err, ret) => {
         //remove from database and callback to feedback user in the UI
         if (ret.auth.success){
             const db = await dbl.connect();
-            const status = db.collection('users').updateOne({login: "login"}, {$set: {active: false}});
+            const status = await db.collection('users').updateOne({login: "login"}, {$set: {active: false}});
+            try{
+                returnValue = status;
+            } catch(err) {
+                console.error(err);
+                returnValue = {success: false, state: "error", message: ERROR.DELETE_ERROR};
+            }finally {
+                db.close();
+            }
 
+        }else{
+            retrunValue = {success: false, state: "error", message: ERROR.DELETE_ERROR};
         }
-    })
-};
+    });
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(returnValue));
+}
 
 function create(args, callback){
     //this method adds a new user to the database

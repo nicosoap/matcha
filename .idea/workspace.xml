@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e4287c19-5cb7-4316-9fcc-e43d4f858ffb" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/controllers/errno_code.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Generated_files.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Generated_files.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/user.js" afterPath="$PROJECT_DIR$/src/controllers/user.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server-compiled.js" afterPath="$PROJECT_DIR$/src/server-compiled.js" />
@@ -29,35 +31,48 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="user.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="user.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controllers/user.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="294" column="7" selection-start-line="294" selection-start-column="4" selection-end-line="294" selection-end-column="7" />
+            <state relative-caret-position="639">
+              <caret line="382" column="39" selection-start-line="382" selection-start-column="39" selection-end-line="382" selection-end-column="39" />
               <folding>
                 <element signature="e#42#72#0" expanded="true" />
                 <element signature="n#!!block;n#genToken#0" expanded="false" />
-                <element signature="n#!!block;n#contains#0" expanded="false" />
                 <element signature="n#!!block;n#newDevice#0" expanded="false" />
                 <element signature="n#!!block;n#basicAuth#0" expanded="false" />
+                <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
+                <element signature="n#!!block;n#userLogin#0" expanded="false" />
                 <element signature="n#!!block;n#authenticate#0" expanded="false" />
                 <element signature="n#!!block;n#checkLogin#0" expanded="false" />
                 <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
+                <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
                 <element signature="n#!!block;n#checkEmail#0" expanded="false" />
-                <element signature="n#!!block;n#changePassword#0" expanded="false" />
+                <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
                 <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
-                <element signature="e#13541#14369#0" expanded="false" />
                 <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="server.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="errno_code.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/controllers/errno_code.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#41#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
-              <caret line="61" column="35" selection-start-line="61" selection-start-column="35" selection-end-line="61" selection-end-column="35" />
+            <state relative-caret-position="870">
+              <caret line="73" column="3" selection-start-line="73" selection-start-column="3" selection-end-line="73" selection-end-column="3" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
                 <element signature="e#593#683#0" expanded="false" />
@@ -65,8 +80,6 @@
                 <element signature="e#992#1118#0" expanded="false" />
                 <element signature="e#1023#1071#0" expanded="false" />
                 <element signature="e#1157#1161#0" expanded="false" />
-                <element signature="e#1270#1472#0" expanded="false" />
-                <element signature="e#1647#1725#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -75,7 +88,7 @@
       <file leaf-file-name="userProfile.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/controllers/userProfile.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
+            <state relative-caret-position="255">
               <caret line="19" column="2" selection-start-line="19" selection-start-column="2" selection-end-line="19" selection-end-column="2" />
               <folding>
                 <element signature="e#42#72#0" expanded="true" />
@@ -145,8 +158,9 @@
         <option value="$PROJECT_DIR$/src/credentials.js" />
         <option value="$PROJECT_DIR$/src/controllers/dbConnect.js" />
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/src/server.js" />
+        <option value="$PROJECT_DIR$/src/controllers/errno_code.js" />
         <option value="$PROJECT_DIR$/src/controllers/user.js" />
+        <option value="$PROJECT_DIR$/src/server.js" />
       </list>
     </option>
   </component>
@@ -361,12 +375,12 @@
       <workItem from="1474832397160" duration="5932000" />
       <workItem from="1474876027607" duration="26101000" />
       <workItem from="1474967660921" duration="1925000" />
-      <workItem from="1474974441435" duration="78000" />
+      <workItem from="1474974441435" duration="4661000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="78538000" />
+    <option name="totallyTimeSpent" value="83121000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1355" height="1336" extended-state="0" />
@@ -375,21 +389,21 @@
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27601478" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991317" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991317" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="npm" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13180742" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Mongo Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13180742" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -408,16 +422,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/controllers/userProfile.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="19" column="2" selection-start-line="19" selection-start-column="2" selection-end-line="19" selection-end-column="2" />
-          <folding>
-            <element signature="e#42#72#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/credentials.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
@@ -443,16 +447,17 @@
           <folding>
             <element signature="e#42#72#0" expanded="true" />
             <element signature="n#!!block;n#genToken#0" expanded="false" />
-            <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
+            <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
+            <element signature="n#!!block;n#userLogin#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
+            <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
-            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
-            <element signature="e#13541#14369#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
@@ -483,8 +488,6 @@
             <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
             <element signature="e#1157#1161#0" expanded="false" />
-            <element signature="e#1270#1472#0" expanded="false" />
-            <element signature="e#1647#1725#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -539,16 +542,17 @@
           <folding>
             <element signature="e#42#72#0" expanded="true" />
             <element signature="n#!!block;n#genToken#0" expanded="false" />
-            <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
+            <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
+            <element signature="n#!!block;n#userLogin#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
+            <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
-            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
-            <element signature="e#13541#14369#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
@@ -572,8 +576,6 @@
             <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
             <element signature="e#1157#1161#0" expanded="false" />
-            <element signature="e#1270#1472#0" expanded="false" />
-            <element signature="e#1647#1725#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -628,16 +630,17 @@
           <folding>
             <element signature="e#42#72#0" expanded="true" />
             <element signature="n#!!block;n#genToken#0" expanded="false" />
-            <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
+            <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
+            <element signature="n#!!block;n#userLogin#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
+            <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
-            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
-            <element signature="e#13541#14369#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
@@ -704,8 +707,6 @@
             <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
             <element signature="e#1157#1161#0" expanded="false" />
-            <element signature="e#1270#1472#0" expanded="false" />
-            <element signature="e#1647#1725#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -717,16 +718,17 @@
           <folding>
             <element signature="e#42#72#0" expanded="true" />
             <element signature="n#!!block;n#genToken#0" expanded="false" />
-            <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
+            <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
+            <element signature="n#!!block;n#userLogin#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
+            <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
-            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
-            <element signature="e#13541#14369#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
@@ -753,8 +755,6 @@
             <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
             <element signature="e#1157#1161#0" expanded="false" />
-            <element signature="e#1270#1472#0" expanded="false" />
-            <element signature="e#1647#1725#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -766,16 +766,17 @@
           <folding>
             <element signature="e#42#72#0" expanded="true" />
             <element signature="n#!!block;n#genToken#0" expanded="false" />
-            <element signature="n#!!block;n#contains#0" expanded="false" />
             <element signature="n#!!block;n#newDevice#0" expanded="false" />
             <element signature="n#!!block;n#basicAuth#0" expanded="false" />
+            <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
+            <element signature="n#!!block;n#userLogin#0" expanded="false" />
             <element signature="n#!!block;n#authenticate#0" expanded="false" />
             <element signature="n#!!block;n#checkLogin#0" expanded="false" />
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
+            <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
-            <element signature="n#!!block;n#changePassword#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
-            <element signature="e#13541#14369#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
@@ -820,8 +821,6 @@
             <element signature="e#992#1118#0" expanded="false" />
             <element signature="e#1023#1071#0" expanded="false" />
             <element signature="e#1157#1161#0" expanded="false" />
-            <element signature="e#1270#1472#0" expanded="false" />
-            <element signature="e#1647#1725#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -877,48 +876,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/user.js">
+    <entry file="file://$PROJECT_DIR$/package.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
-          <caret line="294" column="7" selection-start-line="294" selection-start-column="4" selection-end-line="294" selection-end-column="7" />
-          <folding>
-            <element signature="e#42#72#0" expanded="true" />
-            <element signature="n#!!block;n#genToken#0" expanded="false" />
-            <element signature="n#!!block;n#contains#0" expanded="false" />
-            <element signature="n#!!block;n#newDevice#0" expanded="false" />
-            <element signature="n#!!block;n#basicAuth#0" expanded="false" />
-            <element signature="n#!!block;n#authenticate#0" expanded="false" />
-            <element signature="n#!!block;n#checkLogin#0" expanded="false" />
-            <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
-            <element signature="n#!!block;n#checkEmail#0" expanded="false" />
-            <element signature="n#!!block;n#changePassword#0" expanded="false" />
-            <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
-            <element signature="e#13541#14369#0" expanded="false" />
-            <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="825">
+          <caret line="55" column="1" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/server.js">
+    <entry file="file://$PROJECT_DIR$/src/controllers/interactions.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
-          <caret line="61" column="35" selection-start-line="61" selection-start-column="35" selection-end-line="61" selection-end-column="35" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="39" selection-end-column="2" />
           <folding>
-            <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#593#683#0" expanded="false" />
-            <element signature="e#840#862#0" expanded="false" />
-            <element signature="e#992#1118#0" expanded="false" />
-            <element signature="e#1023#1071#0" expanded="false" />
-            <element signature="e#1157#1161#0" expanded="false" />
-            <element signature="e#1270#1472#0" expanded="false" />
-            <element signature="e#1647#1725#0" expanded="false" />
+            <element signature="e#42#72#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/controllers/userProfile.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
+        <state relative-caret-position="255">
           <caret line="19" column="2" selection-start-line="19" selection-start-column="2" selection-end-line="19" selection-end-column="2" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
@@ -934,21 +912,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/interactions.js">
+    <entry file="file://$PROJECT_DIR$/src/controllers/user.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="39" selection-end-column="2" />
+        <state relative-caret-position="639">
+          <caret line="382" column="39" selection-start-line="382" selection-start-column="39" selection-end-line="382" selection-end-column="39" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
+            <element signature="n#!!block;n#genToken#0" expanded="false" />
+            <element signature="n#!!block;n#newDevice#0" expanded="false" />
+            <element signature="n#!!block;n#basicAuth#0" expanded="false" />
+            <element signature="n#!!block;n#tokenAuth#0" expanded="false" />
+            <element signature="n#!!block;n#userLogin#0" expanded="false" />
+            <element signature="n#!!block;n#authenticate#0" expanded="false" />
+            <element signature="n#!!block;n#checkLogin#0" expanded="false" />
+            <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
+            <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
+            <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
+            <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
+    <entry file="file://$PROJECT_DIR$/src/controllers/errno_code.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
-          <caret line="55" column="1" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
-          <folding />
+        <state relative-caret-position="270">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="870">
+          <caret line="73" column="3" selection-start-line="73" selection-start-column="3" selection-end-line="73" selection-end-column="3" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+            <element signature="e#593#683#0" expanded="false" />
+            <element signature="e#840#862#0" expanded="false" />
+            <element signature="e#992#1118#0" expanded="false" />
+            <element signature="e#1023#1071#0" expanded="false" />
+            <element signature="e#1157#1161#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

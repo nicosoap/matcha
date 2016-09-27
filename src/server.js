@@ -51,13 +51,7 @@ app.get('/user', function(req, res){
 
 app.get("/test/login/:login", user.checkLogin);
 
-app.get("/test/email/:email", async (req, res, next) => {
-    try {
-        let test = await user.checkEmail(req.params.email);
-        res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify(test));
-    } catch(err) { next(err)}
-});
+app.get("/test/email/:email", user.checkEmail);
 
 app.post('/login', user.userLogin);
 
@@ -65,18 +59,20 @@ app.post('/change_password', user.changePassword);
 
 app.post('/retrieve_password', user.retrievePassword);
 
-app.use(function(req, res){
+app.post('/delete', user.Delete);
+
+app.use((req, res) =>{
     res.type('text/html');
     res.status(404);
     res.send('Error 404');
 });
 
-app.use(function(err, req, res){
+app.use((err, req, res) =>{
     console.error(err.stack);
     res.status(500);
     res.send('Error 500');
 });
 
-app.listen(app.get('port'), function(){
+app.listen(app.get('port'), () => {
     console.log('Express started on http://localhost:' + app.get('port') + ' press Ctrl-C to terminate');
 });

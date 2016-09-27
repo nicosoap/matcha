@@ -102,6 +102,7 @@
         <item url="file://$PROJECT_DIR$/src/controllers/interactions-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/babel-helper-remap-async-to-generator/lib/index-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/cookie-parser/index-compiled.js" />
+        <item url="file://$PROJECT_DIR$/src/controllers/errno_code-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/babel-plugin-transform-decorators/lib/index-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/parseurl/index-compiled.js" />
         <item url="file://$PROJECT_DIR$/src/controllers/userProfile-compiled.js" />
@@ -810,6 +811,7 @@
       <root url="file://$PROJECT_DIR$/src/controllers/interactions-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/babel-helper-remap-async-to-generator/lib/index-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/cookie-parser/index-compiled.js" />
+      <root url="file://$PROJECT_DIR$/src/controllers/errno_code-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/babel-plugin-transform-decorators/lib/index-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/parseurl/index-compiled.js" />
       <root url="file://$PROJECT_DIR$/src/controllers/userProfile-compiled.js" />
