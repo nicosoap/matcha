@@ -12,9 +12,9 @@ import * as dbl from "./dbConnect";
 import credentials from '../credentials';
 import mongodb from 'mongodb';
 import jwt from 'jsonwebtoken';
-import expressJWT from 'express-jwt';
 import nodemailer from 'nodemailer';
-import ERROR from 'errno_code';
+import ERROR from './errno_code';
+import match from '../model/match';
 const saltRounds = 10;
 
 let MongoClient = mongodb.MongoClient;
@@ -245,11 +245,11 @@ async function checkLoginHlp(login){
             login: login
         }).limit(1).count());
         if (userCount == 0 && !(/([ ])/.exec(login))) {
-            return {valid: true, message: "Login " + login + " is available"};
+            return {valid: true, message: "Login " + login + " is available", login: login};
         } else if((/([ ])/.exec(login))){
-            return {valid: false, message: "Login " + login + " contains whitespace"};
+            return {valid: false, message: "Login " + login + " contains whitespace", login: login};
         } else {
-            return {valid: false, message: "Login " + login + " isn't available"};
+            return {valid: false, message: "Login " + login + " isn't available", login: login};
         }
     } finally {
         db.close();
@@ -258,7 +258,7 @@ async function checkLoginHlp(login){
 }
 
 async function checkEmailHlp(email){
-    let db = await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@82.251.11.24:" + credentials.port + "/" + credentials.dbName);
+    let db = await dbl.connect();
     try {
         let collection = db.collection('users');
         console.log(collection);
@@ -266,11 +266,11 @@ async function checkEmailHlp(email){
             email: email
         }).limit(1).count());
         if (userCount == 0 && (email.match(/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ig))) {
-            return {valid: true, message: "Email " + email + " is available"};
+            return {valid: true, message: "Email " + email + " is available",email: email};
         } else if(userCount == 0){
-            return {valid: false, error: 1, message: "Email " + email + " is incorrect"};
+            return {valid: false, error: 1, message: "Email " + email + " is incorrect",email: email};
         } else {
-            return {valid: false, error: 2, message: "A profile already exists for " + email};
+            return {valid: false, error: 2, message: "A profile already exists for " + email,email: email};
         }
     } finally {
         db.close();
@@ -278,12 +278,22 @@ async function checkEmailHlp(email){
     //this method checks if Email already exists in database
 }
 
-export async function checkEmail(req, res, next) => {
+export async function checkEmail(req, res, next){
     try {
         let test = await checkEmailHlp(req.params.email);
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(test));
     } catch(err) { next(err)}
+}
+
+async function checkPass(pass1, pass2){
+    if ((pass1 === pass2) &&
+        (pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,48}$/))){
+        let password = await bcrypt.hashSync(pass1, saltRounds);
+        return ({valid: true, message: "Valid password", password: password});
+    } else {
+        return({valid: false, message: ERROR.PASSWORD_FORMAT_ERROR});
+    }
 }
 
 async function changePasswordHlp(token, password){
@@ -346,12 +356,12 @@ async function requireNewPassword(email){
         } else {
             let mailOptions = {
                 from: '"liveoption" <customer-success@liveoption.io>', // sender address
-                to: '"' + user.firstName + ' ' + user.lastName + '" <' + user.email + '>', // list of receivers
-                subject: 'Password reset requested for ' + user.firstName + ' ' + user.lastName + ' on liveoption',
-                html: '<b>Hello ' + user.firstName + ',</b></br><p>A password recovery procedure has been requested ' +
+                to: user.email, // list of receivers
+                subject: 'Password reset requested on liveoption',
+                html: '<b>Hello,</b></br><p>A password recovery procedure has been requested ' +
                 'in your name on liveoption.io. If you requested a new password, please' +
                 ' click on the following link to proceed.</p>' +
-                '<a href="http://www.liveoption.io/password?token=' + myToken + '">Change my password now</a>' +
+                '<a href="http://www.liveoption.io/change_password?token=' + myToken + '">Change my password now</a>' +
                 '<p>If you didn\'t request a password reset, please disregard this email</p>' // html body
             };
             return await transporter.sendMail(mailOptions);
@@ -374,10 +384,6 @@ export async function retrievePassword(req, res){
     } catch (err) {
         console.error(err);
     }
-}
-
-function verifyEmail(token){
-    //this method verifies the user email by confronting a token
 }
 
 export async function Delete(res, req){
@@ -408,11 +414,58 @@ export async function Delete(res, req){
     res.send(JSON.stringify(returnValue));
 }
 
-function create(args, callback){
+export function renderForm(req, res){
+    res.send({message: "TU LA VU TA PAGE"})
+}
+
+export async function create(req, res){
     //this method adds a new user to the database
+    let user = {};
+    let errors = [];
+    let emailProp = await checkEmailHlp(req.body.email);
+    let loginProp = await checkLoginHlp(req.body.login);
+    let passwordProp = await checkPass(req.body.password, req.body.password2);
+
+    if (emailProp.valid) {user.email = emailProp.email} else errors.push(emailProp.message);
+    if (loginProp.valid) {user.login = loginProp.login} else errors.push(loginProp.message);
+    if (passwordProp.valid) {user.password = passwordProp.password} else errors.push(passwordProp.message);
+    if (errors.length() == 0) {
+        let db = dbl.connect();
+        try {
+            db.collection('users').insertOne(user);
+        } finally {
+            db.close();
+        }
+        await validateAccount(email);
+        res.send({success: true, message: "user created, please check your emails"});
+    } else {
+        res.send({success: false, message: "Your account couldn't be created", errors: errors});
+    }
+}
+
+async function validateAccount(email){
+    let myToken = jwt.sign({email: email}, credentials.jwtSecret, {expiresIn: 900});
+    let mailOptions = {
+        from: '"liveoption" <customer-success@liveoption.io>', // sender address
+        to: email, // list of receivers
+        subject: 'Pleasee verify your liveoption account',
+        html: '<b>Hello,</b></br><p>You just created a liveoption account. Please click the following link within the next 15mins. to verify your email address.</p>' +
+        '<a href="http://www.liveoption.io/validate?token=' + myToken + '">Validate account now</a>' +
+        '<p>Thank you for registering liveoption,</p><p>See you soon !</p>' // html body
+    };
+    return await transporter.sendMail(mailOptions);
+}
+
+export async function isVerified(res, req){
+    //this method makes sure the user has authorized his account via email
+    let email = req.user.email;
+    let db = await dbl.connect();
+    try{
+        db.collection('users').updateOne({email: email}, {$set: {active: true}});
+    } finally {
+        db.close();
+    }
+    res.json({success: true, message: ERROR.ACCOUNT_VALIDATED_INFO})
 };
 
-function isVerified(userId, callback){
-    //this method makes sure the user has authorized his account via email
-    return (true);
-};
+export async function viewAll(res, req){res.send({message: "OK"})}

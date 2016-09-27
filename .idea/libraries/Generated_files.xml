@@ -109,6 +109,7 @@
         <item url="file://$PROJECT_DIR$/node_modules/babel-plugin-syntax-decorators/lib/index-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/body-parser/lib/types/raw-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/moment/src/lib/parse/token-compiled.js" />
+        <item url="file://$PROJECT_DIR$/src/controllers/match-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/babel-plugin-syntax-exponentiation-operator/lib/index-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/moment/src/lib/parse/regex-compiled.js" />
         <item url="file://$PROJECT_DIR$/node_modules/base64-url/index-compiled.js" />
@@ -818,6 +819,7 @@
       <root url="file://$PROJECT_DIR$/node_modules/babel-plugin-syntax-decorators/lib/index-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/body-parser/lib/types/raw-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/moment/src/lib/parse/token-compiled.js" />
+      <root url="file://$PROJECT_DIR$/src/model/match-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/babel-plugin-syntax-exponentiation-operator/lib/index-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/moment/src/lib/parse/regex-compiled.js" />
       <root url="file://$PROJECT_DIR$/node_modules/base64-url/index-compiled.js" />

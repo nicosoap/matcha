@@ -18,5 +18,6 @@ module.exports = {
     PAGE_NOT_FOUND_ERROR: "Page not found",
     WTF_ERROR: "What the fuck ?",
     LOGIN_SUCCESS_INFO: "You successfully logged in",
+    ACCOUNT_VALIDATED_INFO: "Your account is now validated, you may log-in",
 
 };

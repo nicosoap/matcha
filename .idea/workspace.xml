@@ -2,9 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e4287c19-5cb7-4316-9fcc-e43d4f858ffb" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/controllers/errno_code.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/model/match-compiled.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/model/match-compiled.js.map" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/model/match.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/Generated_files.xml" afterPath="$PROJECT_DIR$/.idea/libraries/Generated_files.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/errno_code.js" afterPath="$PROJECT_DIR$/src/controllers/errno_code.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/controllers/user.js" afterPath="$PROJECT_DIR$/src/controllers/user.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server-compiled.js" afterPath="$PROJECT_DIR$/src/server-compiled.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/server-compiled.js.map" afterPath="$PROJECT_DIR$/src/server-compiled.js.map" />
@@ -31,11 +34,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="user.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="user.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/controllers/user.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="639">
-              <caret line="382" column="39" selection-start-line="382" selection-start-column="39" selection-end-line="382" selection-end-column="39" />
+            <state relative-caret-position="1050">
+              <caret line="449" column="18" selection-start-line="449" selection-start-column="18" selection-end-line="449" selection-end-column="18" />
               <folding>
                 <element signature="e#42#72#0" expanded="true" />
                 <element signature="n#!!block;n#genToken#0" expanded="false" />
@@ -48,38 +51,48 @@
                 <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
                 <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
                 <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+                <element signature="n#!!block;n#checkPass#0" expanded="false" />
                 <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+                <element signature="n#!!block;n#changePassword#0" expanded="false" />
                 <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
                 <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
+                <element signature="n#!!block;n#Delete#0" expanded="false" />
+                <element signature="n#!!block;n#create#0" expanded="false" />
+                <element signature="n#!!block;n#isVerified#0" expanded="false" />
+                <marker date="1474987211139" expanded="false" signature="15473:15520" ph="{...}" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="errno_code.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/controllers/errno_code.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#41#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="server.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="server.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="870">
-              <caret line="73" column="3" selection-start-line="73" selection-start-column="3" selection-end-line="73" selection-end-column="3" />
+            <state relative-caret-position="480">
+              <caret line="50" column="11" selection-start-line="50" selection-start-column="11" selection-end-line="50" selection-end-column="18" />
               <folding>
                 <element signature="e#0#30#0" expanded="true" />
-                <element signature="e#593#683#0" expanded="false" />
-                <element signature="e#840#862#0" expanded="false" />
-                <element signature="e#992#1118#0" expanded="false" />
-                <element signature="e#1023#1071#0" expanded="false" />
-                <element signature="e#1157#1161#0" expanded="false" />
+                <element signature="e#591#681#0" expanded="false" />
+                <element signature="e#834#856#0" expanded="false" />
+                <element signature="e#919#1064#0" expanded="false" />
+                <element signature="e#1095#1182#0" expanded="false" />
+                <element signature="e#1217#1248#0" expanded="false" />
+                <element signature="e#1711#1796#0" expanded="false" />
+                <element signature="e#1820#1898#0" expanded="false" />
+                <element signature="e#1927#2008#0" expanded="false" />
+                <element signature="e#2045#2154#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="match.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/model/match.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="3" column="45" selection-start-line="3" selection-start-column="45" selection-end-line="3" selection-end-column="45" />
+              <folding>
+                <element signature="n#!!doc;n#user#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -122,9 +135,21 @@
       <file leaf-file-name="package.json" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/package.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="825">
-              <caret line="55" column="1" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
+            <state relative-caret-position="240">
+              <caret line="16" column="10" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="errno_code.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/controllers/errno_code.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="20" column="76" selection-start-line="20" selection-start-column="76" selection-end-line="20" selection-end-column="76" />
+              <folding>
+                <element signature="e#0#41#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -159,8 +184,9 @@
         <option value="$PROJECT_DIR$/src/controllers/dbConnect.js" />
         <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/src/controllers/errno_code.js" />
-        <option value="$PROJECT_DIR$/src/controllers/user.js" />
+        <option value="$PROJECT_DIR$/src/controllers/match.js" />
         <option value="$PROJECT_DIR$/src/server.js" />
+        <option value="$PROJECT_DIR$/src/controllers/user.js" />
       </list>
     </option>
   </component>
@@ -174,7 +200,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="y" value="23" />
-    <option name="width" value="1355" />
+    <option name="width" value="1346" />
     <option name="height" value="1336" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
@@ -263,6 +289,24 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="model" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matcha" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="matcha" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="controllers" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -287,6 +331,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/model" />
       <recent name="$PROJECT_DIR$/src" />
     </key>
   </component>
@@ -375,18 +420,18 @@
       <workItem from="1474832397160" duration="5932000" />
       <workItem from="1474876027607" duration="26101000" />
       <workItem from="1474967660921" duration="1925000" />
-      <workItem from="1474974441435" duration="4661000" />
+      <workItem from="1474974441435" duration="10300000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="83121000" />
+    <option name="totallyTimeSpent" value="88760000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="1355" height="1336" extended-state="0" />
+    <frame x="0" y="23" width="1346" height="1336" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.27601478" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2778603" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991317" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32991317" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -418,18 +463,12 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
+    <breakpoint-manager>
+      <option name="time" value="3" />
+    </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/credentials.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="14" selection-start-line="6" selection-start-column="14" selection-end-line="6" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/controllers/interactions.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -456,9 +495,15 @@
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#checkPass#0" expanded="false" />
             <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
+            <element signature="n#!!block;n#Delete#0" expanded="false" />
+            <element signature="n#!!block;n#create#0" expanded="false" />
+            <element signature="n#!!block;n#isVerified#0" expanded="false" />
+            <marker date="1474987211139" expanded="false" signature="15473:15520" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -483,11 +528,15 @@
           <caret line="9" column="40" selection-start-line="9" selection-start-column="40" selection-end-line="11" selection-end-column="37" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#593#683#0" expanded="false" />
-            <element signature="e#840#862#0" expanded="false" />
-            <element signature="e#992#1118#0" expanded="false" />
-            <element signature="e#1023#1071#0" expanded="false" />
-            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#591#681#0" expanded="false" />
+            <element signature="e#834#856#0" expanded="false" />
+            <element signature="e#919#1064#0" expanded="false" />
+            <element signature="e#1095#1182#0" expanded="false" />
+            <element signature="e#1217#1248#0" expanded="false" />
+            <element signature="e#1711#1796#0" expanded="false" />
+            <element signature="e#1820#1898#0" expanded="false" />
+            <element signature="e#1927#2008#0" expanded="false" />
+            <element signature="e#2045#2154#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -551,9 +600,15 @@
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#checkPass#0" expanded="false" />
             <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
+            <element signature="n#!!block;n#Delete#0" expanded="false" />
+            <element signature="n#!!block;n#create#0" expanded="false" />
+            <element signature="n#!!block;n#isVerified#0" expanded="false" />
+            <marker date="1474987211139" expanded="false" signature="15473:15520" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -571,11 +626,15 @@
           <caret line="8" column="54" selection-start-line="8" selection-start-column="54" selection-end-line="8" selection-end-column="54" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#593#683#0" expanded="false" />
-            <element signature="e#840#862#0" expanded="false" />
-            <element signature="e#992#1118#0" expanded="false" />
-            <element signature="e#1023#1071#0" expanded="false" />
-            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#591#681#0" expanded="false" />
+            <element signature="e#834#856#0" expanded="false" />
+            <element signature="e#919#1064#0" expanded="false" />
+            <element signature="e#1095#1182#0" expanded="false" />
+            <element signature="e#1217#1248#0" expanded="false" />
+            <element signature="e#1711#1796#0" expanded="false" />
+            <element signature="e#1820#1898#0" expanded="false" />
+            <element signature="e#1927#2008#0" expanded="false" />
+            <element signature="e#2045#2154#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -639,9 +698,15 @@
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#checkPass#0" expanded="false" />
             <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
+            <element signature="n#!!block;n#Delete#0" expanded="false" />
+            <element signature="n#!!block;n#create#0" expanded="false" />
+            <element signature="n#!!block;n#isVerified#0" expanded="false" />
+            <marker date="1474987211139" expanded="false" signature="15473:15520" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -702,11 +767,15 @@
           <caret line="84" column="3" selection-start-line="84" selection-start-column="3" selection-end-line="84" selection-end-column="3" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#593#683#0" expanded="false" />
-            <element signature="e#840#862#0" expanded="false" />
-            <element signature="e#992#1118#0" expanded="false" />
-            <element signature="e#1023#1071#0" expanded="false" />
-            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#591#681#0" expanded="false" />
+            <element signature="e#834#856#0" expanded="false" />
+            <element signature="e#919#1064#0" expanded="false" />
+            <element signature="e#1095#1182#0" expanded="false" />
+            <element signature="e#1217#1248#0" expanded="false" />
+            <element signature="e#1711#1796#0" expanded="false" />
+            <element signature="e#1820#1898#0" expanded="false" />
+            <element signature="e#1927#2008#0" expanded="false" />
+            <element signature="e#2045#2154#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -727,9 +796,15 @@
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#checkPass#0" expanded="false" />
             <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
+            <element signature="n#!!block;n#Delete#0" expanded="false" />
+            <element signature="n#!!block;n#create#0" expanded="false" />
+            <element signature="n#!!block;n#isVerified#0" expanded="false" />
+            <marker date="1474987211139" expanded="false" signature="15473:15520" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -750,11 +825,15 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#593#683#0" expanded="false" />
-            <element signature="e#840#862#0" expanded="false" />
-            <element signature="e#992#1118#0" expanded="false" />
-            <element signature="e#1023#1071#0" expanded="false" />
-            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#591#681#0" expanded="false" />
+            <element signature="e#834#856#0" expanded="false" />
+            <element signature="e#919#1064#0" expanded="false" />
+            <element signature="e#1095#1182#0" expanded="false" />
+            <element signature="e#1217#1248#0" expanded="false" />
+            <element signature="e#1711#1796#0" expanded="false" />
+            <element signature="e#1820#1898#0" expanded="false" />
+            <element signature="e#1927#2008#0" expanded="false" />
+            <element signature="e#2045#2154#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -775,9 +854,15 @@
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#checkPass#0" expanded="false" />
             <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
+            <element signature="n#!!block;n#Delete#0" expanded="false" />
+            <element signature="n#!!block;n#create#0" expanded="false" />
+            <element signature="n#!!block;n#isVerified#0" expanded="false" />
+            <marker date="1474987211139" expanded="false" signature="15473:15520" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -816,11 +901,15 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#593#683#0" expanded="false" />
-            <element signature="e#840#862#0" expanded="false" />
-            <element signature="e#992#1118#0" expanded="false" />
-            <element signature="e#1023#1071#0" expanded="false" />
-            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="e#591#681#0" expanded="false" />
+            <element signature="e#834#856#0" expanded="false" />
+            <element signature="e#919#1064#0" expanded="false" />
+            <element signature="e#1095#1182#0" expanded="false" />
+            <element signature="e#1217#1248#0" expanded="false" />
+            <element signature="e#1711#1796#0" expanded="false" />
+            <element signature="e#1820#1898#0" expanded="false" />
+            <element signature="e#1927#2008#0" expanded="false" />
+            <element signature="e#2045#2154#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -876,14 +965,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="825">
-          <caret line="55" column="1" selection-start-line="55" selection-start-column="1" selection-end-line="55" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/controllers/interactions.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -912,10 +993,57 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/controllers/errno_code.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="20" column="76" selection-start-line="20" selection-start-column="76" selection-end-line="20" selection-end-column="76" />
+          <folding>
+            <element signature="e#0#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/model/match.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="3" column="45" selection-start-line="3" selection-start-column="45" selection-end-line="3" selection-end-column="45" />
+          <folding>
+            <element signature="n#!!doc;n#user#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="10" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="50" column="11" selection-start-line="50" selection-start-column="11" selection-end-line="50" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#30#0" expanded="true" />
+            <element signature="e#591#681#0" expanded="false" />
+            <element signature="e#834#856#0" expanded="false" />
+            <element signature="e#919#1064#0" expanded="false" />
+            <element signature="e#1095#1182#0" expanded="false" />
+            <element signature="e#1217#1248#0" expanded="false" />
+            <element signature="e#1711#1796#0" expanded="false" />
+            <element signature="e#1820#1898#0" expanded="false" />
+            <element signature="e#1927#2008#0" expanded="false" />
+            <element signature="e#2045#2154#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/controllers/user.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="639">
-          <caret line="382" column="39" selection-start-line="382" selection-start-column="39" selection-end-line="382" selection-end-column="39" />
+        <state relative-caret-position="1050">
+          <caret line="449" column="18" selection-start-line="449" selection-start-column="18" selection-end-line="449" selection-end-column="18" />
           <folding>
             <element signature="e#42#72#0" expanded="true" />
             <element signature="n#!!block;n#genToken#0" expanded="false" />
@@ -928,34 +1056,15 @@
             <element signature="n#!!block;n#checkLoginHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmailHlp#0" expanded="false" />
             <element signature="n#!!block;n#checkEmail#0" expanded="false" />
+            <element signature="n#!!block;n#checkPass#0" expanded="false" />
             <element signature="n#!!block;n#changePasswordHlp#0" expanded="false" />
+            <element signature="n#!!block;n#changePassword#0" expanded="false" />
             <element signature="n#!!block;n#requireNewPassword#0" expanded="false" />
             <element signature="n#!!block;n#retrievePassword#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/controllers/errno_code.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#41#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/server.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="870">
-          <caret line="73" column="3" selection-start-line="73" selection-start-column="3" selection-end-line="73" selection-end-column="3" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-            <element signature="e#593#683#0" expanded="false" />
-            <element signature="e#840#862#0" expanded="false" />
-            <element signature="e#992#1118#0" expanded="false" />
-            <element signature="e#1023#1071#0" expanded="false" />
-            <element signature="e#1157#1161#0" expanded="false" />
+            <element signature="n#!!block;n#Delete#0" expanded="false" />
+            <element signature="n#!!block;n#create#0" expanded="false" />
+            <element signature="n#!!block;n#isVerified#0" expanded="false" />
+            <marker date="1474987211139" expanded="false" signature="15473:15520" ph="{...}" />
           </folding>
         </state>
       </provider>
