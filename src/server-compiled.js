@@ -77,7 +77,7 @@ app.use(_bodyParser2.default.urlencoded({
     extended: true
 }));
 
-app.use((0, _expressJwt2.default)({ secret: _credentials2.default.jwtSecret }).unless({ path: ['/login', '/test/email/:email', '/test/email/', '/test/email', '/test/*'] }));
+app.use((0, _expressJwt2.default)({ secret: _credentials2.default.jwtSecret }).unless({ path: ['/login', /^\/test/i] }));
 
 app.get('/', function (req, res) {
     if (req.session.isLogedIn) {
@@ -89,7 +89,9 @@ app.get('/', function (req, res) {
 
 app.get('/user', function (req, res) {});
 
-app.get("/test/login/:login", function () {
+app.get("/test/login/:login", user.checkLogin);
+
+app.get("/test/email/:email", function () {
     var _ref = _asyncToGenerator(regeneratorRuntime.mark(function _callee(req, res, next) {
         var test;
         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -98,7 +100,7 @@ app.get("/test/login/:login", function () {
                     case 0:
                         _context.prev = 0;
                         _context.next = 3;
-                        return user.checkLogin(req.params.login);
+                        return user.checkEmail(req.params.email);
 
                     case 3:
                         test = _context.sent;
@@ -125,53 +127,11 @@ app.get("/test/login/:login", function () {
     };
 }());
 
-app.get("/test/email/:email", function () {
-    var _ref2 = _asyncToGenerator(regeneratorRuntime.mark(function _callee2(req, res, next) {
-        var test;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-            while (1) {
-                switch (_context2.prev = _context2.next) {
-                    case 0:
-                        _context2.prev = 0;
-                        _context2.next = 3;
-                        return user.checkEmail(req.params.email);
+app.post('/login', user.userLogin);
 
-                    case 3:
-                        test = _context2.sent;
+app.post('/change_password', user.changePassword);
 
-                        res.setHeader('Content-Type', 'application/json');
-                        res.send(JSON.stringify(test));
-                        _context2.next = 11;
-                        break;
-
-                    case 8:
-                        _context2.prev = 8;
-                        _context2.t0 = _context2['catch'](0);
-                        next(_context2.t0);
-                    case 11:
-                    case 'end':
-                        return _context2.stop();
-                }
-            }
-        }, _callee2, undefined, [[0, 8]]);
-    }));
-
-    return function (_x4, _x5, _x6) {
-        return _ref2.apply(this, arguments);
-    };
-}());
-
-app.post('/login', function (req, res) {
-    user.authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, function (err, ret) {
-        if (err && device == false) {
-            console.error(err);
-            res.redirect('/login').json(ret);
-        } else {
-            res.status(200).json(ret);
-        }
-    });
-    console.log("Authentication finished");
-});
+app.post('/retrieve_password', user.retrievePassword);
 
 app.use(function (req, res) {
     res.type('text/html');

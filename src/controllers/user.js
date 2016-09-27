@@ -87,7 +87,7 @@ async function basicAuth(login, password,fingerprint, callback){
     console.log("Connecting " + login + " with basic stategy");
     let db = await dbl.connect();
     try {
-        let user = await db.collection('users').findOne({login: login});
+        let user = await db.collection('users').findOne({login: login, active: true});
         try {
             if (!user) {
                 callback({message: "an error occured"}, {
@@ -160,7 +160,7 @@ async function basicAuth(login, password,fingerprint, callback){
 async function tokenAuth(token, fingerprint, callback){
     console.log("Connecting with token based strategy");
     let db = await dbl.connect();
-    let user = (await db.collection('users').findOne({token: token}));
+    let user = (await db.collection('users').findOne({token: token, active : true}));
     try {
         if (!user) {
             const ret = {
@@ -205,7 +205,22 @@ async function tokenAuth(token, fingerprint, callback){
     }
 }
 
-export async function authenticate(login, password, token, fingerprint, callback){
+export async function userLogin(req, res) {
+    await authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, (err, ret) => {
+        if (err || ret.auth.fingerprint == false) {
+            console.log("Error: " + err + ", auth: " + ret.auth.success + ", fingerprint: " + ret.auth.fingerprint);
+            console.error(err);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(ret));
+        } else {
+            console.log("Error: " + err + ", auth: " + ret.auth.success + ", fingerprint: " + ret.auth.fingerprint);
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify(ret));
+        }
+    });
+}
+
+async function authenticate(login, password, token, fingerprint, callback){
     //This method authenticates user using basic strategy (username and password) or token based strategy.
     //The first strategy uses Bcrypt to hash and salt the password.
     //The latter uses JWT to validate the token.
@@ -368,10 +383,15 @@ function verifyEmail(userId, token, callback){
     //this method verifies the user email by confronting a token
 };
 
-function Delete(login, password, callback){
+function Delete(login, password, fingerprint){
     //this methods allow deletion of a user account after validating password
-    authenticate(login, password, function(err, ret){
+    authenticate(login, password, '', fingerprint, async (err, ret) => {
         //remove from database and callback to feedback user in the UI
+        if (ret.auth.success){
+            const db = await dbl.connect();
+            const status = db.collection('users').updateOne({login: "login"}, {$set: {active: false}});
+
+        }
     })
 };
 

@@ -59,21 +59,7 @@ app.get("/test/email/:email", async (req, res, next) => {
     } catch(err) { next(err)}
 });
 
-app.post('/login', async function(req, res) {
-    await user.authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, function (err, ret) {
-            if (err || ret.auth.fingerprint == false) {
-                console.log("Error: " + err + ", auth: " + ret.auth.success + ", fingerprint: " + ret.auth.fingerprint);
-                console.error(err);
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify(ret));
-            } else {
-                console.log("Error: " + err + ", auth: " + ret.auth.success + ", fingerprint: " + ret.auth.fingerprint);
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify(ret));
-            }
-    });
-    console.log("Authentication finished");
-});
+app.post('/login', user.userLogin);
 
 app.post('/change_password', user.changePassword);
 
