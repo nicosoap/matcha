@@ -17,7 +17,7 @@ module.exports = {
     ADDRESS_ERROR: "Your address hasn't been recognized",
     PAGE_NOT_FOUND_ERROR: "Page not found",
     WTF_ERROR: "What the fuck ?",
-    LOGIN_SUCCESS_INFO: "You successfully logged in",
+    LOGIN_SUCCESS_INFO: "You successfully signed in",
     ACCOUNT_VALIDATED_INFO: "Your account is now validated, you may log-in",
 
 };

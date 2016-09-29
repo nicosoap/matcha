@@ -36,6 +36,10 @@ var _interactions = require('./controllers/interactions');
 
 var _interactions2 = _interopRequireDefault(_interactions);
 
+var _admin = require('./controllers/admin');
+
+var admin = _interopRequireWildcard(_admin);
+
 var _credentials = require('./credentials');
 
 var _credentials2 = _interopRequireDefault(_credentials);
@@ -79,7 +83,11 @@ app.get('/login', function (req, res) {
 });
 app.post('/login', user.userLogin);
 app.get('/user', user.viewAll);
+app.put('/user', user.updateProfile);
 app.post('/user/new', user.create);
+app.post('/user/update', user.updateProfile);
+app.get('/user/tags', user.tags);
+app.post('/user/tags', user.addTag);
 app.get('/register', user.renderForm);
 app.get('/test/login/:login', user.checkLogin);
 app.get('/test/email/:email', user.checkEmail);
@@ -87,6 +95,7 @@ app.post('/change_password', user.changePassword);
 app.post('/retrieve_password', user.retrievePassword);
 app.post('/activate_account', user.isVerified);
 app.post('/delete', user.Delete);
+app.post('/admin/userform/', admin.addFormItems);
 app.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
         res.redirect('/login');

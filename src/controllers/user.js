@@ -1,7 +1,15 @@
-/**
- * Created by opichou on 9/19/16.
- */
-import express from 'express';
+// ************************************************************************** //
+//                                                                            //
+//                                                        :::      ::::::::   //
+//   user.js                                            :+:      :+:    :+:   //
+//                                                    +:+ +:+         +:+     //
+//   By: opichou <marvin@42.fr>                     +#+  +:+       +#+        //
+//                                                +#+#+#+#+#+   +#+           //
+//   Created: 2016/09/19 18:27:53 by opichou           #+#    #+#             //
+//   Updated: 2016/09/29 18:27:53 by opichou          ###   ########.fr       //
+//                                                                            //
+// ************************************************************************** //
+
 import formidable from 'formidable';
 import fs from 'fs';
 import parseurl from 'parseurl';
@@ -15,31 +23,51 @@ import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import ERROR from './errno_code';
 import match from '../model/match';
-const saltRounds = 10;
+let saltRounds = 10;
 
-let MongoClient = mongodb.MongoClient;
 let transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com');
 
 
 async function genToken(user){
-    let myToken = jwt.sign({username: user.login}, credentials.jwtSecret);
-    user.token = myToken;
-    const db = await dbl.connect();
+    let myToken = await jwt.sign({username: user.login}, credentials.jwtSecret)
+    const db = await dbl.connect()
     try {
-        const update = await db.collection('users').updateOne({login: user.login},{$set: {token: myToken}});
+        const update = await db.collection('users').updateOne({login: user.login},{$set: {token: myToken}})
         try {
+            console.log(update)
             if (update.modifiedCount == 1){
-                return user;
-            } else { console.log(ERROR.TOKEN_ERROR + user.login);}
+                user.token = myToken
+                console.log(user)
+                return user
+            } else {
+                console.log(ERROR.TOKEN_ERROR + user.login)
+                user.success = false
+                user.message = ERROR.TOKEN_ERROR
+                return user;}
         } catch (err) {
-            console.log(err);
-            return false;
+            console.log(err)
+            user.success = false
+            user.message = ERROR.TOKEN_ERROR
+            return user
         }
     } catch (err) {
-        console.log(err);
-            return false;
+        console.log(err)
+        user.success = false
+        user.message = ERROR.TOKEN_ERROR
+        return user
     } finally {
         db.close();
+    }
+}
+
+async function addFingerprint(user, fingerprint){
+    let db = await dbl.connect()
+    try {
+        db.collection('users').updateOne({login: user.login}, {$push: {fingerprint: fingerprint}})
+        user.fingerprint = fingerprint
+        return user
+    } catch (err) {
+        console.error(err);
     }
 }
 
@@ -52,40 +80,12 @@ function contains(a, obj) {
     return false;
 }
 
-async function newDevice(userObj, callback){
-    if (userObj.user.fingerprint) {
-        userObj.user.fingerprint.push(userObj.auth.fingerprint);
-    } else {
-        userObj.user.fingerprint = [userObj.auth.fingerprint];
-    }
-    const db = await dbl.connect();
-    try {
-        const update = await db.collection('users').updateOne({login: userObj.user.login},
-            {$set: {fingerprint: userObj.user.fingerprint}});
-        try {
-            if (update.modifiedCount == 1){
-                callback(false, userObj);
-            } else {
-                console.log(ERROR.FINGERPRINT_ERROR + login);
-                callback({success: false, message: ERROR.FINGERPRINT_ERROR}, userObj);
-            }
-        } catch (err) {
-            console.log(err);
-            callback(err, userObj);
-        }
-    } catch (err) {
-        console.log(err);
-        callback(err, userObj);
-    } finally {
-        db.close();
-    }
-}
-
-async function basicAuth(login, password,fingerprint, callback){
+async function basicAuth(login, password, fingerprint, callback){
     let db = await dbl.connect();
     try {
-        let user = await db.collection('users').findOne({login: login, active: true});
+        let user = await db.collection('users').findOne({$or: [{login: login, active: true}, {email: login, active: true}]});
         try {
+            db.close()
             if (!user) {
                 callback({success: false, message: ERROR.AUTH_ERROR}, {
                     auth: {
@@ -94,9 +94,11 @@ async function basicAuth(login, password,fingerprint, callback){
                     }
                 });
             } else {
-                bcrypt.compare(password, user.password, async function (err, res) {
-                    if (!err) {
+                bcrypt.compare(password, user.password, async (err, res) => {
+                    console.log(password + " : " + bcrypt.hashSync(password, saltRounds).length + " vs " + user.password.length + ", " + res)
+                    if (res) {
                         user = await genToken(user);
+                        console.log("Token received")
                         if (user.fingerprint && contains(user.fingerprint, fingerprint)) {
                             const ret = {
                                 auth: {
@@ -105,11 +107,12 @@ async function basicAuth(login, password,fingerprint, callback){
                                     fingerprint: fingerprint,
                                     token: user.token,
                                     message: ERROR.LOGIN_SUCCESS_INFO
-                                },
-                                user: user
+                                }
                             };
                             callback(err, ret);
                         } else {
+                            console.log("New fingerprint will be added to user profile")
+                            user = addFingerprint(user, fingerprint)
                             const ret = {
                                 auth: {
                                     method: "basic",
@@ -117,11 +120,9 @@ async function basicAuth(login, password,fingerprint, callback){
                                     fingerprint: fingerprint,
                                     token: user.token,
                                     message: ERROR.LOGIN_SUCCESS_INFO
-                                },
-                                user: user
+                                }
                             };
-                            db.close();
-                            newDevice(ret, callback);
+                            callback(err, ret)
                         }
                     } else {
                         console.log("wrong password");
@@ -140,8 +141,6 @@ async function basicAuth(login, password,fingerprint, callback){
         }
         catch (err) {
             callback(err, false);
-        } finally {
-            db.close();
         }
     } catch(err) {
         console.error(err);
@@ -245,10 +244,13 @@ async function checkLoginHlp(login){
             login: login
         }).limit(1).count());
         if (userCount == 0 && !(/([ ])/.exec(login))) {
+            console.log("Login " + login + " is valid")
             return {valid: true, message: "Login " + login + " is available", login: login};
         } else if((/([ ])/.exec(login))){
+            console.log("Login " + login + " is not valid")
             return {valid: false, message: "Login " + login + " contains whitespace", login: login};
         } else {
+            console.log("Login " + login + " is not valid")
             return {valid: false, message: "Login " + login + " isn't available", login: login};
         }
     } finally {
@@ -266,10 +268,13 @@ async function checkEmailHlp(email){
             email: email
         }).limit(1).count());
         if (userCount == 0 && (email.match(/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ig))) {
+            console.log("Email " + email + " is valid")
             return {valid: true, message: "Email " + email + " is available",email: email};
         } else if(userCount == 0){
+            console.log("Email " + email + " is not valid")
             return {valid: false, error: 1, message: "Email " + email + " is incorrect",email: email};
         } else {
+            console.log("Email " + email + " is not valid")
             return {valid: false, error: 2, message: "A profile already exists for " + email,email: email};
         }
     } finally {
@@ -278,20 +283,22 @@ async function checkEmailHlp(email){
     //this method checks if Email already exists in database
 }
 
-export async function checkEmail(req, res, next){
+export async function checkEmail(req, res){
     try {
         let test = await checkEmailHlp(req.params.email);
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(test));
-    } catch(err) { next(err)}
+    } catch(err) { console.error(err)}
 }
 
 async function checkPass(pass1, pass2){
     if ((pass1 === pass2) &&
         (pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,48}$/))){
+        console.log("Password " + pass1 + " is valid")
         let password = await bcrypt.hashSync(pass1, saltRounds);
         return ({valid: true, message: "Valid password", password: password});
     } else {
+        console.log("Password " + pass1 + " is not valid")
         return({valid: false, message: ERROR.PASSWORD_FORMAT_ERROR});
     }
 }
@@ -386,7 +393,7 @@ export async function retrievePassword(req, res){
     }
 }
 
-export async function Delete(res, req){
+export async function Delete(req, res){
     login = req.body.login;
     password = req.body.password;
     fingerprint = req.body.fingerprint;
@@ -414,8 +421,24 @@ export async function Delete(res, req){
     res.send(JSON.stringify(returnValue));
 }
 
-export function renderForm(req, res){
-    res.send({message: "TU LA VU TA PAGE"})
+export async function renderForm(req, res){
+    let db = await dbl.connect()
+    let response = await db.collection('profileItems').find()
+    try {
+        res.send(response)
+    } finally {
+        db.close()
+    }
+}
+
+export async function addFormItems(req, res){
+    let db = await dbl.connect()
+    let response = await db.collection('profileItems').addMany()
+    try {
+        res.send(response)
+    } finally {
+        db.close()
+    }
 }
 
 export async function create(req, res){
@@ -426,13 +449,14 @@ export async function create(req, res){
     let loginProp = await checkLoginHlp(req.body.login);
     let passwordProp = await checkPass(req.body.password, req.body.password2);
 
-    if (emailProp.valid) {user.email = emailProp.email} else errors.push(emailProp.message);
-    if (loginProp.valid) {user.login = loginProp.login} else errors.push(loginProp.message);
-    if (passwordProp.valid) {user.password = passwordProp.password} else errors.push(passwordProp.message);
-    if (errors.length() == 0) {
-        let db = dbl.connect();
+    if (emailProp.valid) {user.email = emailProp.email} else errors.push(emailProp.message) && console.log("email error logged");
+    if (loginProp.valid) {user.login = loginProp.login} else errors.push(loginProp.message) && console.log("login error logged");
+    if (passwordProp.valid) {user.password = passwordProp.password} else errors.push(passwordProp.message) && console.log("password error logged");
+    if (errors.length == 0) {
+        let db = await dbl.connect()
+        await db.collection('users').insertOne(user);
         try {
-            db.collection('users').insertOne(user);
+            console.log("success")
         } finally {
             db.close();
         }
@@ -466,6 +490,40 @@ export async function isVerified(res, req){
         db.close();
     }
     res.json({success: true, message: ERROR.ACCOUNT_VALIDATED_INFO})
-};
+}
+
+export async function updateProfile(req, res){
+    let db = await dbl.connect()
+    await db.collection('users').updateOne({login: req.body.login}, {$set: req.body})
+    try {
+        res.send(req.body)
+    } finally {
+        db.close()
+    }
+}
+
+export async function tags(req, res){
+    let db = await dbl.connect()
+    let response = await db.colletion('tags').find().sort({count: desc})
+    res.send({response})
+}
+
+export async function addTag(req, res){
+    if (await req.body.tags === ''){res.send({status: "ok", tagsCreated: 0})}
+    const db = await dbl.connect()
+    let bulk = await db.collection('tags').initializeUnorderedBulkOp()
+    await console.log("step 1")
+    await req.body.tags.split("#").filter(async (n) => n != '').forEach(async(n) => {
+        await bulk.find({label: n}).upsert().updateOne({$inc: {count: 1}})
+        await console.log('step 2')
+    })
+    const result = await bulk.execute({w:1})
+    try{
+        console.log(result)
+        res.send({status: "ok", tagCreated: result.nUpserted})
+    } finally {
+        db.close()
+    }
+}
 
 export async function viewAll(res, req){res.send({message: "OK"})}
