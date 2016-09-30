@@ -4,10 +4,6 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _formidable = require('formidable');
-
-var _formidable2 = _interopRequireDefault(_formidable);
-
 var _fs = require('fs');
 
 var _fs2 = _interopRequireDefault(_fs);
@@ -28,10 +24,6 @@ var _user = require('./controllers/user');
 
 var user = _interopRequireWildcard(_user);
 
-var _userProfile = require('./controllers/userProfile');
-
-var _userProfile2 = _interopRequireDefault(_userProfile);
-
 var _interactions = require('./controllers/interactions');
 
 var _interactions2 = _interopRequireDefault(_interactions);
@@ -44,19 +36,36 @@ var _credentials = require('./credentials');
 
 var _credentials2 = _interopRequireDefault(_credentials);
 
-var _jsonwebtoken = require('jsonwebtoken');
+var _nodemailer = require('nodemailer');
 
-var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+var _nodemailer2 = _interopRequireDefault(_nodemailer);
 
 var _expressJwt = require('express-jwt');
 
 var _expressJwt2 = _interopRequireDefault(_expressJwt);
 
+var _multer = require('multer');
+
+var _multer2 = _interopRequireDefault(_multer);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// ************************************************************************** //
+//                                                                            //
+//                                                        :::      ::::::::   //
+//   server.js                                          :+:      :+:    :+:   //
+//                                                    +:+ +:+         +:+     //
+//   By: opichou <opichou@student.42.fr>            +#+  +:+       +#+        //
+//                                                +#+#+#+#+#+   +#+           //
+//   Created: 2016/09/01 18:27:53 by opichou           #+#    #+#             //
+//   Updated: 2016/09/29 18:27:53 by opichou          ###   ########.fr       //
+//                                                                            //
+// ************************************************************************** //
+
 var app = (0, _express2.default)();
+var upload = (0, _multer2.default)({ dest: __dirname + '/uploads' });
 
 app.disable('X-Powerd-By');
 app.use(require('cookie-parser')(_credentials2.default.cookieSecret));
@@ -84,11 +93,15 @@ app.get('/login', function (req, res) {
 app.post('/login', user.userLogin);
 app.get('/user', user.viewAll);
 app.put('/user', user.updateProfile);
+app.post('/upload', upload.single('picture'), user.uploadPicture);
 app.post('/user/new', user.create);
 app.post('/user/update', user.updateProfile);
 app.get('/user/tags', user.tags);
 app.post('/user/tags', user.addTag);
 app.get('/register', user.renderForm);
+app.get('/reactivate', function (req, res) {
+    res.send("REACTIVATION FORM: login + password + send activation email");
+});
 app.get('/test/login/:login', user.checkLogin);
 app.get('/test/email/:email', user.checkEmail);
 app.post('/change_password', user.changePassword);

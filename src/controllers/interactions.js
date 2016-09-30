@@ -2,7 +2,6 @@
  * Created by opichou on 9/19/16.
  */
 import express from 'express';
-import formidable from 'formidable';
 import fs from 'fs';
 import parseurl from 'parseurl';
 import bodyParser from 'body-parser';

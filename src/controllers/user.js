@@ -10,22 +10,20 @@
 //                                                                            //
 // ************************************************************************** //
 
-import formidable from 'formidable';
-import fs from 'fs';
-import parseurl from 'parseurl';
-import bodyParser from 'body-parser';
-import session from 'express-session';
-import bcrypt from 'bcrypt';
-import * as dbl from "./dbConnect";
-import credentials from '../credentials';
+import fs from 'fs'
+import session from 'express-session'
+import bcrypt from 'bcrypt'
+import * as dbl from "./dbConnect"
+import credentials from '../credentials'
 import mongodb from 'mongodb';
-import jwt from 'jsonwebtoken';
-import nodemailer from 'nodemailer';
-import ERROR from './errno_code';
-import match from '../model/match';
-let saltRounds = 10;
+import jwt from 'jsonwebtoken'
+import nodemailer from 'nodemailer'
+import ERROR from './errno_code'
+import match from '../model/match'
 
-let transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com');
+let saltRounds = 10
+
+let transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com')
 
 
 async function genToken(user){
@@ -431,23 +429,17 @@ export async function renderForm(req, res){
     }
 }
 
-export async function addFormItems(req, res){
-    let db = await dbl.connect()
-    let response = await db.collection('profileItems').addMany()
-    try {
-        res.send(response)
-    } finally {
-        db.close()
-    }
+export function uploadPicture(req, res){
+    console.log(req.file)
+    console.log(req.files)
 }
 
 export async function create(req, res){
-    //this method adds a new user to the database
-    let user = {};
-    let errors = [];
-    let emailProp = await checkEmailHlp(req.body.email);
-    let loginProp = await checkLoginHlp(req.body.login);
-    let passwordProp = await checkPass(req.body.password, req.body.password2);
+    let user = {},
+        errors = [],
+        emailProp = await checkEmailHlp(req.body.email),
+        loginProp = await checkLoginHlp(req.body.login),
+        passwordProp = await checkPass(req.body.password, req.body.password2);
 
     if (emailProp.valid) {user.email = emailProp.email} else errors.push(emailProp.message) && console.log("email error logged");
     if (loginProp.valid) {user.login = loginProp.login} else errors.push(loginProp.message) && console.log("login error logged");
@@ -461,11 +453,11 @@ export async function create(req, res){
             db.close();
         }
         await validateAccount(email);
-        res.send({success: true, message: "user created, please check your emails"});
+        res.send({success: true, message: "User created, please check your emails"});
     } else {
         res.send({success: false, message: "Your account couldn't be created", errors: errors});
     }
-}
+} //this method adds a new user to the database
 
 async function validateAccount(email){
     let myToken = jwt.sign({email: email}, credentials.jwtSecret, {expiresIn: 900});
@@ -494,9 +486,13 @@ export async function isVerified(res, req){
 
 export async function updateProfile(req, res){
     let db = await dbl.connect()
-    await db.collection('users').updateOne({login: req.body.login}, {$set: req.body})
     try {
-        res.send(req.body)
+        let payload = req.body
+        let login = req.user.username
+        addTag(payload.tags)
+        delete payload.tags
+        await db.collection('users').updateOne({login: login}, {$set: payload})
+        res.send({success: true, message:ERROR.PROFILE_UPDATED_INFO})
     } finally {
         db.close()
     }
@@ -508,19 +504,16 @@ export async function tags(req, res){
     res.send({response})
 }
 
-export async function addTag(req, res){
-    if (await req.body.tags === ''){res.send({status: "ok", tagsCreated: 0})}
+export async function addTag(tags){
+    if (await tags === ''){console.log({status: "ok", tagsCreated: 0})}
     const db = await dbl.connect()
-    let bulk = await db.collection('tags').initializeUnorderedBulkOp()
-    await console.log("step 1")
-    await req.body.tags.split("#").filter(async (n) => n != '').forEach(async(n) => {
-        await bulk.find({label: n}).upsert().updateOne({$inc: {count: 1}})
-        await console.log('step 2')
-    })
-    const result = await bulk.execute({w:1})
     try{
+        let bulk = await db.collection('tags').initializeUnorderedBulkOp()
+        await req.body.tags.filter((n) => n != '').forEach(async(n) => {
+            bulk.find({label: n}).upsert().updateOne({$inc: {count: 1}})
+        })
+        const result = await bulk.execute({w:1})
         console.log(result)
-        res.send({status: "ok", tagCreated: result.nUpserted})
     } finally {
         db.close()
     }

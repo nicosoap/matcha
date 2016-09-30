@@ -19,5 +19,6 @@ module.exports = {
     WTF_ERROR: "What the fuck ?",
     LOGIN_SUCCESS_INFO: "You successfully signed in",
     ACCOUNT_VALIDATED_INFO: "Your account is now validated, you may log-in",
+    PROFILE_UPDATED_INFO: "Your profile was successfully updated",
 
 };

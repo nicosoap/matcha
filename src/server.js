@@ -1,19 +1,30 @@
+// ************************************************************************** //
+//                                                                            //
+//                                                        :::      ::::::::   //
+//   server.js                                          :+:      :+:    :+:   //
+//                                                    +:+ +:+         +:+     //
+//   By: opichou <opichou@student.42.fr>            +#+  +:+       +#+        //
+//                                                +#+#+#+#+#+   +#+           //
+//   Created: 2016/09/01 18:27:53 by opichou           #+#    #+#             //
+//   Updated: 2016/09/29 18:27:53 by opichou          ###   ########.fr       //
+//                                                                            //
+// ************************************************************************** //
+
 import express from 'express'
-import formidable from 'formidable'
 import fs from 'fs'
 import parseurl from 'parseurl'
 import bodyParser from 'body-parser'
 import session from 'express-session'
 import * as user from './controllers/user'
-import userProfile from './controllers/userProfile'
 import interactions from './controllers/interactions'
 import * as admin from './controllers/admin'
 import credentials from './credentials'
-import jwt from 'jsonwebtoken'
+import nodemailer from 'nodemailer'
 import expressJWT from 'express-jwt'
+import multer from 'multer'
 
 var app = express()
-
+var upload = multer({ dest: __dirname+'/uploads' })
 
 app.disable('X-Powerd-By')
 app.use(require('cookie-parser')(credentials.cookieSecret))
@@ -46,11 +57,13 @@ app.get('/login', (req, res) => {
 app.post('/login', user.userLogin)
 app.get('/user', user.viewAll)
 app.put('/user', user.updateProfile)
+app.post('/upload', upload.single('picture'), user.uploadPicture)
 app.post('/user/new', user.create)
 app.post('/user/update', user.updateProfile)
 app.get('/user/tags', user.tags)
 app.post('/user/tags', user.addTag)
 app.get('/register', user.renderForm)
+app.get('/reactivate', (req, res)=>{res.send("REACTIVATION FORM: login + password + send activation email")})
 app.get('/test/login/:login', user.checkLogin)
 app.get('/test/email/:email', user.checkEmail)
 app.post('/change_password', user.changePassword)

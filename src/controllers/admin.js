@@ -10,7 +10,6 @@
 //                                                                            //
 // ************************************************************************** //
 
-import formidable from 'formidable';
 import fs from 'fs';
 import parseurl from 'parseurl';
 import bodyParser from 'body-parser';
@@ -28,7 +27,7 @@ let saltRounds = 10;
 let transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com');
 
 export async function addFormItems(req, res){
-    if (req.user.username == 'olivier') {
+    if (req.user.username === 'olivier') {
         let label = req.body.label
         let dataType = req.body.dataType
         switch(dataType) {
