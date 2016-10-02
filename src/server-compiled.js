@@ -24,6 +24,10 @@ var _user = require('./controllers/user');
 
 var user = _interopRequireWildcard(_user);
 
+var _picture = require('./controllers/picture');
+
+var picture = _interopRequireWildcard(_picture);
+
 var _interactions = require('./controllers/interactions');
 
 var _interactions2 = _interopRequireDefault(_interactions);
@@ -52,7 +56,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// ************************************************************************** //
+//import io from 'socket.io'
+
+
+var app = require('express')(); // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
 //   server.js                                          :+:      :+:    :+:   //
@@ -64,7 +71,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //                                                                            //
 // ************************************************************************** //
 
-var app = (0, _express2.default)();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var upload = (0, _multer2.default)({ dest: __dirname + '/uploads' });
 
 app.disable('X-Powerd-By');
@@ -93,22 +101,26 @@ app.get('/login', function (req, res) {
 app.post('/login', user.userLogin);
 app.get('/user', user.viewAll);
 app.put('/user', user.updateProfile);
-app.post('/upload', upload.single('picture'), user.uploadPicture);
+app.post('/picture', upload.single('picture'), picture.uploadPicture);
+app.post('/picture/delete', picture.deleteOne);
 app.post('/user/new', user.create);
 app.post('/user/update', user.updateProfile);
 app.get('/user/tags', user.tags);
 app.post('/user/tags', user.addTag);
-app.get('/register', user.renderForm);
-app.get('/reactivate', function (req, res) {
-    res.send("REACTIVATION FORM: login + password + send activation email");
-});
 app.get('/test/login/:login', user.checkLogin);
 app.get('/test/email/:email', user.checkEmail);
-app.post('/change_password', user.changePassword);
-app.post('/retrieve_password', user.retrievePassword);
-app.post('/activate_account', user.isVerified);
-app.post('/delete', user.Delete);
+app.get('/account/register', user.renderForm);
+app.post('/account/change_password', user.changePassword);
+app.post('/account/retrieve_password', user.retrievePassword);
+app.post('/account/activate', user.isVerified);
+app.post('/account/reactivate', user.reactivate);
+app.post('/account/delete', user.Delete);
 app.post('/admin/userform/', admin.addFormItems);
+
+io.on('connection', function (socket) {
+    console.log('a user connected');
+});
+
 app.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
         res.redirect('/login');

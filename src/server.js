@@ -16,15 +16,21 @@ import parseurl from 'parseurl'
 import bodyParser from 'body-parser'
 import session from 'express-session'
 import * as user from './controllers/user'
+import * as picture from './controllers/picture'
 import interactions from './controllers/interactions'
 import * as admin from './controllers/admin'
 import credentials from './credentials'
 import nodemailer from 'nodemailer'
 import expressJWT from 'express-jwt'
 import multer from 'multer'
+//import io from 'socket.io'
 
-var app = express()
-var upload = multer({ dest: __dirname+'/uploads' })
+
+
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+var upload = multer({ dest: `${__dirname}/uploads` })
 
 app.disable('X-Powerd-By')
 app.use(require('cookie-parser')(credentials.cookieSecret))
@@ -57,20 +63,26 @@ app.get('/login', (req, res) => {
 app.post('/login', user.userLogin)
 app.get('/user', user.viewAll)
 app.put('/user', user.updateProfile)
-app.post('/upload', upload.single('picture'), user.uploadPicture)
+app.post('/picture', upload.single('picture'), picture.uploadPicture)
+app.post('/picture/delete', picture.deleteOne)
 app.post('/user/new', user.create)
 app.post('/user/update', user.updateProfile)
 app.get('/user/tags', user.tags)
 app.post('/user/tags', user.addTag)
-app.get('/register', user.renderForm)
-app.get('/reactivate', (req, res)=>{res.send("REACTIVATION FORM: login + password + send activation email")})
 app.get('/test/login/:login', user.checkLogin)
 app.get('/test/email/:email', user.checkEmail)
-app.post('/change_password', user.changePassword)
-app.post('/retrieve_password', user.retrievePassword)
-app.post('/activate_account', user.isVerified)
-app.post('/delete', user.Delete)
+app.get('/account/register', user.renderForm)
+app.post('/account/change_password', user.changePassword)
+app.post('/account/retrieve_password', user.retrievePassword)
+app.post('/account/activate', user.isVerified)
+app.post('/account/reactivate', user.reactivate)
+app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
+
+io.on('connection', (socket) => {
+    console.log('a user connected');
+});
+
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
         res.redirect('/login');

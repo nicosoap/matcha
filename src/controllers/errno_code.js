@@ -20,5 +20,9 @@ module.exports = {
     LOGIN_SUCCESS_INFO: "You successfully signed in",
     ACCOUNT_VALIDATED_INFO: "Your account is now validated, you may log-in",
     PROFILE_UPDATED_INFO: "Your profile was successfully updated",
+    PICTURE_UPLOAD_SUCCESS: "Picture successfully added",
+    PICTURE_REGISTER_ERROR: "The picture couldn't be registered in the database",
+    PICTURE_UPLOAD_ERROR: "Picture upload failed",
+    REACTIVATION_ERROR: "An error occured during account reactivation"
 
 };

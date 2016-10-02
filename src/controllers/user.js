@@ -26,30 +26,32 @@ let saltRounds = 10
 let transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com')
 
 
+function now(){
+    const currentdate = new Date();
+    return currentdate.getDay() + "/"+currentdate.getMonth()
+    + "/" + currentdate.getFullYear() + " @ "
+    + currentdate.getHours() + ":"
+    + currentdate.getMinutes() + ":" + currentdate.getSeconds()
+}
+
 async function genToken(user){
     let myToken = await jwt.sign({username: user.login}, credentials.jwtSecret)
     const db = await dbl.connect()
     try {
         const update = await db.collection('users').updateOne({login: user.login},{$set: {token: myToken}})
-        try {
-            console.log(update)
-            if (update.modifiedCount == 1){
-                user.token = myToken
-                console.log(user)
-                return user
-            } else {
-                console.log(ERROR.TOKEN_ERROR + user.login)
-                user.success = false
-                user.message = ERROR.TOKEN_ERROR
-                return user;}
-        } catch (err) {
-            console.log(err)
+        if (update.modifiedCount == 1){
+            user.token = myToken
+
+            console.log(user.login + " connected: "+ now())
+            return user
+        } else {
+            console.error(ERROR.TOKEN_ERROR + user.login)
             user.success = false
             user.message = ERROR.TOKEN_ERROR
-            return user
+            return user;
         }
     } catch (err) {
-        console.log(err)
+        console.error(err)
         user.success = false
         user.message = ERROR.TOKEN_ERROR
         return user
@@ -93,7 +95,6 @@ async function basicAuth(login, password, fingerprint, callback){
                 });
             } else {
                 bcrypt.compare(password, user.password, async (err, res) => {
-                    console.log(password + " : " + bcrypt.hashSync(password, saltRounds).length + " vs " + user.password.length + ", " + res)
                     if (res) {
                         user = await genToken(user);
                         console.log("Token received")
@@ -147,8 +148,10 @@ async function basicAuth(login, password, fingerprint, callback){
 
 async function tokenAuth(token, fingerprint, callback){
     let db = await dbl.connect();
-    let user = (await db.collection('users').findOne({token: token, active : true}));
+    let login = jwt.verify(token, credentials.jwtSecret).username
+    console.log("token auth for user: "+login)
     try {
+        let user = await db.collection('users').findOne({login: login, active : true});
         if (!user) {
             const ret = {
                 auth:{
@@ -156,7 +159,6 @@ async function tokenAuth(token, fingerprint, callback){
                     success: false,
                     fingerprint: fingerprint,
                     message: ERROR.AUTH_ERROR}};
-                    console.log(user);
             callback(true, ret);
         } else if (user.fingerprint && contains(user.fingerprint, fingerprint)){
             const ret = {
@@ -164,8 +166,7 @@ async function tokenAuth(token, fingerprint, callback){
                     method: "token",
                     success: true,
                     fingerprint: fingerprint,
-                    message: ERROR.LOGIN_SUCCESS_INFO},
-                user: user};
+                    message: ERROR.LOGIN_SUCCESS_INFO}};
             callback(false, ret);
         } else {
             const ret = {
@@ -173,8 +174,7 @@ async function tokenAuth(token, fingerprint, callback){
                     method: "token",
                     success: true,
                     fingerprint: false,
-                    message: ERROR.AUTH_DEVICE_ERROR},
-                user: user};
+                    message: ERROR.AUTH_DEVICE_ERROR}};
             callback(true, ret);
         }
     }
@@ -192,7 +192,8 @@ async function tokenAuth(token, fingerprint, callback){
 }
 
 export async function userLogin(req, res) {
-    await authenticate(req.body.login, req.body.password, req.body.token, req.body.fingerprint, (err, ret) => {
+    let token = req.headers.authorization.match(/^Bearer (.*)$/)[1]
+    await authenticate(req.body.login, req.body.password, token, req.body.fingerprint, (err, ret) => {
         if (err || ret.auth.fingerprint == false) {
             console.error(err);
             res.setHeader('Content-Type', 'application/json');
@@ -216,10 +217,10 @@ async function authenticate(login, password, token, fingerprint, callback){
     // device fingerprint status.
 
     console.log("Connection attempt from: " + login + ' (token: ' + token + ')');
-    if (login && password && fingerprint) {
-        basicAuth(login, password,fingerprint, callback);
-    } else if (token && fingerprint) {
+    if (token && fingerprint) {
         tokenAuth(token, fingerprint, callback);
+    } else if (login && password && fingerprint) {
+        basicAuth(login, password,fingerprint, callback);
     }else {
         callback({message: ERROR.AUTH_ERROR},
             {auth:{success: false, message: ERROR.AUTH_ERROR}});
@@ -429,11 +430,6 @@ export async function renderForm(req, res){
     }
 }
 
-export function uploadPicture(req, res){
-    console.log(req.file)
-    console.log(req.files)
-}
-
 export async function create(req, res){
     let user = {},
         errors = [],
@@ -459,6 +455,34 @@ export async function create(req, res){
     }
 } //this method adds a new user to the database
 
+export async function reactivate(req, res){
+    let login = req.body.login,
+        password = req.body.password,
+        db = await dbl.connect();
+    try {
+
+        const user = await db.collection('users').findOneAndUpdate({login: login, password: password, active: false}, {$set: {active: true}})
+        console.log(user)
+        if (user.nModified != 1) {
+            console.log("error")
+            res.send({success: false, message: ERROR.REACTIVATION_ERROR})
+        }else{
+            let myToken = jwt.sign({email: user.email}, credentials.jwtSecret, {expiresIn: 9000}),
+                mailOptions = {
+                    from: '"liveoption" <customer-success@liveoption.io>', // sender address
+                    to: user.email, // list of receivers
+                    subject: 'Your account has been reactivated',
+                    html: '<b>Hello,</b></br><p>Your liveoption account has just been reactivated.' +
+                    'If you did not request the reactivation of your liveoption account, <a href="'+ req.get('host') +'/">please click here.</a></p>'+
+                    '<p>Thank you,</p><p>See you soon !</p>'
+                }; // html body
+            res.send(await transporter.sendMail(mailOptions))
+        }
+    } finally {
+        db.close()
+    }
+}//this method reactivates a previously desactivated account
+
 async function validateAccount(email){
     let myToken = jwt.sign({email: email}, credentials.jwtSecret, {expiresIn: 900});
     let mailOptions = {
@@ -466,7 +490,7 @@ async function validateAccount(email){
         to: email, // list of receivers
         subject: 'Pleasee verify your liveoption account',
         html: '<b>Hello,</b></br><p>You just created a liveoption account. Please click the following link within the next 15mins. to verify your email address.</p>' +
-        '<a href="http://www.liveoption.io/validate?token=' + myToken + '">Validate account now</a>' +
+        '<a href="http://www.liveoption.io/account/validate?token=' + myToken + '">Validate account now</a>' +
         '<p>Thank you for registering liveoption,</p><p>See you soon !</p>' // html body
     };
     return await transporter.sendMail(mailOptions);
@@ -513,7 +537,7 @@ export async function addTag(tags){
             bulk.find({label: n}).upsert().updateOne({$inc: {count: 1}})
         })
         const result = await bulk.execute({w:1})
-        console.log(result)
+        console.error(result)
     } finally {
         db.close()
     }
