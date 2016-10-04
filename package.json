@@ -44,13 +44,12 @@
     "nodemailer": "^2.6.4",
     "nodemon": "^1.10.2",
     "parseurl": "^1.3.1",
-    "react": "^15.3.1",
-    "react-dom": "^15.3.1",
+    "readable-stream": "^2.1.5",
     "socket.io": "^1.4.8"
   },
   "devDependencies": {
-    "babel-cli": "^6.14.0",
-    "babel-preset-es2015": "^6.14.0",
-    "babel-preset-stage-2": "^6.13.0"
+    "babel-cli": "^6.16.0",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-stage-2": "^6.17.0"
   }
 }

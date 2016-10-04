@@ -34,7 +34,7 @@ function now(){
     + currentdate.getMinutes() + ":" + currentdate.getSeconds()
 }
 
-async function genToken(user){
+async function genToken (user){
     let myToken = await jwt.sign({username: user.login}, credentials.jwtSecret)
     const db = await dbl.connect()
     try {

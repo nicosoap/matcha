@@ -23,14 +23,16 @@ import credentials from './credentials'
 import nodemailer from 'nodemailer'
 import expressJWT from 'express-jwt'
 import multer from 'multer'
-//import io from 'socket.io'
+import socketIo from 'socket.io'
+import http from 'http'
+
 
 
 
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var upload = multer({ dest: `${__dirname}/uploads` })
+const server = http.createServer(app)
+const io = socketIo(server);
+const upload = multer({ dest: `${__dirname}/uploads` })
 
 app.disable('X-Powerd-By')
 app.use(require('cookie-parser')(credentials.cookieSecret))
@@ -40,7 +42,7 @@ app.use(session({
     secret: credentials.cookieSecret,
 
 }))
-app.set('port', process.env.PORT || 8081)
+app.set('port', process.env.PORT || 3001)
 app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -53,13 +55,13 @@ app.use(expressJWT({secret: credentials.jwtSecret}).unless({
         '/user/new',
         '/protected',
         /^\/test/i]}))
+
+//--ROUTES--/ />
+
 app.get('/', (req, res) => {
-    if (!req.user) return res.redirect('/login');
     res.send("Welcome dude !!!");
 })
-app.get('/login', (req, res) => {
-    res.send("login page");
-})
+app.get('/login', (_, res) => res.send("Login Page"))
 app.post('/login', user.userLogin)
 app.get('/user', user.viewAll)
 app.put('/user', user.updateProfile)
@@ -78,10 +80,16 @@ app.post('/account/activate', user.isVerified)
 app.post('/account/reactivate', user.reactivate)
 app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
+//--ROUTES--/ />
 
-io.on('connection', (socket) => {
-    console.log('a user connected');
-});
+//io.on('connection', socket => {
+//    socket.on('message', body => {
+//        socket.broadcast.emit('message', {
+//            body,
+//            from: socket.id.slice(8)
+//        })
+//    });
+//});
 
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
@@ -91,13 +99,13 @@ app.use((err, req, res, next) => {
 app.use((req, res) =>{
     res.type('text/html');
     res.status(404);
-    res.send('Error 404');
+    res.send('Error 404 Page');
 })
 app.use((err, req, res) =>{
     console.error(err.stack);
     res.status(500);
-    res.send('Error 500');
+    res.send('Error 500 Page');
 })
-app.listen(app.get('port'), () => {
+server.listen(app.get('port'), () => {
     console.log('Express started on http://localhost:' + app.get('port') + ' press Ctrl-C to terminate');
 })
