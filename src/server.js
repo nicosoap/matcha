@@ -82,14 +82,14 @@ app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
 //--ROUTES--/ />
 
-//io.on('connection', socket => {
-//    socket.on('message', body => {
-//        socket.broadcast.emit('message', {
-//            body,
-//            from: socket.id.slice(8)
-//        })
-//    });
-//});
+io.on('connection', socket => {
+    socket.on('message', body => {
+        socket.broadcast.emit('message', {
+            body,
+            from: socket.id.slice(8)
+        })
+    });
+});
 
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
