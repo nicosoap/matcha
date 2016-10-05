@@ -27,11 +27,11 @@ let transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMat
 
 
 function now(){
-    const currentdate = new Date();
-    return currentdate.getDay() + "/"+currentdate.getMonth()
-    + "/" + currentdate.getFullYear() + " @ "
-    + currentdate.getHours() + ":"
-    + currentdate.getMinutes() + ":" + currentdate.getSeconds()
+    const currentDate = new Date();
+    return currentDate.getDate() + "/"+ ("0" + (currentDate.getMonth() + 1)).slice(-2)
+        + "/" + currentDate.getFullYear() + " @ "
+        + currentDate.getHours() + ":"
+        + currentDate.getMinutes() + ":" + currentDate.getSeconds()
 }
 
 async function genToken (user){

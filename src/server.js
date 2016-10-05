@@ -17,7 +17,7 @@ import bodyParser from 'body-parser'
 import session from 'express-session'
 import * as user from './controllers/user'
 import * as picture from './controllers/picture'
-import interactions from './controllers/interactions'
+import * as interactions from './controllers/interactions'
 import * as admin from './controllers/admin'
 import credentials from './credentials'
 import nodemailer from 'nodemailer'
@@ -25,14 +25,13 @@ import expressJWT from 'express-jwt'
 import multer from 'multer'
 import socketIo from 'socket.io'
 import http from 'http'
+import socketioJwt from 'socketio-jwt'
 
-
-
-
-var app = require('express')();
+const app = require('express')();
 const server = http.createServer(app)
 const io = socketIo(server);
 const upload = multer({ dest: `${__dirname}/uploads` })
+const AllClients = []
 
 app.disable('X-Powerd-By')
 app.use(require('cookie-parser')(credentials.cookieSecret))
@@ -55,6 +54,10 @@ app.use(expressJWT({secret: credentials.jwtSecret}).unless({
         '/user/new',
         '/protected',
         /^\/test/i]}))
+io.use(socketioJwt.authorize({
+    secret: credentials.jwtSecret,
+    handshake: true
+}));
 
 //--ROUTES--/ />
 
@@ -82,13 +85,45 @@ app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
 //--ROUTES--/ />
 
+function now(){
+    const currentDate = new Date();
+    return currentDate.getDate() + "/"+ ("0" + (currentDate.getMonth() + 1)).slice(-2)
+        + "/" + currentDate.getFullYear() + " @ "
+        + currentDate.getHours() + ":"
+        + currentDate.getMinutes() + ":" + currentDate.getSeconds()
+}
+
 io.on('connection', socket => {
+    interactions.connect(socket.decoded_token.username, socket.id)
+    console.log(socket.decoded_token.username, 'connected on', now());
     socket.on('message', body => {
-        socket.broadcast.emit('message', {
+        socket.emit('message', {
             body,
-            from: socket.id.slice(8)
+            from: socket.decoded_token.username
         })
     });
+    socket.on('like', body => {
+        socket.broadcast.emit('like', {
+            body,
+            from: socket.decoded_token.username
+        })
+    });
+    socket.on('match', body => {
+        socket.broadcast.emit('match', {
+            body,
+            from: socket.decoded_token.username
+        })
+    });
+    socket.on('visit', body => {
+        socket.emit('visit', {
+            body,
+            from: socket.decoded_token.username
+        })
+    });
+    socket.on('disconnect', () => {
+        interactions.disconnect(socket.decoded_token.username, socket.id)
+        console.log(socket.decoded_token.username, 'disconnected on', now());
+    })
 });
 
 app.use((err, req, res, next) => {
