@@ -96,28 +96,57 @@ function now(){
 io.on('connection', socket => {
     interactions.connect(socket.decoded_token.username, socket.id)
     console.log(socket.decoded_token.username, 'connected on', now());
+    socket.emit('message', {
+        body: "this is a new message",
+        from: "olivier",
+        read: true
+    });
+    setTimeout(() => socket.emit('message', {
+        body: "this is a new message",
+        from: "olivier",
+        read: false
+    }), 5000);
+    setTimeout(() => socket.emit('match', {
+        body: "this is a new match",
+        from: "olivier",
+        read: true
+    }), 5500);
+    setTimeout(() => socket.emit('match', {
+        body: "this is a new match",
+        from: "olivier",
+        read: false
+    }), 10000);
+    setTimeout(() => socket.emit('match', {
+        body: "this is a new match",
+        from: "olivier",
+        read: true
+    }), 5000);
     socket.on('message', body => {
         socket.emit('message', {
             body,
-            from: socket.decoded_token.username
+            from: socket.decoded_token.username,
+            read: false
         })
     });
     socket.on('like', body => {
         socket.broadcast.emit('like', {
             body,
-            from: socket.decoded_token.username
+            from: socket.decoded_token.username,
+            read: false
         })
     });
     socket.on('match', body => {
         socket.broadcast.emit('match', {
             body,
-            from: socket.decoded_token.username
+            from: socket.decoded_token.username,
+            read: false
         })
     });
     socket.on('visit', body => {
         socket.emit('visit', {
             body,
-            from: socket.decoded_token.username
+            from: socket.decoded_token.username,
+            read: false
         })
     });
     socket.on('disconnect', () => {
