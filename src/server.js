@@ -96,86 +96,23 @@ function now(){
 io.on('connection', socket => {
     interactions.connect(socket.decoded_token.username, socket.id)
     console.log(socket.decoded_token.username, 'connected on', now());
-    setTimeout(() => socket.emit('message', {
-        body: "this is a new message",
-        from: "olivier",
+    setTimeout( () => socket.emit('message', {
+        body: "Ceci est un message",
+        from: socket.decoded_token.username,
         read: false
-    }), 3100);
-    setTimeout(() => socket.emit('message', {
-        body: "this is a new match",
-        from: "olivier",
+    }), 500)
+    setTimeout(() =>socket.emit('match', {
+        body: "ceci est un match",
+        from: socket.decoded_token.username,
         read: false
-    }), 4200);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
+    }), 4000)
+    setTimeout( () => socket.emit('message', {
+        body: "Ceci est un message",
+        from: socket.decoded_token.username,
         read: false
-    }), 5500);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 7000);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 8700);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 9630);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 10299);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 11000);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 12900);
-    setTimeout(() => socket.emit('message', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 13610);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 15025);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 17105);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 19110);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 21815);
-    setTimeout(() => socket.emit('match', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 23300);
-    setTimeout(() => socket.emit('message', {
-        body: "this is a new match",
-        from: "olivier",
-        read: false
-    }), 26000);
+    }), 8600)
+
+
     socket.on('message', body => {
         socket.emit('message', {
             body,
