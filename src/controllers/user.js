@@ -543,4 +543,25 @@ export async function addTag(tags){
     }
 }
 
-export async function viewAll(res, req){res.send({message: "OK"})}
+export const viewAll = async (req, res) => {
+    const regexHashtag = /#([a-zA-Z0-9-]*)+/g,
+        regexNetflix = /netflix/i,
+        regexRightNow = /rightnow/i,
+        regexAge = /age-from=([0-9]{1,2}).*age-to=([0-9]{1,2})/i, //min = group1, max = group2
+        regexPopularity = /popularity-from=([0-9]{1,2}).*popularity-to=([0-9]{1,3})/i, //min = group1, max = group2
+        regexGeocode = /around-lat=([0-9]{1,2}\.{0,1}[0-9]{0,16}).*around-lng=([0-9]{1,2}\.{0,1}[0-9]{0,16})/i,//lat = group1, lng = group2
+        query = req.query.query,
+        netflix = regexNetflix.test(query),
+        rightnow = regexRightNow.test(query),
+        age = regexAge.exec(query),
+        popularity = regexPopularity.exec(query),
+        geocode = regexGeocode.exec(query)
+    let i = 0,
+        tags = []
+    while ((temp = regexHashtag.exec(query)) !== null) {
+        tags[i] = temp[1]
+        i++
+    }
+
+    res.send({message: "User search is unavailable now"})
+}

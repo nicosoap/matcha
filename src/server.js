@@ -26,16 +26,17 @@ import socketioJwt from 'socketio-jwt'
 import cors from 'cors'
 
 let corsOptions = {
-    origin: 'localhost',
+    origin: 'http://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 
 const app = require('express')();
 const server = http.createServer(app)
-const io = socketIo(server);
+const io = socketIo(server)
 const upload = multer({ dest: `${__dirname}/uploads` })
 
-app.disable('X-Powerd-By')
+app.disable('X-Powered-By')
+app.use(cors())
 app.use(require('cookie-parser')(credentials.cookieSecret))
 app.use(session({
     resave: false,
@@ -55,7 +56,6 @@ app.use(expressJWT({secret: credentials.jwtSecret}).unless({
         '/user/new',
         '/protected',
         /^\/test/i]}))
-app.use(cors())
 io.use(socketioJwt.authorize({
     secret: credentials.jwtSecret,
     handshake: true

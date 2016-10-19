@@ -1,0 +1,1 @@
+{"version":3,"sources":["match.js"],"names":[],"mappings":";;;;;QAGsB,I,GAAA,I;AAHtB;;;AAGO,eAAe,IAAf,CAAoB,GAApB,EAAyB,GAAzB,EAA8B,IAA9B,EAAoC,CAAE","file":"match-compiled.js","sourcesContent":["/**\n * Created by opichou on 9/27/16.\n */\nexport async function user(res, req, next) {};"]}
