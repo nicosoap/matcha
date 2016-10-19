@@ -11,8 +11,6 @@
 // ************************************************************************** //
 
 import express from 'express'
-import fs from 'fs'
-import parseurl from 'parseurl'
 import bodyParser from 'body-parser'
 import session from 'express-session'
 import * as user from './controllers/user'
@@ -20,18 +18,22 @@ import * as picture from './controllers/picture'
 import * as interactions from './controllers/interactions'
 import * as admin from './controllers/admin'
 import credentials from './credentials'
-import nodemailer from 'nodemailer'
 import expressJWT from 'express-jwt'
 import multer from 'multer'
 import socketIo from 'socket.io'
 import http from 'http'
 import socketioJwt from 'socketio-jwt'
+import cors from 'cors'
+
+let corsOptions = {
+    origin: 'localhost',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 const app = require('express')();
 const server = http.createServer(app)
 const io = socketIo(server);
 const upload = multer({ dest: `${__dirname}/uploads` })
-const AllClients = []
 
 app.disable('X-Powerd-By')
 app.use(require('cookie-parser')(credentials.cookieSecret))
@@ -39,7 +41,6 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     secret: credentials.cookieSecret,
-
 }))
 app.set('port', process.env.PORT || 3001)
 app.use(express.static(__dirname + '/public'))
@@ -54,6 +55,7 @@ app.use(expressJWT({secret: credentials.jwtSecret}).unless({
         '/user/new',
         '/protected',
         /^\/test/i]}))
+app.use(cors())
 io.use(socketioJwt.authorize({
     secret: credentials.jwtSecret,
     handshake: true
@@ -66,7 +68,7 @@ app.get('/', (req, res) => {
 })
 app.get('/login', (_, res) => res.send("Login Page"))
 app.post('/login', user.userLogin)
-app.get('/user', user.viewAll)
+app.get('/user', cors(corsOptions), user.viewAll)
 app.put('/user', user.updateProfile)
 app.post('/picture', upload.single('picture'), picture.uploadPicture)
 app.post('/picture/delete', picture.deleteOne)

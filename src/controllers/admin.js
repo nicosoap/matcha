@@ -14,7 +14,7 @@ import fs from 'fs';
 import parseurl from 'parseurl';
 import bodyParser from 'body-parser';
 import session from 'express-session';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt-nodejs'
 import * as dbl from "./dbConnect";
 import credentials from '../credentials';
 import mongodb from 'mongodb';

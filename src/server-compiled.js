@@ -4,18 +4,6 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
-var _http = require('http');
-
-var _http2 = _interopRequireDefault(_http);
-
-var _fs = require('fs');
-
-var _fs2 = _interopRequireDefault(_fs);
-
-var _parseurl = require('parseurl');
-
-var _parseurl2 = _interopRequireDefault(_parseurl);
-
 var _bodyParser = require('body-parser');
 
 var _bodyParser2 = _interopRequireDefault(_bodyParser);
@@ -34,7 +22,7 @@ var picture = _interopRequireWildcard(_picture);
 
 var _interactions = require('./controllers/interactions');
 
-var _interactions2 = _interopRequireDefault(_interactions);
+var interactions = _interopRequireWildcard(_interactions);
 
 var _admin = require('./controllers/admin');
 
@@ -43,10 +31,6 @@ var admin = _interopRequireWildcard(_admin);
 var _credentials = require('./credentials');
 
 var _credentials2 = _interopRequireDefault(_credentials);
-
-var _nodemailer = require('nodemailer');
-
-var _nodemailer2 = _interopRequireDefault(_nodemailer);
 
 var _expressJwt = require('express-jwt');
 
@@ -60,27 +44,23 @@ var _socket = require('socket.io');
 
 var _socket2 = _interopRequireDefault(_socket);
 
-var _path = require('path');
+var _http = require('http');
 
-var _path2 = _interopRequireDefault(_path);
+var _http2 = _interopRequireDefault(_http);
 
-var _webpack = require('webpack');
+var _socketioJwt = require('socketio-jwt');
 
-var _webpack2 = _interopRequireDefault(_webpack);
+var _socketioJwt2 = _interopRequireDefault(_socketioJwt);
 
-var _webpackDevMiddleware = require('webpack-dev-middleware');
+var _cors = require('cors');
 
-var _webpackDevMiddleware2 = _interopRequireDefault(_webpackDevMiddleware);
-
-var _webpackConfig = require('../webpack.config.js');
-
-var _webpackConfig2 = _interopRequireDefault(_webpackConfig);
+var _cors2 = _interopRequireDefault(_cors);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var app = (0, _express2.default)(); // ************************************************************************** //
+// ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
 //   server.js                                          :+:      :+:    :+:   //
@@ -92,6 +72,12 @@ var app = (0, _express2.default)(); // *****************************************
 //                                                                            //
 // ************************************************************************** //
 
+var corsOptions = {
+    origin: 'localhost',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+var app = require('express')();
 var server = _http2.default.createServer(app);
 var io = (0, _socket2.default)(server);
 var upload = (0, _multer2.default)({ dest: __dirname + '/uploads' });
@@ -102,17 +88,20 @@ app.use((0, _expressSession2.default)({
     resave: false,
     saveUninitialized: true,
     secret: _credentials2.default.cookieSecret
-
 }));
-app.set('port', process.env.PORT || 8081);
+app.set('port', process.env.PORT || 3001);
 app.use(_express2.default.static(__dirname + '/public'));
-app.use((0, _webpackDevMiddleware2.default)((0, _webpack2.default)(_webpackConfig2.default)));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({
     extended: true
 }));
 app.use((0, _expressJwt2.default)({ secret: _credentials2.default.jwtSecret }).unless({
     path: ['/login', '/retrieve_password', '/activate_account', '/user/new', '/protected', /^\/test/i] }));
+app.use((0, _cors2.default)());
+io.use(_socketioJwt2.default.authorize({
+    secret: _credentials2.default.jwtSecret,
+    handshake: true
+}));
 
 //--ROUTES--/ />
 
@@ -123,7 +112,7 @@ app.get('/login', function (_, res) {
     return res.send("Login Page");
 });
 app.post('/login', user.userLogin);
-app.get('/user', user.viewAll);
+app.get('/user', (0, _cors2.default)(corsOptions), user.viewAll);
 app.put('/user', user.updateProfile);
 app.post('/picture', upload.single('picture'), picture.uploadPicture);
 app.post('/picture/delete', picture.deleteOne);
@@ -142,12 +131,67 @@ app.post('/account/delete', user.Delete);
 app.post('/admin/userform/', admin.addFormItems);
 //--ROUTES--/ />
 
+function now() {
+    var currentDate = new Date();
+    return currentDate.getDate() + "/" + ("0" + (currentDate.getMonth() + 1)).slice(-2) + "/" + currentDate.getFullYear() + " @ " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();
+}
+
 io.on('connection', function (socket) {
-    socket.on('message', function (body) {
-        socket.broadcast.emit('message', {
-            body: body,
-            from: socket.id.slice(8)
+    interactions.connect(socket.decoded_token.username, socket.id);
+    console.log(socket.decoded_token.username, 'connected on', now());
+    setTimeout(function () {
+        return socket.emit('message', {
+            body: "Ceci est un message",
+            from: socket.decoded_token.username,
+            read: false
         });
+    }, 500);
+    setTimeout(function () {
+        return socket.emit('match', {
+            body: "ceci est un match",
+            from: socket.decoded_token.username,
+            read: false
+        });
+    }, 4000);
+    setTimeout(function () {
+        return socket.emit('message', {
+            body: "Ceci est un message",
+            from: socket.decoded_token.username,
+            read: false
+        });
+    }, 8600);
+
+    socket.on('message', function (body) {
+        socket.emit('message', {
+            body: body,
+            from: socket.decoded_token.username,
+            read: false
+        });
+    });
+    socket.on('like', function (body) {
+        socket.broadcast.emit('like', {
+            body: body,
+            from: socket.decoded_token.username,
+            read: false
+        });
+    });
+    socket.on('match', function (body) {
+        socket.broadcast.emit('match', {
+            body: body,
+            from: socket.decoded_token.username,
+            read: false
+        });
+    });
+    socket.on('visit', function (body) {
+        socket.emit('visit', {
+            body: body,
+            from: socket.decoded_token.username,
+            read: false
+        });
+    });
+    socket.on('disconnect', function () {
+        interactions.disconnect(socket.decoded_token.username, socket.id);
+        console.log(socket.decoded_token.username, 'disconnected on', now());
     });
 });
 
