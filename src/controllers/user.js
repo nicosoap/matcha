@@ -522,27 +522,6 @@ export async function updateProfile(req, res){
     }
 }
 
-export async function tags(req, res){
-    let db = await dbl.connect()
-    let response = await db.colletion('tags').find().sort({count: desc})
-    res.send({response})
-}
-
-export async function addTag(tags){
-    if (await tags === ''){console.log({status: "ok", tagsCreated: 0})}
-    const db = await dbl.connect()
-    try{
-        let bulk = await db.collection('tags').initializeUnorderedBulkOp()
-        await req.body.tags.filter((n) => n != '').forEach(async(n) => {
-            bulk.find({label: n}).upsert().updateOne({$inc: {count: 1}})
-        })
-        const result = await bulk.execute({w:1})
-        console.error(result)
-    } finally {
-        db.close()
-    }
-}
-
 export const viewAll = async (req, res) => {
     const regexHashtag = /#([a-zA-Z0-9-]*)+/g,
         regexNetflix = /netflix/i,

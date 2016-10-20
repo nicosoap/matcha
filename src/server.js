@@ -14,6 +14,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import session from 'express-session'
 import * as user from './controllers/user'
+import * as tags from './controllers/tags'
 import * as picture from './controllers/picture'
 import * as interactions from './controllers/interactions'
 import * as admin from './controllers/admin'
@@ -74,8 +75,8 @@ app.post('/picture', upload.single('picture'), picture.uploadPicture)
 app.post('/picture/delete', picture.deleteOne)
 app.post('/user/new', user.create)
 app.post('/user/update', user.updateProfile)
-app.get('/user/tags', user.tags)
-app.post('/user/tags', user.addTag)
+app.get('/tags', tags.tags)
+app.post('/tags', tags.addTag)
 app.get('/test/login/:login', user.checkLogin)
 app.get('/test/email/:email', user.checkEmail)
 app.get('/account/register', user.renderForm)

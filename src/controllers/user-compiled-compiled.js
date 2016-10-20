@@ -1041,6 +1041,7 @@ var create = function () {
                     case 10:
                         passwordProp = _context22.sent;
 
+
                         if (emailProp.valid) {
                             user.email = emailProp.email;
                         } else errors.push(emailProp.message) && console.log("email error logged");
@@ -1431,27 +1432,7 @@ var viewAll = function () {
 //# sourceMappingURL=user-compiled.js.map
 
 
-function _asyncToGenerator(fn) {
-    return function () {
-        var gen = fn.apply(this, arguments);return new Promise(function (resolve, reject) {
-            function step(key, arg) {
-                try {
-                    var info = gen[key](arg);var value = info.value;
-                } catch (error) {
-                    reject(error);return;
-                }if (info.done) {
-                    resolve(value);
-                } else {
-                    return Promise.resolve(value).then(function (value) {
-                        step("next", value);
-                    }, function (err) {
-                        step("throw", err);
-                    });
-                }
-            }return step("next");
-        });
-    };
-}
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 Object.defineProperty(exports, "__esModule", {
     value: true
