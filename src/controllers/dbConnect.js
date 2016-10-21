@@ -16,5 +16,5 @@ var MongoClient = mongodb.MongoClient;
 
 export async function connect(){
     var MongoClient = mongodb.MongoClient;
-    return await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@82.251.11.24:" + credentials.port + "/" + credentials.dbName);
+    return await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@liveoption.io:" + credentials.port + "/" + credentials.dbName);
 }

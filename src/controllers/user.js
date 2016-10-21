@@ -523,24 +523,60 @@ export async function updateProfile(req, res){
 }
 
 export const viewAll = async (req, res) => {
-    const regexHashtag = /#([a-zA-Z0-9-]*)+/g,
+    const query = {
+        netflix: false,
+        rightnow: false,
+        age:{
+            min:18,
+            max: 77
+        },
+        popularity: {
+            min: 0,
+            max: 100
+        },
+        geocode: {
+            lat: 0,
+            lng: 0
+        },
+        tags: [],
+        custom: ''
+    },
+        regexHashtag = /#([a-zA-Z0-9-]*)+/g,
         regexNetflix = /netflix/i,
         regexRightNow = /rightnow/i,
         regexAge = /age-from=([0-9]{1,2}).*age-to=([0-9]{1,2})/i, //min = group1, max = group2
         regexPopularity = /popularity-from=([0-9]{1,2}).*popularity-to=([0-9]{1,3})/i, //min = group1, max = group2
-        regexGeocode = /around-lat=([0-9]{1,2}\.{0,1}[0-9]{0,16}).*around-lng=([0-9]{1,2}\.{0,1}[0-9]{0,16})/i,//lat = group1, lng = group2
-        query = req.query.query,
-        netflix = regexNetflix.test(query),
-        rightnow = regexRightNow.test(query),
-        age = regexAge.exec(query),
-        popularity = regexPopularity.exec(query),
-        geocode = regexGeocode.exec(query)
+        regexGeocode = /around-lat=(-?[0-9]{1,2}\.?[0-9]{0,16}).*around-lng=(-?[0-9]{1,2}\.?[0-9]{0,16})/i,//lat = group1, lng = group2
+        queryStr = req.query.query
+        query.netflix = regexNetflix.test(queryStr)
+        query.rightnow = regexRightNow.test(queryStr)
+    const age = regexAge.exec(queryStr)
+    if (age) {
+        query.age.min = age[1]
+        query.age.max = age[2]
+    }
+    const popularity = regexPopularity.exec(queryStr)
+    if (popularity) {
+        query.popularity.min = popularity[1]
+        query.popularity.max = popularity[2]
+    }
+        const geocode = regexGeocode.exec(queryStr)
+    if (geocode) {
+        query.geocode.lat = geocode[1]
+        query.geocode.lng = geocode[2]
+    }
     let i = 0,
-        tags = []
-    while ((temp = regexHashtag.exec(query)) !== null) {
-        tags[i] = temp[1]
+        temp = []
+    while ((temp = regexHashtag.exec(queryStr)) !== null) {
+        query.tags[i] = temp[1]
         i++
     }
-
-    res.send({message: "User search is unavailable now"})
+    console.log(query)
+    const db = await dbl.connect()
+    try {
+        const results = db.collection('users').find()
+        res.send({message: "results"})
+    } catch(err) {
+        console.error(err)
+    }
 }
