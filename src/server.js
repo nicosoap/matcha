@@ -86,6 +86,7 @@ app.post('/account/activate', user.isVerified)
 app.post('/account/reactivate', user.reactivate)
 app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
+app.get('/admin/userform', cors(corsOptions), admin.getUserForm)
 //--ROUTES--/ />
 
 function now(){
@@ -99,23 +100,6 @@ function now(){
 io.on('connection', socket => {
     interactions.connect(socket.decoded_token.username, socket.id)
     console.log(socket.decoded_token.username, 'connected on', now());
-    setTimeout( () => socket.emit('message', {
-        body: "Ceci est un message",
-        from: socket.decoded_token.username,
-        read: false
-    }), 500)
-    setTimeout(() =>socket.emit('match', {
-        body: "ceci est un match",
-        from: socket.decoded_token.username,
-        read: false
-    }), 4000)
-    setTimeout( () => socket.emit('message', {
-        body: "Ceci est un message",
-        from: socket.decoded_token.username,
-        read: false
-    }), 8600)
-
-
     socket.on('message', body => {
         socket.emit('message', {
             body,

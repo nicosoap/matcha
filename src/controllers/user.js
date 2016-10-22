@@ -523,7 +523,8 @@ export async function updateProfile(req, res){
 }
 
 export const viewAll = async (req, res) => {
-    const query = {
+    console.log('userSearch')
+    let query = {
         netflix: false,
         rightnow: false,
         age:{
@@ -545,38 +546,67 @@ export const viewAll = async (req, res) => {
         regexNetflix = /netflix/i,
         regexRightNow = /rightnow/i,
         regexAge = /age-from=([0-9]{1,2}).*age-to=([0-9]{1,2})/i, //min = group1, max = group2
+        regexAgeMin = /age-from=[0-9]{1,2}/i,
+        regexAgeMax = /age-to=[0-9]{1,2}/i,
         regexPopularity = /popularity-from=([0-9]{1,2}).*popularity-to=([0-9]{1,3})/i, //min = group1, max = group2
-        regexGeocode = /around-lat=(-?[0-9]{1,2}\.?[0-9]{0,16}).*around-lng=(-?[0-9]{1,2}\.?[0-9]{0,16})/i,//lat = group1, lng = group2
+        regexPopularityMin = /popularity-from=[0-9]{1,2}/i,
+        regexPopularityMax = /popularity-to=[0-9]{1,3}/i,
+        regexGeocode = /around-lat=(-?[0-9]{1,2}\.?[0-9]{0,16}).*around-lng=(-?[0-9]{1,2}\.?[0-9]{0,16})/i, //lat = group1, lng = group2
+        regexGeocodeLat = /around-lat=-?[0-9]{1,2}\.?[0-9]{0,16}/i,
+        regexGeocodeLng = /around-lng=-?[0-9]{1,2}\.?[0-9]{0,16}/i,
         queryStr = req.query.query
         query.netflix = regexNetflix.test(queryStr)
         query.rightnow = regexRightNow.test(queryStr)
+
     const age = regexAge.exec(queryStr)
+
     if (age) {
         query.age.min = age[1]
         query.age.max = age[2]
     }
+
     const popularity = regexPopularity.exec(queryStr)
+
     if (popularity) {
         query.popularity.min = popularity[1]
         query.popularity.max = popularity[2]
     }
+
         const geocode = regexGeocode.exec(queryStr)
+
     if (geocode) {
         query.geocode.lat = geocode[1]
         query.geocode.lng = geocode[2]
     }
+
     let i = 0,
         temp = []
     while ((temp = regexHashtag.exec(queryStr)) !== null) {
         query.tags[i] = temp[1]
         i++
     }
-    console.log(query)
+    query.custom = queryStr.replace(regexGeocodeLng, '')
+        .replace(regexGeocodeLat, '')
+        .replace(regexPopularityMax, '')
+        .replace(regexPopularityMin, '')
+        .replace(regexAgeMax, '')
+        .replace(regexAgeMin, '')
+        .replace(regexRightNow, '')
+        .replace(regexNetflix, '')
+        .replace(regexHashtag, '')
+        .replace(/ (?: *)/, ' ')
+        .split(' ')
+        .filter(e => e !== '')
+
     const db = await dbl.connect()
     try {
-        const results = db.collection('users').find()
-        res.send({message: "results"})
-    } catch(err) {
-        console.error(err)
+        const results = await db.collection('users').find({})
+        try {
+                res.send({users: await results.toArray()})
+        } catch (err) {
+            console.error(err)
+        }
+    } finally {
+        db.close()
     }
 }

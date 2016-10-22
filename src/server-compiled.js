@@ -131,6 +131,7 @@ app.post('/account/activate', user.isVerified);
 app.post('/account/reactivate', user.reactivate);
 app.post('/account/delete', user.Delete);
 app.post('/admin/userform/', admin.addFormItems);
+app.get('/admin/userform', (0, _cors2.default)(corsOptions), admin.getUserForm);
 //--ROUTES--/ />
 
 function now() {
@@ -141,28 +142,6 @@ function now() {
 io.on('connection', function (socket) {
     interactions.connect(socket.decoded_token.username, socket.id);
     console.log(socket.decoded_token.username, 'connected on', now());
-    setTimeout(function () {
-        return socket.emit('message', {
-            body: "Ceci est un message",
-            from: socket.decoded_token.username,
-            read: false
-        });
-    }, 500);
-    setTimeout(function () {
-        return socket.emit('match', {
-            body: "ceci est un match",
-            from: socket.decoded_token.username,
-            read: false
-        });
-    }, 4000);
-    setTimeout(function () {
-        return socket.emit('message', {
-            body: "Ceci est un message",
-            from: socket.decoded_token.username,
-            read: false
-        });
-    }, 8600);
-
     socket.on('message', function (body) {
         socket.emit('message', {
             body: body,

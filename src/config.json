@@ -1,0 +1,186 @@
+{
+  "user": [
+    {
+      "id":"0",
+      "name":"id",
+      "type":"hidden",
+      "value":"0",
+      "fullForm":"true",
+      "shortForm":"true"
+    },
+    {
+      "id":"1",
+      "name":"username",
+      "type":"text",
+      "placeholder":"Login",
+      "autocomplete":"username",
+      "fullForm":"true",
+      "shortForm":"true"
+    },
+    {
+      "id":"2",
+      "name":"email",
+      "type":"email",
+      "placeholder":"Email address",
+      "autocomplete":"email",
+      "fullForm":"true",
+      "shortForm":"true"
+    },
+    {
+      "id":"3",
+      "name":"OldPassword",
+      "type":"password",
+      "placeholder":"Old password",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"4",
+      "name":"password",
+      "type":"password",
+      "placeholder":"Password",
+      "fullForm":"false",
+      "shortForm":"true"
+    },
+    {
+      "id":"4",
+      "name":"NewPassword",
+      "type":"password",
+      "placeholder":"Password",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"5",
+      "name":"password2",
+      "type":"password",
+      "placeholder":"Password again",
+      "fullForm":"false",
+      "shortForm":"true"
+    },
+    {
+      "id":"5",
+      "name":"NewPassword2",
+      "type":"password",
+      "placeholder":"Password again",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"6",
+      "name":"screenName",
+      "type":"text",
+      "placeholder":"Profile name",
+      "autocomplete":"nickname",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"7",
+      "name":"firstName",
+      "type":"text",
+      "placeholder":"First name",
+      "autocomplete":"given-name",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"8",
+      "name":"lastName",
+      "type":"text",
+      "placeholder":"Last Name",
+      "autocomplete":"family-name",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"9",
+      "name":"gender",
+      "type":"radio",
+      "value":[
+        {
+          "id":"0",
+          "label": "female",
+          "value": "female",
+          "default": "false"
+        },
+        {
+          "id":"1",
+          "label":"other",
+          "value":"other",
+          "default":"false"
+      },
+        {
+          "id":"2",
+          "label":"male",
+          "value":"male",
+          "default":"false"
+        }],
+      "placeholder":"Your gender",
+      "autocomplete":"sex",
+      "fullForm":"true",
+      "shortForm":"false"
+      },{
+      "id":"10",
+      "name":"birthDate",
+      "type":"date",
+      "placeholder":"Birth date",
+      "autocomplete":"bday",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"11",
+      "name":"attractedByFemale",
+      "type":"checkbox",
+      "value":"female",
+      "placeholder":"I like women",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"12",
+      "name":"attractedByOther",
+      "type":"checkbox",
+      "value":"other",
+      "placeholder":"I like others",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"13",
+      "name":"attractedByMale",
+      "type":"checkbox",
+      "value":"male",
+      "placeholder":"I like men",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"14",
+      "name":"bio",
+      "type":"textArea",
+      "placeholder":"Tell us more about you...",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"15",
+      "name":"tags",
+      "type":"tagInput",
+      "placeholder":"#Interests",
+      "fullForm":"true",
+      "shortForm":"false"
+    },
+    {
+      "id":"16",
+      "name":"photo",
+      "type":"photo",
+      "accept":"image/x-png, image/jpeg, image/gif",
+      "placeholder":"Profile picture",
+      "autocomplete":"photo",
+      "fullForm":"true",
+      "shortForm":"false"
+    }
+  ]
+}

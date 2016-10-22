@@ -22,6 +22,8 @@ import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import ERROR from './errno_code';
 import match from '../model/match';
+import * as config from '../config.json'
+
 let saltRounds = 10;
 
 let transporter = nodemailer.createTransport('smtps://apimatcha@gmail.com:apiMatcha1212@smtp.gmail.com');
@@ -55,4 +57,9 @@ export async function addFormItems(req, res){
     } else {
         res.redirect('/')
     }
+}
+
+export async function getUserForm(req, res) {
+    let form = config.user.filter(e => e.fullForm)
+    res.send(form)
 }
