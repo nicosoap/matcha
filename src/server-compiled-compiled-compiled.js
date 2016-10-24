@@ -60,9 +60,21 @@ var _cors = require('cors');
 
 var _cors2 = _interopRequireDefault(_cors);
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) {
+    if (obj && obj.__esModule) {
+        return obj;
+    } else {
+        var newObj = {};if (obj != null) {
+            for (var key in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+            }
+        }newObj.default = obj;return newObj;
+    }
+}
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
 
 var corsOptions = {
     origin: 'http://localhost:3000',
@@ -115,7 +127,6 @@ app.get('/login', function (_, res) {
 });
 app.post('/login', user.userLogin);
 app.get('/user', (0, _cors2.default)(corsOptions), user.viewAll);
-app.get('/user/:userId', (0, _cors2.default)(corsOptions), user.viewOne);
 app.put('/user', user.updateProfile);
 app.post('/picture', upload.single('picture'), picture.uploadPicture);
 app.post('/picture/delete', picture.deleteOne);
@@ -132,9 +143,6 @@ app.post('/account/activate', user.isVerified);
 app.post('/account/reactivate', user.reactivate);
 app.post('/account/delete', user.Delete);
 app.post('/admin/userform/', admin.addFormItems);
-app.get('/admin/userform', (0, _cors2.default)(corsOptions), admin.getUserForm);
-app.put('/like/:userId', (0, _cors2.default)(corsOptions), interactions.like);
-app.put('/block/:userId', (0, _cors2.default)(corsOptions), interactions.block);
 //--ROUTES--/ />
 
 function now() {
@@ -145,6 +153,28 @@ function now() {
 io.on('connection', function (socket) {
     interactions.connect(socket.decoded_token.username, socket.id);
     console.log(socket.decoded_token.username, 'connected on', now());
+    setTimeout(function () {
+        return socket.emit('message', {
+            body: "Ceci est un message",
+            from: socket.decoded_token.username,
+            read: false
+        });
+    }, 500);
+    setTimeout(function () {
+        return socket.emit('match', {
+            body: "ceci est un match",
+            from: socket.decoded_token.username,
+            read: false
+        });
+    }, 4000);
+    setTimeout(function () {
+        return socket.emit('message', {
+            body: "Ceci est un message",
+            from: socket.decoded_token.username,
+            read: false
+        });
+    }, 8600);
+
     socket.on('message', function (body) {
         socket.emit('message', {
             body: body,
@@ -199,3 +229,7 @@ server.listen(app.get('port'), function () {
 });
 
 //# sourceMappingURL=server-compiled.js.map
+
+//# sourceMappingURL=server-compiled-compiled.js.map
+
+//# sourceMappingURL=server-compiled-compiled-compiled.js.map

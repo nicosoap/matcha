@@ -70,6 +70,7 @@ app.get('/', (req, res) => {
 app.get('/login', (_, res) => res.send("Login Page"))
 app.post('/login', user.userLogin)
 app.get('/user', cors(corsOptions), user.viewAll)
+app.get('/user/:userId', cors(corsOptions), user.viewOne)
 app.put('/user', user.updateProfile)
 app.post('/picture', upload.single('picture'), picture.uploadPicture)
 app.post('/picture/delete', picture.deleteOne)
@@ -87,6 +88,8 @@ app.post('/account/reactivate', user.reactivate)
 app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
 app.get('/admin/userform', cors(corsOptions), admin.getUserForm)
+app.put('/like/:userId', cors(corsOptions), interactions.like)
+app.put('/block/:userId', cors(corsOptions), interactions.block)
 //--ROUTES--/ />
 
 function now(){

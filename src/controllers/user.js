@@ -610,3 +610,7 @@ export const viewAll = async (req, res) => {
         db.close()
     }
 }
+
+export const viewOne = async (req, res) => {
+    res.send({success: true})
+}
