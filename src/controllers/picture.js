@@ -76,3 +76,13 @@ export async function setAsDefault(req, res) {
         db.close()
     }
 }
+
+export async function getAll(userId) {
+    const db = await dbl.connect()
+    try {
+        const user = await db.collection('users').findOne({login: userId}, {photo: true})
+        return user.photo
+    } finally {
+        db.close()
+    }
+}

@@ -1,4 +1,7 @@
 {
+  "debug" : true,
+  "URL": "localhost",
+  "port": "3001",
   "user": [
     {
       "id":"0",

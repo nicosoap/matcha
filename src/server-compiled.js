@@ -24,10 +24,6 @@ var _picture = require('./controllers/picture');
 
 var picture = _interopRequireWildcard(_picture);
 
-var _interactions = require('./controllers/interactions');
-
-var interactions = _interopRequireWildcard(_interactions);
-
 var _admin = require('./controllers/admin');
 
 var admin = _interopRequireWildcard(_admin);
@@ -56,6 +52,14 @@ var _socketioJwt = require('socketio-jwt');
 
 var _socketioJwt2 = _interopRequireDefault(_socketioJwt);
 
+var _config = require('./config.json');
+
+var _config2 = _interopRequireDefault(_config);
+
+var _socket3 = require('socket.io-redis');
+
+var _socket4 = _interopRequireDefault(_socket3);
+
 var _cors = require('cors');
 
 var _cors2 = _interopRequireDefault(_cors);
@@ -64,10 +68,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}; // ************************************************************************** //
+// import * as interactions from './controllers/interactions'
+// ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
 //   server.js                                          :+:      :+:    :+:   //
@@ -79,9 +81,16 @@ var corsOptions = {
 //                                                                            //
 // ************************************************************************** //
 
+var corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
 var app = require('express')();
 var server = _http2.default.createServer(app);
 var io = (0, _socket2.default)(server);
+// io.adapter(redis({ host: 'localhost', port: 3001 }))
+var interactions = require('./controllers/interactions')(io);
 var upload = (0, _multer2.default)({ dest: __dirname + '/uploads' });
 
 app.disable('X-Powered-By');
@@ -92,7 +101,7 @@ app.use((0, _expressSession2.default)({
     saveUninitialized: true,
     secret: _credentials2.default.cookieSecret
 }));
-app.set('port', process.env.PORT || 3001);
+app.set('port', process.env.PORT || _config2.default.port || 3001);
 app.use(_express2.default.static(__dirname + '/public'));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({
@@ -134,6 +143,7 @@ app.post('/account/delete', user.Delete);
 app.post('/admin/userform/', admin.addFormItems);
 app.get('/admin/userform', (0, _cors2.default)(corsOptions), admin.getUserForm);
 app.get('/like/:userId', (0, _cors2.default)(corsOptions), interactions.like);
+app.get('/dislike/:userId', (0, _cors2.default)(corsOptions), interactions.dislike);
 app.get('/block/:userId', (0, _cors2.default)(corsOptions), interactions.block);
 //--ROUTES--/ />
 

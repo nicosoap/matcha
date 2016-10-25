@@ -16,7 +16,7 @@ import session from 'express-session'
 import * as user from './controllers/user'
 import * as tags from './controllers/tags'
 import * as picture from './controllers/picture'
-import * as interactions from './controllers/interactions'
+// import * as interactions from './controllers/interactions'
 import * as admin from './controllers/admin'
 import credentials from './credentials'
 import expressJWT from 'express-jwt'
@@ -24,16 +24,20 @@ import multer from 'multer'
 import socketIo from 'socket.io'
 import http from 'http'
 import socketioJwt from 'socketio-jwt'
+import config from './config.json'
+import redis from 'socket.io-redis'
 import cors from 'cors'
 
 let corsOptions = {
     origin: 'http://localhost:3000',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
+}
 
 const app = require('express')();
 const server = http.createServer(app)
 const io = socketIo(server)
+// io.adapter(redis({ host: 'localhost', port: 3001 }))
+const interactions =  require('./controllers/interactions')(io)
 const upload = multer({ dest: `${__dirname}/uploads` })
 
 app.disable('X-Powered-By')
@@ -44,7 +48,7 @@ app.use(session({
     saveUninitialized: true,
     secret: credentials.cookieSecret,
 }))
-app.set('port', process.env.PORT || 3001)
+app.set('port', process.env.PORT || config.port || 3001)
 app.use(express.static(__dirname + '/public'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -89,6 +93,7 @@ app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
 app.get('/admin/userform', cors(corsOptions), admin.getUserForm)
 app.get('/like/:userId', cors(corsOptions), interactions.like)
+app.get('/dislike/:userId', cors(corsOptions), interactions.dislike)
 app.get('/block/:userId', cors(corsOptions), interactions.block)
 //--ROUTES--/ />
 
