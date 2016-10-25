@@ -88,8 +88,8 @@ app.post('/account/reactivate', user.reactivate)
 app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
 app.get('/admin/userform', cors(corsOptions), admin.getUserForm)
-app.put('/like/:userId', cors(corsOptions), interactions.like)
-app.put('/block/:userId', cors(corsOptions), interactions.block)
+app.get('/like/:userId', cors(corsOptions), interactions.like)
+app.get('/block/:userId', cors(corsOptions), interactions.block)
 //--ROUTES--/ />
 
 function now(){

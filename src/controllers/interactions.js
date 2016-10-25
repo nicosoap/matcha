@@ -32,10 +32,11 @@ module.exports = {
     like: async (req, res) => {
         const userId = req.user.username,
             otherId = req.params.userId
+        console.log(userId, otherId)
         //this method logs a like from userId to otherId (being the other member's userId and fires callback
         const db = await dbl.connect()
         try {
-            await db.collection('likes').upsert({userId, otherId}, {$set: {like: true}})
+            db.collection('likes').upsert({userId, otherId}, {$set: {like: true}})
             res.send({success: true})
             if (this.doeslike(userId, otherId)) {
                 // socket.io match

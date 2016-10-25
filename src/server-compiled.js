@@ -133,8 +133,8 @@ app.post('/account/reactivate', user.reactivate);
 app.post('/account/delete', user.Delete);
 app.post('/admin/userform/', admin.addFormItems);
 app.get('/admin/userform', (0, _cors2.default)(corsOptions), admin.getUserForm);
-app.put('/like/:userId', (0, _cors2.default)(corsOptions), interactions.like);
-app.put('/block/:userId', (0, _cors2.default)(corsOptions), interactions.block);
+app.get('/like/:userId', (0, _cors2.default)(corsOptions), interactions.like);
+app.get('/block/:userId', (0, _cors2.default)(corsOptions), interactions.block);
 //--ROUTES--/ />
 
 function now() {
