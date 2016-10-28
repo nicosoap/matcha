@@ -55,7 +55,10 @@ module.exports = (io) =>{
                     }
                 }, {upsert: true})
                 if (config.debug) {
-                    self.sendNotif(login, config.debug_output, {body: "Connected to Matcha Server on " + self.now()})
+                    self.sendNotif(login,
+                        config.debug_output,
+                        {
+                            body: "Connected to Matcha Server on " + self.now()})
                     console.log("BEBUG: user connected and notified as " + config.debug_output + ".")
                 }
             } finally {

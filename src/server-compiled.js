@@ -109,7 +109,7 @@ app.use(_bodyParser2.default.urlencoded({
 }));
 
 app.use((0, _expressJwt2.default)({ secret: _credentials2.default.jwtSecret }).unless({
-    path: ['/login', '/retrieve_password', '/activate_account', '/user/new', '/protected', /^\/images\//i, '/public', /^\/test/i] }));
+    path: ['/login', '/retrieve_password', '/activate_account', '/user/new', '/protected', '/public', /^\/admin\/userform/i, /^\/images\//i, /^\/test/i] }));
 
 io.use(_socketioJwt2.default.authorize({
     secret: _credentials2.default.jwtSecret,
@@ -142,7 +142,7 @@ app.post('/account/retrieve_password', user.retrievePassword);
 app.post('/account/activate', user.isVerified);
 app.post('/account/reactivate', user.reactivate);
 app.post('/account/delete', user.Delete);
-app.post('/admin/userform/', admin.addFormItems);
+app.post('/admin/form/', (0, _cors2.default)(corsOptions), admin.addFormItems);
 app.get('/admin/userform', (0, _cors2.default)(corsOptions), admin.getUserForm);
 app.get('/admin/appConfig', (0, _cors2.default)(corsOptions), admin.getAppConfig);
 app.get('/like/:userId', (0, _cors2.default)(corsOptions), interactions.like);

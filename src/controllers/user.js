@@ -522,7 +522,6 @@ export async function updateProfile(req, res){
 }
 
 export const viewAll = async (req, res) => {
-    console.log('userSearch')
     let query = {
         netflix: false,
         rightnow: false,
@@ -553,7 +552,9 @@ export const viewAll = async (req, res) => {
         regexGeocode = /around-lat=(-?[0-9]{1,2}\.?[0-9]{0,16}).*around-lng=(-?[0-9]{1,2}\.?[0-9]{0,16})/i, //lat = group1, lng = group2
         regexGeocodeLat = /around-lat=-?[0-9]{1,2}\.?[0-9]{0,16}/i,
         regexGeocodeLng = /around-lng=-?[0-9]{1,2}\.?[0-9]{0,16}/i,
-        queryStr = req.query.query
+
+        queryStr = req.query.query || ''
+
         query.netflix = regexNetflix.test(queryStr)
         query.rightnow = regexRightNow.test(queryStr)
 
@@ -601,6 +602,7 @@ export const viewAll = async (req, res) => {
     try {
         const results = await db.collection('users').find({})
         try {
+            console.log('sending...')
                 res.send({users: await results.toArray()})
         } catch (err) {
             console.error(err)

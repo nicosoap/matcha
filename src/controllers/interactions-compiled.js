@@ -131,7 +131,8 @@ module.exports = function (io) {
 
                             case 7:
                                 if (_config2.default.debug) {
-                                    self.sendNotif(login, _config2.default.debug_output, { body: "Connected to Matcha Server on " + self.now() });
+                                    self.sendNotif(login, _config2.default.debug_output, {
+                                        body: "Connected to Matcha Server on " + self.now() });
                                     console.log("BEBUG: user connected and notified as " + _config2.default.debug_output + ".");
                                 }
 

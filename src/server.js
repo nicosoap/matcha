@@ -61,8 +61,9 @@ app.use(expressJWT({secret: credentials.jwtSecret}).unless({
         '/activate_account',
         '/user/new',
         '/protected',
-        /^\/images\//i,
         '/public',
+        /^\/admin\/userform/i,
+        /^\/images\//i,
         /^\/test/i]}))
 
 io.use(socketioJwt.authorize({
@@ -94,7 +95,7 @@ app.post('/account/retrieve_password', user.retrievePassword)
 app.post('/account/activate', user.isVerified)
 app.post('/account/reactivate', user.reactivate)
 app.post('/account/delete', user.Delete)
-app.post('/admin/userform/', admin.addFormItems)
+app.post('/admin/form/',cors(corsOptions), admin.addFormItems)
 app.get('/admin/userform', cors(corsOptions), admin.getUserForm)
 app.get('/admin/appConfig', cors(corsOptions), admin.getAppConfig)
 app.get('/like/:userId', cors(corsOptions), interactions.like)

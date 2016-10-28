@@ -59,8 +59,8 @@ export async function addFormItems(req, res){
     }
 }
 
-export async function getUserForm(_, res) {
-    let form = config.user.filter(e => e.fullForm)
+export async function getUserForm(req, res) {
+    const form = config.user.filter(e => e[req.query.form] === "true")
     res.send(form)
 }
 
