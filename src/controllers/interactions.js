@@ -55,7 +55,8 @@ module.exports = (io) =>{
                     }
                 }, {upsert: true})
                 if (config.debug) {
-                    self.sendNotif('opichou', 'like', {body: "Connected to Matcha Server on " + self.now()})
+                    self.sendNotif(login, config.debug_output, {body: "Connected to Matcha Server on " + self.now()})
+                    console.log("BEBUG: user connected and notified as " + config.debug_output + ".")
                 }
             } finally {
                 db.close()
@@ -81,59 +82,54 @@ module.exports = (io) =>{
         _his: (user) =>{
             let _his = 'their'
             if (user.gender === 'male') { _his = 'his'} else if (user.gender === 'female') { _his = 'her'}
-        }
+        },
+
+        photo: user => {return (user.photo.filter(e => {e.front})[0].filename)},
 
 
-///
-        ///
-        ///
-        ///                     ATTENTION CETTE FONCTION ENVOIE UN MESSAGE A L'EMMETEUR ET DEVRAIT L'ENVOYER AU DESTINATAIRE
-        ///
-        ///
 
-        //this method logs a like from userId to otherId (being the other member's userId and fires callback
         like: async(req, res) => {
+            console.log('like')
             const userId = req.user.username,
                 otherId = req.params.userId
             let db = await dbl.connect()
-            let photo = await picture.getAll(userId)
-            let photo2 = await picture.getAll(otherId)
             try {
                 await db.collection('likes').updateOne({userId, otherId}, {$set: {like: true}}, {upsert: true})
-                const user = await db.collection('users').findOne({login: userId})
-                const user2 = await db.collection('users').findOne({login: otherId})
-                if (await this.doeslike(otherId, userId)) {
+                let user = await db.collection('users').findOne({login: userId})
+                let user2 = await db.collection('users').findOne({login: otherId})
+                let match = await self.doesLike(otherId, userId)
+                if (match) {
                     res.send({success: true, match: true})
                     const body = userId + ' and you matched ! You can now chat with ' + self._him(user) + '.'
                     const body2 = otherId + ' and you matched ! You can now chat with ' + self._him(user2) + '.'
 
-                    this.sendNotif(otherId, 'match', {
+                    self.sendNotif(otherId, 'match', {
                         body,
                         from: userId,
-                        image: photo[0],
+                        image:self.photo(user),
                         read: false
                     })
-                    this.sendNotif(userId, 'match', {
+                    self.sendNotif(userId, 'match', {
                         body2,
                         from: otherId,
-                        image: photo2[0],
+                        image: self.photo(user2),
                         read: false
                     })
                 } else {
                     res.send({success: true, match: false})
                     if (config.debug) {
-                        self.sendNotif('opichou', 'like', {
-                            body,
+                        self.sendNotif(userId, config.debug_output, {
+                            body: "Like notification has been sent to " + otherId + ".",
                             from: userId,
-                            image: photo[0],
+                            image:self.photo(user),
                             read: false
                         })
                     }
                     const body = userId + ' is interested in you. Check out ' + self._his(db, userId) + ' profile!'
-                    this.sendNotif(otherId, 'like', {
+                    self.sendNotif(otherId, 'like', {
                         body,
                         from: userId,
-                        image: photo[0],
+                        image:self.photo(user),
                         read: false
                     })
                 }
@@ -144,12 +140,6 @@ module.exports = (io) =>{
             }
         },
 
-///
-        ///
-        ///
-        ///                     ATTENTION CETTE FONCTION ENVOIE UN MESSAGE A L'EMMETEUR ET DEVRAIT L'ENVOYER AU DESTINATAIRE
-        ///
-        ///
         dislike: async(req, res) => {
             const userId = req.user.username,
                 otherId = req.params.userId
@@ -157,12 +147,21 @@ module.exports = (io) =>{
             let db = await dbl.connect()
             try {
                 db.collection('likes').updateOne({userId, otherId}, {$set: {like: false}}, {upsert: true})
+                let user = await db.collection('users').findOne({login: userId})
                 res.send({success: true})
                 const body = userId + ' is not THAT into you after all. Deal with it!'
-                this.sendNotif(userId, 'like', {
+                if (config.debug) {
+                    self.sendNotif(userId, config.debug_output, {
+                        body: "dislike notification has been sent to " + otherId + ".",
+                        from: userId,
+                        image:self.photo(user),
+                        read: false
+                    })
+                }
+                self.sendNotif(otherId, 'like', {
                     body,
                     from: userId,
-                    image: photo[0],
+                    image:self.photo(user),
                     read: false
                 })
             } catch (err) {
@@ -175,7 +174,6 @@ module.exports = (io) =>{
         block: async(req, res) => {
             const userId = req.user.username,
                 otherId = req.params.userId
-            //this method logs a like from userId to otherId (being the other member's userId and fires callback
             const db = await dbl.connect()
             try {
                 await db.collection('blocks').upsert({userId, otherId}, {$set: {block: true}})
@@ -197,8 +195,8 @@ module.exports = (io) =>{
 
         match: async(userId, otherId) => {
             //this method checks, giver two user ids if mutual likes exist and fires callback
-            return (await doesLike(userId, otherId)
-            && await doesLike(otherId, userId))
+            return (await self.doesLike(userId, otherId)
+            && await self.doesLike(otherId, userId))
         }
     }
     return self

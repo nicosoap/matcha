@@ -91,9 +91,9 @@ var server = _http2.default.createServer(app);
 var io = (0, _socket2.default)(server);
 // io.adapter(redis({ host: 'localhost', port: 3001 }))
 var interactions = require('./controllers/interactions')(io);
-var upload = (0, _multer2.default)({ dest: __dirname + '/uploads' });
+var upload = (0, _multer2.default)({ dest: __dirname + '/public/images' });
 
-app.disable('X-Powered-By');
+app.disable('x-powered-by');
 app.use((0, _cors2.default)());
 app.use(require('cookie-parser')(_credentials2.default.cookieSecret));
 app.use((0, _expressSession2.default)({
@@ -102,13 +102,15 @@ app.use((0, _expressSession2.default)({
     secret: _credentials2.default.cookieSecret
 }));
 app.set('port', process.env.PORT || _config2.default.port || 3001);
-app.use(_express2.default.static(__dirname + '/public'));
+app.use('/images', _express2.default.static(__dirname + '/public/images'));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({
     extended: true
 }));
+
 app.use((0, _expressJwt2.default)({ secret: _credentials2.default.jwtSecret }).unless({
-    path: ['/login', '/retrieve_password', '/activate_account', '/user/new', '/protected', /^\/test/i] }));
+    path: ['/login', '/retrieve_password', '/activate_account', '/user/new', '/protected', /^\/images\//i, '/public', /^\/test/i] }));
+
 io.use(_socketioJwt2.default.authorize({
     secret: _credentials2.default.jwtSecret,
     handshake: true
@@ -126,8 +128,8 @@ app.post('/login', user.userLogin);
 app.get('/user', (0, _cors2.default)(corsOptions), user.viewAll);
 app.get('/user/:userId', (0, _cors2.default)(corsOptions), user.viewOne);
 app.put('/user', user.updateProfile);
-app.post('/picture', upload.single('picture'), picture.uploadPicture);
-app.post('/picture/delete', picture.deleteOne);
+app.post('/image', (0, _cors2.default)(corsOptions), upload.single('picture'), picture.uploadPicture);
+app.post('/image/delete', picture.deleteOne);
 app.post('/user/new', user.create);
 app.post('/user/update', user.updateProfile);
 app.get('/tags', tags.tags);
@@ -142,6 +144,7 @@ app.post('/account/reactivate', user.reactivate);
 app.post('/account/delete', user.Delete);
 app.post('/admin/userform/', admin.addFormItems);
 app.get('/admin/userform', (0, _cors2.default)(corsOptions), admin.getUserForm);
+app.get('/admin/appConfig', (0, _cors2.default)(corsOptions), admin.getAppConfig);
 app.get('/like/:userId', (0, _cors2.default)(corsOptions), interactions.like);
 app.get('/dislike/:userId', (0, _cors2.default)(corsOptions), interactions.dislike);
 app.get('/block/:userId', (0, _cors2.default)(corsOptions), interactions.block);
@@ -191,7 +194,7 @@ io.on('connection', function (socket) {
 
 app.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
-        res.redirect('/login');
+        res.send({ error: err.name });
     }
 });
 app.use(function (req, res) {

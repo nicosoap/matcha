@@ -15,7 +15,6 @@ import session from 'express-session'
 import bcrypt from 'bcrypt-nodejs'
 import * as dbl from "./dbConnect"
 import credentials from '../credentials'
-import mongodb from 'mongodb';
 import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer'
 import ERROR from './errno_code'

@@ -1,7 +1,12 @@
 {
   "debug" : true,
+  "debug_output": "like",
   "URL": "localhost",
   "port": "3001",
+  "appConfig":{
+    "baseURL": "http://localhost:3001",
+    "debug": "true"
+  },
   "user": [
     {
       "id":"0",

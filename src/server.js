@@ -38,9 +38,9 @@ const server = http.createServer(app)
 const io = socketIo(server)
 // io.adapter(redis({ host: 'localhost', port: 3001 }))
 const interactions =  require('./controllers/interactions')(io)
-const upload = multer({ dest: `${__dirname}/uploads` })
+const upload = multer({ dest: `${__dirname}/public/images` })
 
-app.disable('X-Powered-By')
+app.disable('x-powered-by')
 app.use(cors())
 app.use(require('cookie-parser')(credentials.cookieSecret))
 app.use(session({
@@ -49,18 +49,22 @@ app.use(session({
     secret: credentials.cookieSecret,
 }))
 app.set('port', process.env.PORT || config.port || 3001)
-app.use(express.static(__dirname + '/public'))
+app.use('/images', express.static(__dirname + '/public/images'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
     extended: true
 }))
+
 app.use(expressJWT({secret: credentials.jwtSecret}).unless({
     path: ['/login',
         '/retrieve_password',
         '/activate_account',
         '/user/new',
         '/protected',
+        /^\/images\//i,
+        '/public',
         /^\/test/i]}))
+
 io.use(socketioJwt.authorize({
     secret: credentials.jwtSecret,
     handshake: true
@@ -76,8 +80,8 @@ app.post('/login', user.userLogin)
 app.get('/user', cors(corsOptions), user.viewAll)
 app.get('/user/:userId', cors(corsOptions), user.viewOne)
 app.put('/user', user.updateProfile)
-app.post('/picture', upload.single('picture'), picture.uploadPicture)
-app.post('/picture/delete', picture.deleteOne)
+app.post('/image', cors(corsOptions), upload.single('picture'), picture.uploadPicture)
+app.post('/image/delete', picture.deleteOne)
 app.post('/user/new', user.create)
 app.post('/user/update', user.updateProfile)
 app.get('/tags', tags.tags)
@@ -92,6 +96,7 @@ app.post('/account/reactivate', user.reactivate)
 app.post('/account/delete', user.Delete)
 app.post('/admin/userform/', admin.addFormItems)
 app.get('/admin/userform', cors(corsOptions), admin.getUserForm)
+app.get('/admin/appConfig', cors(corsOptions), admin.getAppConfig)
 app.get('/like/:userId', cors(corsOptions), interactions.like)
 app.get('/dislike/:userId', cors(corsOptions), interactions.dislike)
 app.get('/block/:userId', cors(corsOptions), interactions.block)
@@ -144,7 +149,7 @@ io.on('connection', socket => {
 
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
-        res.redirect('/login');
+        res.send({error:err.name});
     }
 })
 app.use((req, res) =>{

@@ -59,7 +59,12 @@ export async function addFormItems(req, res){
     }
 }
 
-export async function getUserForm(req, res) {
+export async function getUserForm(_, res) {
     let form = config.user.filter(e => e.fullForm)
     res.send(form)
+}
+
+export async function getAppConfig(_, res) {
+    let appConfig = config.appConfig
+    res.send(appConfig)
 }

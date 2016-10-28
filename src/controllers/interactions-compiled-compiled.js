@@ -36,14 +36,45 @@ var _config = require('../config.json');
 
 var _config2 = _interopRequireDefault(_config);
 
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+function _interopRequireWildcard(obj) {
+    if (obj && obj.__esModule) {
+        return obj;
+    } else {
+        var newObj = {};if (obj != null) {
+            for (var key in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+            }
+        }newObj.default = obj;return newObj;
+    }
+}
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
 
-function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            * Created by opichou on 9/19/16.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                            */
-
+function _asyncToGenerator(fn) {
+    return function () {
+        var gen = fn.apply(this, arguments);return new Promise(function (resolve, reject) {
+            function step(key, arg) {
+                try {
+                    var info = gen[key](arg);var value = info.value;
+                } catch (error) {
+                    reject(error);return;
+                }if (info.done) {
+                    resolve(value);
+                } else {
+                    return Promise.resolve(value).then(function (value) {
+                        step("next", value);
+                    }, function (err) {
+                        step("throw", err);
+                    });
+                }
+            }return step("next");
+        });
+    };
+} /**
+   * Created by opichou on 9/19/16.
+   */
 
 // var io = require('socket.io-emitter')({host:'localhost', port:3001})
 // setInterval(function(){
@@ -131,8 +162,7 @@ module.exports = function (io) {
 
                             case 7:
                                 if (_config2.default.debug) {
-                                    self.sendNotif(login, _config2.default.debug_output, { body: "Connected to Matcha Server on " + self.now() });
-                                    console.log("BEBUG: user connected and notified as " + _config2.default.debug_output + ".");
+                                    self.sendNotif('opichou', 'like', { body: "Connected to Matcha Server on " + self.now() });
                                 }
 
                             case 8:
@@ -201,115 +231,122 @@ module.exports = function (io) {
             return disconnect;
         }(),
 
-        _his: function _his(user) {
-            var _his = 'their';
-            if (user.gender === 'male') {
-                _his = 'his';
-            } else if (user.gender === 'female') {
-                _his = 'her';
-            }
-        },
+        ///
+        ///
+        ///
+        ///                     ATTENTION CETTE FONCTION ENVOIE UN MESSAGE A L'EMMETEUR ET DEVRAIT L'ENVOYER AU DESTINATAIRE
+        ///
+        ///
 
-        photo: function photo(user) {
-            return user.photo.filter(function (e) {
-                e.front;
-            })[0].filename;
-        },
-
+        //this method logs a like from userId to otherId (being the other member's userId and fires callback
         like: function () {
             var _ref4 = _asyncToGenerator(regeneratorRuntime.mark(function _callee4(req, res) {
-                var userId, otherId, db, user, user2, match, body, body2, _body;
+                var userId, otherId, db, photo, photo2, user, user2, _body, body2, _body2;
 
                 return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
                             case 0:
-                                console.log('like');
                                 userId = req.user.username, otherId = req.params.userId;
-                                _context4.next = 4;
+                                _context4.next = 3;
                                 return dbl.connect();
 
-                            case 4:
+                            case 3:
                                 db = _context4.sent;
-                                _context4.prev = 5;
-                                _context4.next = 8;
+                                _context4.next = 6;
+                                return picture.getAll(userId);
+
+                            case 6:
+                                photo = _context4.sent;
+                                _context4.next = 9;
+                                return picture.getAll(otherId);
+
+                            case 9:
+                                photo2 = _context4.sent;
+                                _context4.prev = 10;
+                                _context4.next = 13;
                                 return db.collection('likes').updateOne({ userId: userId, otherId: otherId }, { $set: { like: true } }, { upsert: true });
 
-                            case 8:
-                                _context4.next = 10;
+                            case 13:
+                                _context4.next = 15;
                                 return db.collection('users').findOne({ login: userId });
 
-                            case 10:
+                            case 15:
                                 user = _context4.sent;
-                                _context4.next = 13;
+                                _context4.next = 18;
                                 return db.collection('users').findOne({ login: otherId });
 
-                            case 13:
+                            case 18:
                                 user2 = _context4.sent;
-                                _context4.next = 16;
-                                return self.doesLike(otherId, userId);
+                                _context4.next = 21;
+                                return undefined.doeslike(otherId, userId);
 
-                            case 16:
-                                match = _context4.sent;
+                            case 21:
+                                if (!_context4.sent) {
+                                    _context4.next = 29;
+                                    break;
+                                }
 
-                                if (match) {
-                                    res.send({ success: true, match: true });
-                                    body = userId + ' and you matched ! You can now chat with ' + self._him(user) + '.';
-                                    body2 = otherId + ' and you matched ! You can now chat with ' + self._him(user2) + '.';
+                                res.send({ success: true, match: true });
+                                _body = userId + ' and you matched ! You can now chat with ' + self._him(user) + '.';
+                                body2 = otherId + ' and you matched ! You can now chat with ' + self._him(user2) + '.';
 
+                                undefined.sendNotif(otherId, 'match', {
+                                    body: _body,
+                                    from: userId,
+                                    image: photo[0],
+                                    read: false
+                                });
+                                undefined.sendNotif(userId, 'match', {
+                                    body2: body2,
+                                    from: otherId,
+                                    image: photo2[0],
+                                    read: false
+                                });
+                                _context4.next = 33;
+                                break;
 
-                                    self.sendNotif(otherId, 'match', {
-                                        body: body,
+                            case 29:
+                                res.send({ success: true, match: false });
+                                if (_config2.default.debug) {
+                                    self.sendNotif('opichou', 'like', {
+                                        body: _body2,
                                         from: userId,
-                                        image: self.photo(user),
-                                        read: false
-                                    });
-                                    self.sendNotif(userId, 'match', {
-                                        body2: body2,
-                                        from: otherId,
-                                        image: self.photo(user2),
-                                        read: false
-                                    });
-                                } else {
-                                    res.send({ success: true, match: false });
-                                    if (_config2.default.debug) {
-                                        self.sendNotif(userId, _config2.default.debug_output, {
-                                            body: "Like notification has been sent to " + otherId + ".",
-                                            from: userId,
-                                            image: self.photo(user),
-                                            read: false
-                                        });
-                                    }
-                                    _body = userId + ' is interested in you. Check out ' + self._his(db, userId) + ' profile!';
-
-                                    self.sendNotif(otherId, 'like', {
-                                        body: _body,
-                                        from: userId,
-                                        image: self.photo(user),
+                                        image: photo[0],
                                         read: false
                                     });
                                 }
-                                _context4.next = 23;
+                                _body2 = userId + ' is interested in you. Check out ' + self._his(db, userId) + ' profile!';
+
+                                undefined.sendNotif(otherId, 'like', {
+                                    body: _body2,
+                                    from: userId,
+                                    image: photo[0],
+                                    read: false
+                                });
+
+                            case 33:
+                                _context4.next = 38;
                                 break;
 
-                            case 20:
-                                _context4.prev = 20;
-                                _context4.t0 = _context4['catch'](5);
+                            case 35:
+                                _context4.prev = 35;
+                                _context4.t0 = _context4['catch'](10);
 
                                 console.log(_context4.t0);
 
-                            case 23:
-                                _context4.prev = 23;
+                            case 38:
+                                _context4.prev = 38;
 
                                 db.close();
-                                return _context4.finish(23);
+                                return _context4.finish(38);
 
-                            case 26:
+                            case 41:
                             case 'end':
                                 return _context4.stop();
                         }
                     }
-                }, _callee4, undefined, [[5, 20, 23, 26]]);
+                }, _callee4, undefined, [[10, 35, 38, 41]]);
             }));
 
             function like(_x8, _x9) {
@@ -319,9 +356,16 @@ module.exports = function (io) {
             return like;
         }(),
 
+        ///
+        ///
+        ///
+        ///                     ATTENTION CETTE FONCTION ENVOIE UN MESSAGE A L'EMMETEUR ET DEVRAIT L'ENVOYER AU DESTINATAIRE
+        ///
+        ///
         dislike: function () {
             var _ref5 = _asyncToGenerator(regeneratorRuntime.mark(function _callee5(req, res) {
-                var userId, otherId, db, user, body;
+                var userId, otherId, db, _body3;
+
                 return regeneratorRuntime.wrap(function _callee5$(_context5) {
                     while (1) {
                         switch (_context5.prev = _context5.next) {
@@ -334,53 +378,30 @@ module.exports = function (io) {
 
                             case 4:
                                 db = _context5.sent;
-                                _context5.prev = 5;
 
-                                db.collection('likes').updateOne({ userId: userId, otherId: otherId }, { $set: { like: false } }, { upsert: true });
-                                _context5.next = 9;
-                                return db.collection('users').findOne({ login: userId });
+                                try {
+                                    db.collection('likes').updateOne({ userId: userId, otherId: otherId }, { $set: { like: false } }, { upsert: true });
+                                    res.send({ success: true });
+                                    _body3 = userId + ' is not THAT into you after all. Deal with it!';
 
-                            case 9:
-                                user = _context5.sent;
-
-                                res.send({ success: true });
-                                body = userId + ' is not THAT into you after all. Deal with it!';
-
-                                if (_config2.default.debug) {
-                                    self.sendNotif(userId, _config2.default.debug_output, {
-                                        body: "dislike notification has been sent to " + otherId + ".",
+                                    undefined.sendNotif(userId, 'like', {
+                                        body: _body3,
                                         from: userId,
-                                        image: self.photo(user),
+                                        image: photo[0],
                                         read: false
                                     });
+                                } catch (err) {
+                                    console.log(err);
+                                } finally {
+                                    db.close();
                                 }
-                                self.sendNotif(otherId, 'like', {
-                                    body: body,
-                                    from: userId,
-                                    image: self.photo(user),
-                                    read: false
-                                });
-                                _context5.next = 19;
-                                break;
 
-                            case 16:
-                                _context5.prev = 16;
-                                _context5.t0 = _context5['catch'](5);
-
-                                console.log(_context5.t0);
-
-                            case 19:
-                                _context5.prev = 19;
-
-                                db.close();
-                                return _context5.finish(19);
-
-                            case 22:
+                            case 6:
                             case 'end':
                                 return _context5.stop();
                         }
                     }
-                }, _callee5, undefined, [[5, 16, 19, 22]]);
+                }, _callee5, undefined);
             }));
 
             function dislike(_x10, _x11) {
@@ -398,6 +419,8 @@ module.exports = function (io) {
                         switch (_context6.prev = _context6.next) {
                             case 0:
                                 userId = req.user.username, otherId = req.params.userId;
+                                //this method logs a like from userId to otherId (being the other member's userId and fires callback
+
                                 _context6.next = 3;
                                 return dbl.connect();
 
@@ -474,7 +497,7 @@ module.exports = function (io) {
                         switch (_context8.prev = _context8.next) {
                             case 0:
                                 _context8.next = 2;
-                                return self.doesLike(userId, otherId);
+                                return doesLike(userId, otherId);
 
                             case 2:
                                 _context8.t0 = _context8.sent;
@@ -485,7 +508,7 @@ module.exports = function (io) {
                                 }
 
                                 _context8.next = 6;
-                                return self.doesLike(otherId, userId);
+                                return doesLike(otherId, userId);
 
                             case 6:
                                 _context8.t0 = _context8.sent;
@@ -512,3 +535,5 @@ module.exports = function (io) {
 };
 
 //# sourceMappingURL=interactions-compiled.js.map
+
+//# sourceMappingURL=interactions-compiled-compiled.js.map
