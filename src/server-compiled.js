@@ -89,7 +89,6 @@ var corsOptions = {
 var app = require('express')();
 var server = _http2.default.createServer(app);
 var io = (0, _socket2.default)(server);
-// io.adapter(redis({ host: 'localhost', port: 3001 }))
 var interactions = require('./controllers/interactions')(io);
 var upload = (0, _multer2.default)({ dest: __dirname + '/public/images' });
 
@@ -120,9 +119,6 @@ io.use(_socketioJwt2.default.authorize({
 
 app.get('/', function (req, res) {
     res.send("Welcome dude !!!");
-});
-app.get('/login', function (_, res) {
-    return res.send("Login Page");
 });
 app.post('/login', user.userLogin);
 app.get('/user', (0, _cors2.default)(corsOptions), user.viewAll);

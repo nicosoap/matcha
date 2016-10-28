@@ -36,7 +36,6 @@ let corsOptions = {
 const app = require('express')();
 const server = http.createServer(app)
 const io = socketIo(server)
-// io.adapter(redis({ host: 'localhost', port: 3001 }))
 const interactions =  require('./controllers/interactions')(io)
 const upload = multer({ dest: `${__dirname}/public/images` })
 
@@ -76,7 +75,6 @@ io.use(socketioJwt.authorize({
 app.get('/', (req, res) => {
     res.send("Welcome dude !!!");
 })
-app.get('/login', (_, res) => res.send("Login Page"))
 app.post('/login', user.userLogin)
 app.get('/user', cors(corsOptions), user.viewAll)
 app.get('/user/:userId', cors(corsOptions), user.viewOne)
