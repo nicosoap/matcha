@@ -19,6 +19,7 @@ import jwt from 'jsonwebtoken'
 import nodemailer from 'nodemailer'
 import ERROR from './errno_code'
 import match from '../model/match'
+import crypto from 'crypto'
 
 let saltRounds = 10
 
@@ -32,6 +33,21 @@ function now(){
         + currentDate.getHours() + ":"
         + currentDate.getMinutes() + ":" + currentDate.getSeconds()
 }
+
+const encrypt = async message => {
+    let encrypted = await crypto.createHmac('sha256', credentials.cookieSecret)
+        .update(message, 'utf8', 'hex')
+        .digest('hex')
+    return encrypted
+}
+
+const decrypt = async text => {
+    let decipher = crypto.createDecipher('sha256', credentials.cookieSecret)
+    let dec = decipher.update(text,'hex','utf8')
+    dec += decipher.final('utf8');
+    return dec;
+}
+
 
 async function genToken (user){
     let myToken = await jwt.sign({username: user.login}, credentials.jwtSecret)
@@ -79,12 +95,18 @@ function contains(a, obj) {
     return false;
 }
 
-async function basicAuth(login, password, fingerprint, callback){
+async function basicAuth(login, password, fingerprint, callback) {
+    let err = ""
     let db = await dbl.connect();
     try {
-        let user = await db.collection('users').findOne({$or: [{login: login, active: true}, {email: login, active: true}]});
-        try {
-            db.close()
+        let user = await db.collection('users').findOne({
+            $or: [{login: login, active: true}, {
+                email: login,
+                active: true
+            }]
+        })
+        console.log(user)
+
             if (!user) {
                 callback({success: false, message: ERROR.AUTH_ERROR}, {
                     auth: {
@@ -93,55 +115,53 @@ async function basicAuth(login, password, fingerprint, callback){
                     }
                 });
             } else {
-                bcrypt.compare(password, user.password, async (err, res) => {
-                    if (res) {
-                        user = await genToken(user);
-                        console.log("Token received")
-                        if (user.fingerprint && contains(user.fingerprint, fingerprint)) {
-                            const ret = {
-                                auth: {
-                                    method: "basic",
-                                    success: true,
-                                    fingerprint: fingerprint,
-                                    token: user.token,
-                                    message: ERROR.LOGIN_SUCCESS_INFO
-                                }
-                            };
-                            callback(err, ret);
-                        } else {
-                            console.log("New fingerprint will be added to user profile")
-                            user = addFingerprint(user, fingerprint)
-                            const ret = {
-                                auth: {
-                                    method: "basic",
-                                    success: true,
-                                    fingerprint: fingerprint,
-                                    token: user.token,
-                                    message: ERROR.LOGIN_SUCCESS_INFO
-                                }
-                            };
-                            callback(err, ret)
-                        }
-                    } else {
-                        console.log("wrong password");
+                const pass = await encrypt(password)
+                if (user.password === pass) {
+                    user = await genToken(user);
+                    console.log("Token received")
+                    if (user.fingerprint && contains(user.fingerprint, fingerprint)) {
                         const ret = {
                             auth: {
                                 method: "basic",
-                                success: false,
+                                success: true,
                                 fingerprint: fingerprint,
-                                message: ERROR.AUTH_PASSWORD_ERROR
+                                token: user.token,
+                                message: ERROR.LOGIN_SUCCESS_INFO
                             }
                         };
                         callback(err, ret);
+                    } else {
+                        console.log("New fingerprint will be added to user profile")
+                        user = addFingerprint(user, fingerprint)
+                        const ret = {
+                            auth: {
+                                method: "basic",
+                                success: true,
+                                fingerprint: fingerprint,
+                                token: user.token,
+                                message: ERROR.LOGIN_SUCCESS_INFO
+                            }
+                        };
+                        callback(err, ret)
                     }
-                });
+                } else {
+                    console.log("wrong password");
+                    const ret = {
+                        auth: {
+                            method: "basic",
+                            success: false,
+                            fingerprint: fingerprint,
+                            message: ERROR.AUTH_PASSWORD_ERROR
+                        }
+                    };
+                    callback(err, ret);
+                }
             }
         }
-        catch (err) {
-            callback(err, false);
-        }
-    } catch(err) {
-        console.error(err);
+    catch (err) {
+        callback(err, false);
+    } finally {
+        db.close()
     }
 }
 
@@ -168,10 +188,11 @@ async function tokenAuth(token, fingerprint, callback){
                     message: ERROR.LOGIN_SUCCESS_INFO}};
             callback(false, ret);
         } else {
+            console.log(user.fingerprint, fingerprint)
             const ret = {
                 auth:{
                     method: "token",
-                    success: true,
+                    success: false,
                     fingerprint: false,
                     message: ERROR.AUTH_DEVICE_ERROR}};
             callback(true, ret);
@@ -191,17 +212,17 @@ async function tokenAuth(token, fingerprint, callback){
 }
 
 export async function userLogin(req, res) {
+    console.log("Authorizing:", req.body)
     let token = req.headers.authorization.match(/^Bearer (.*)$/)[1]
     await authenticate(req.body.login, req.body.password, token, req.body.fingerprint, (err, ret) => {
-        if (err || ret.auth.fingerprint == false) {
-            console.error(err);
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(ret));
-        } else {
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(ret));
+            if (err || ret.auth.fingerprint == false) {
+                console.error(err)
+                console.log(ret)
+                ret.success = false
+            }
+        res.send(ret)
         }
-    });
+    )
 }
 
 async function authenticate(login, password, token, fingerprint, callback){
@@ -216,10 +237,12 @@ async function authenticate(login, password, token, fingerprint, callback){
     // device fingerprint status.
 
     console.log("Connection attempt from: " + login + ' (token: ' + token + ')');
-    if (token && fingerprint) {
-        tokenAuth(token, fingerprint, callback);
-    } else if (login && password && fingerprint) {
-        basicAuth(login, password,fingerprint, callback);
+    if (login && password && fingerprint) {
+        console.log("using basic strategy")
+        basicAuth(login, password,fingerprint, callback)
+    } else if (token && fingerprint) {
+        console.log("using token strategy")
+        tokenAuth(token, fingerprint, callback)
     }else {
         callback({message: ERROR.AUTH_ERROR},
             {auth:{success: false, message: ERROR.AUTH_ERROR}});
@@ -229,8 +252,7 @@ async function authenticate(login, password, token, fingerprint, callback){
 export async function checkLogin(req, res, next){
     try {
         let test = await checkLoginHlp(req.params.login);
-        res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify(test));
+        res.send(test);
     } catch(err) { next(err)}
 }
 
@@ -241,14 +263,11 @@ async function checkLoginHlp(login){
         let userCount = (await collection.find({
             login: login
         }).limit(1).count());
-        if (userCount == 0 && !(/([ ])/.exec(login))) {
-            console.log("Login " + login + " is valid")
+        if (userCount === 0 && !(/([ ])/.exec(login))) {
             return {valid: true, message: "Login " + login + " is available", login: login};
         } else if((/([ ])/.exec(login))){
-            console.log("Login " + login + " is not valid")
             return {valid: false, message: "Login " + login + " contains whitespace", login: login};
         } else {
-            console.log("Login " + login + " is not valid")
             return {valid: false, message: "Login " + login + " isn't available", login: login};
         }
     } finally {
@@ -261,18 +280,14 @@ async function checkEmailHlp(email){
     let db = await dbl.connect();
     try {
         let collection = db.collection('users');
-        console.log(collection);
         let userCount = (await collection.find({
             email: email
         }).limit(1).count());
         if (userCount == 0 && (email.match(/^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/ig))) {
-            console.log("Email " + email + " is valid")
             return {valid: true, message: "Email " + email + " is available",email: email};
         } else if(userCount == 0){
-            console.log("Email " + email + " is not valid")
             return {valid: false, error: 1, message: "Email " + email + " is incorrect",email: email};
         } else {
-            console.log("Email " + email + " is not valid")
             return {valid: false, error: 2, message: "A profile already exists for " + email,email: email};
         }
     } finally {
@@ -284,20 +299,19 @@ async function checkEmailHlp(email){
 export async function checkEmail(req, res){
     try {
         let test = await checkEmailHlp(req.params.email);
-        res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify(test));
+        res.send(test);
     } catch(err) { console.error(err)}
 }
 
 async function checkPass(pass1, pass2){
     if ((pass1 === pass2) &&
         (pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,48}$/))){
-        console.log("Password " + pass1 + " is valid")
-        let password = await bcrypt.hashSync(pass1, saltRounds);
-        return ({valid: true, message: "Valid password", password: password});
+        console.log("password ", pass1, "is ok")
+        let password = await encrypt(pass1)
+        console.log("password ", password, "is ok")
+        return ({valid: true, message: "Valid password", password: password})
     } else {
-        console.log("Password " + pass1 + " is not valid")
-        return({valid: false, message: ERROR.PASSWORD_FORMAT_ERROR});
+        return({valid: false, message: ERROR.PASSWORD_FORMAT_ERROR})
     }
 }
 
@@ -430,27 +444,48 @@ export async function renderForm(req, res){
 }
 
 export async function create(req, res){
-    let user = {},
-        errors = [],
-        emailProp = await checkEmailHlp(req.body.email),
-        loginProp = await checkLoginHlp(req.body.login),
-        passwordProp = await checkPass(req.body.password, req.body.password2);
+    if (req.body.login && req.body.email && req.body.password && req.body.password2) {
+        let user = {active: false},
+            errors = [],
+            emailProp = await checkEmailHlp(req.body.email),
+            loginProp = await checkLoginHlp(req.body.login),
+            passwordProp = await checkPass(req.body.password, req.body.password2)
 
-    if (emailProp.valid) {user.email = emailProp.email} else errors.push(emailProp.message) && console.log("email error logged");
-    if (loginProp.valid) {user.login = loginProp.login} else errors.push(loginProp.message) && console.log("login error logged");
-    if (passwordProp.valid) {user.password = passwordProp.password} else errors.push(passwordProp.message) && console.log("password error logged");
-    if (errors.length == 0) {
-        let db = await dbl.connect()
-        await db.collection('users').insertOne(user);
-        try {
-            console.log("success")
-        } finally {
-            db.close();
+        if (emailProp.valid) {
+            user.email = emailProp.email
+            console.log(emailProp)
+        } else {errors.push(emailProp.message)
+            console.log(emailProp)}
+        if (loginProp.valid) {
+            user.login = loginProp.login
+            console.log(loginProp)
+        } else {errors.push(loginProp.message)
+            console.log(emailProp)}
+        if (passwordProp.valid) {
+            user.password = passwordProp.password
+            console.log(passwordProp)
+        } else {errors.push(passwordProp.message)
+            console.log(emailProp)}
+        if (errors.length === 0) {
+            let db = await dbl.connect()
+            console.log("no error")
+            try {
+                const rep = await db.collection('users').insertOne(user);
+                if (rep.insertedCount === 1) {
+                    const email = await validateAccount(user.email);
+                    console.log("New user created:", user.login)
+                    res.send({success: true, message: "User created, please check your emails"});
+                }
+            } finally {
+                db.close();
+            }
+        } else {
+            console.log("Error creating user:", user.login)
+            res.send({success: false, message: "Your account couldn't be created", errors: errors || ""})
         }
-        await validateAccount(email);
-        res.send({success: true, message: "User created, please check your emails"});
     } else {
-        res.send({success: false, message: "Your account couldn't be created", errors: errors});
+    console.log("Error creating user:", user.login)
+        res.send({success: false, message: "Your account couldn't be created"})
     }
 } //this method adds a new user to the database
 
@@ -492,6 +527,7 @@ async function validateAccount(email){
         '<a href="http://www.liveoption.io/account/validate?token=' + myToken + '">Validate account now</a>' +
         '<p>Thank you for registering liveoption,</p><p>See you soon !</p>' // html body
     };
+    console.log("sending email to", email)
     return await transporter.sendMail(mailOptions);
 }
 
@@ -500,11 +536,15 @@ export async function isVerified(res, req){
     let email = req.user.email;
     let db = await dbl.connect();
     try{
-        db.collection('users').updateOne({email: email}, {$set: {active: true}});
+        let result = db.collection('users').updateOne({email: email}, {$set: {active: true}});
+            if (result.nmodified === 1) {
+                 res.send({success: true, message: ERROR.ACCOUNT_VALIDATED_INFO})
+            } else {
+                res.send({success: false, message: ERROR.AUTH_ERROR})
+            }
     } finally {
         db.close();
     }
-    res.json({success: true, message: ERROR.ACCOUNT_VALIDATED_INFO})
 }
 
 export async function updateProfile(req, res){

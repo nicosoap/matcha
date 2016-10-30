@@ -1,5 +1,5 @@
 {
-  "debug" : true,
+  "debug" : "true",
   "debug_output": "like",
   "URL": "localhost",
   "port": "3001",
@@ -24,10 +24,34 @@
       "autocomplete":"username",
       "fullForm":"true",
       "shortForm":"true",
-      "login":"true",
+      "login":"false",
       "valid":"false",
-      "validating":"false",
       "error":"",
+      "required":"true",
+      "validator_type":"http",
+      "validator":"/test/login/"
+    },
+    {
+      "id":"1",
+      "name":"username",
+      "type":"text",
+      "placeholder":"Login",
+      "autocomplete":"username",
+      "fullForm":"false",
+      "shortForm":"false",
+      "login":"true",
+      "error":"",
+      "required":"true"
+    },
+    {
+      "id":"4",
+      "name":"password",
+      "type":"password",
+      "placeholder":"Password",
+      "fullForm":"false",
+      "shortForm":"false",
+      "login":"true",
+      "error": "",
       "required":"true"
     },
     {
@@ -39,9 +63,10 @@
       "fullForm":"true",
       "shortForm":"true",
       "valid":"false",
-      "validating":"false",
       "error":"",
-      "required":"true"
+      "required":"true",
+      "validator_type":"http",
+      "validator":"/test/email/"
     },
     {
       "id":"3",
@@ -51,7 +76,6 @@
       "fullForm":"true",
       "shortForm":"false",
       "valid":"false",
-      "validating":"false",
       "error":""
     },
     {
@@ -61,11 +85,12 @@
       "placeholder":"Password",
       "fullForm":"false",
       "shortForm":"true",
-      "login":"true",
+      "login":"false",
       "valid":"false",
-      "validating":"false",
       "error":"",
-      "required":"true"
+      "required":"true",
+      "validator_type":"password",
+      "validator":"3"
     },
     {
       "id":"4",
@@ -75,8 +100,10 @@
       "fullForm":"true",
       "shortForm":"false",
       "valid":"false",
-      "validating":"false",
-      "error":""
+      
+      "error":"",
+      "validator_type":"regex",
+      "validator":"/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,48}$/"
     },
     {
       "id":"5",
@@ -86,9 +113,10 @@
       "fullForm":"false",
       "shortForm":"true",
       "valid":"false",
-      "validating":"false",
       "error":"",
-      "required":"true"
+      "required":"true",
+      "validator_type":"echo",
+      "validator":"password"
     },
     {
       "id":"5",
@@ -98,7 +126,7 @@
       "fullForm":"true",
       "shortForm":"false",
       "valid":"false",
-      "validating":"false",
+      
       "error":""
     },
     {
@@ -137,7 +165,7 @@
           "id":"0",
           "label": "female",
           "value": "female",
-          "default": "false"
+          "default": false
         },
         {
           "id":"1",
