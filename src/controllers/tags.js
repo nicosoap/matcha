@@ -44,10 +44,11 @@ function contains(a, obj) {
 }
 
 export async function tags(req, res){
+    console.log("tags")
     let db = await dbl.connect()
-    const _regex = '/.*' + req.query.tag + '.*/'
-    let response = await db.colletion('tags').find({label: {$regex: _regex, $options: 'i'}}).sort({count: desc})
-    res.send({response})
+    const _regex = '.*' + req.query.tag + '.*'
+    let response = await db.collection('tags').find({label: {$regex: _regex, $options: 'i'}},{sort:['count', 'desc']}).toArray()
+    res.send(response)
 }
 
 export async function addTag(req, res){

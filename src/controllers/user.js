@@ -653,5 +653,23 @@ export const viewAll = async (req, res) => {
 }
 
 export const viewOne = async (req, res) => {
-    res.send({success: true})
+    console.log("Let's find that user")
+    const login = req.user.username
+    let db = await dbl.connect()
+    try {
+        let user = await db.collection('users').findOne({login, active: true}, {password: false, token: false, fingerprint: false})
+        if (user) {
+            res.send({success: true, data: user})
+        } else {
+            res.send({success: false})
+        }
+    } catch(err) {
+        console.error(err)
+    } finally{
+        db.close()
+    }
+}
+
+export const me = async (req,res) => {
+    res.send({login: req.user.username})
 }

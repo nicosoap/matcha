@@ -68,3 +68,8 @@ export async function getAppConfig(_, res) {
     let appConfig = config.appConfig
     res.send(appConfig)
 }
+
+export async function getParams(req, res) {
+    const params = req.query.param
+    res.send(config[params])
+}

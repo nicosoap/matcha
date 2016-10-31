@@ -121,6 +121,7 @@ app.get('/', function (req, res) {
     res.send("Welcome dude !!!");
 });
 app.post('/login', user.userLogin);
+app.get('/i', (0, _cors2.default)(corsOptions), user.me);
 app.get('/user', (0, _cors2.default)(corsOptions), user.viewAll);
 app.get('/user/:userId', (0, _cors2.default)(corsOptions), user.viewOne);
 app.put('/user', user.updateProfile);
@@ -140,6 +141,7 @@ app.post('/account/reactivate', user.reactivate);
 app.post('/account/delete', user.Delete);
 app.post('/admin/form/', (0, _cors2.default)(corsOptions), admin.addFormItems);
 app.get('/admin/userform', (0, _cors2.default)(corsOptions), admin.getUserForm);
+app.get('/config', (0, _cors2.default)(corsOptions), admin.getParams);
 app.get('/admin/appConfig', (0, _cors2.default)(corsOptions), admin.getAppConfig);
 app.get('/like/:userId', (0, _cors2.default)(corsOptions), interactions.like);
 app.get('/dislike/:userId', (0, _cors2.default)(corsOptions), interactions.dislike);

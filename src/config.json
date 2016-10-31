@@ -7,6 +7,33 @@
     "baseURL": "http://localhost:3001",
     "debug": "true"
   },
+  "menuItems": [
+    {
+      "name": "Around me",
+      "icon": "near_me",
+      "rel": "#"
+    },
+    {
+      "name": "Search",
+      "icon": "search",
+      "rel": "#"
+    },
+    {
+      "name": "Live options",
+      "icon": "bubble_chart",
+      "rel": "#"
+    },
+    {
+      "name": "Netflix & chill",
+      "icon": "weekend",
+      "rel": "#"
+    },
+    {
+      "name": "My profile",
+      "icon": "settings_applications",
+      "rel": "profile"
+    }
+  ],
   "user": [
     {
       "id":"0",
@@ -15,6 +42,12 @@
       "value":"0",
       "fullForm":"true",
       "shortForm":"true"
+    },
+    {
+      "id":"0",
+      "type":"section",
+      "value":"Update credentials:",
+      "fullForm":"true"
     },
     {
       "id":"1",
@@ -55,6 +88,40 @@
       "required":"true"
     },
     {
+      "id":"3",
+      "name":"OldPassword",
+      "type":"password",
+      "placeholder":"Old password",
+      "fullForm":"true",
+      "shortForm":"false",
+      "valid":"false",
+      "error":""
+    },
+    {
+      "id":"4",
+      "name":"newPassword",
+      "type":"password",
+      "placeholder":"New password",
+      "fullForm":"true",
+      "shortForm":"false",
+      "valid":"false",
+      "error":"",
+      "validator_type":"password",
+      "validator":"3"
+    },
+    {
+      "id":"5",
+      "name":"newPassword2",
+      "type":"password",
+      "placeholder":"New password again",
+      "fullForm":"true",
+      "shortForm":"false",
+      "valid":"false",
+      "error":"",
+      "validator_type":"echo",
+      "validator":"newPassword"
+    },
+    {
       "id":"2",
       "name":"email",
       "type":"email",
@@ -69,21 +136,10 @@
       "validator":"/test/email/"
     },
     {
-      "id":"3",
-      "name":"OldPassword",
-      "type":"password",
-      "placeholder":"Old password",
-      "fullForm":"true",
-      "shortForm":"false",
-      "valid":"false",
-      "error":""
-    },
-    {
       "id":"4",
       "name":"password",
       "type":"password",
       "placeholder":"Password",
-      "fullForm":"false",
       "shortForm":"true",
       "login":"false",
       "valid":"false",
@@ -93,41 +149,16 @@
       "validator":"3"
     },
     {
-      "id":"4",
-      "name":"NewPassword",
-      "type":"password",
-      "placeholder":"Password",
-      "fullForm":"true",
-      "shortForm":"false",
-      "valid":"false",
-      
-      "error":"",
-      "validator_type":"regex",
-      "validator":"/^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).{8,48}$/"
-    },
-    {
       "id":"5",
       "name":"password2",
       "type":"password",
       "placeholder":"Password again",
-      "fullForm":"false",
       "shortForm":"true",
       "valid":"false",
       "error":"",
       "required":"true",
       "validator_type":"echo",
       "validator":"password"
-    },
-    {
-      "id":"5",
-      "name":"NewPassword2",
-      "type":"password",
-      "placeholder":"Password again",
-      "fullForm":"true",
-      "shortForm":"false",
-      "valid":"false",
-      
-      "error":""
     },
     {
       "id":"6",
@@ -140,9 +171,21 @@
     },
     {
       "id":"7",
+      "type":"spacer",
+      "value":"50px",
+      "fullForm":"true"
+    },
+    {
+      "id":"7",
+      "type":"section",
+      "value":"Personal infos:",
+      "fullForm":"true"
+    },
+    {
+      "id":"7",
       "name":"firstName",
       "type":"text",
-      "placeholder":"First name",
+      "placeholder":"First Name",
       "autocomplete":"given-name",
       "fullForm":"true",
       "shortForm":"false"
@@ -220,6 +263,12 @@
       "shortForm":"false"
     },
     {
+      "id":"7",
+      "type":"section",
+      "value":"Bio:",
+      "fullForm":"true"
+    },
+    {
       "id":"14",
       "name":"bio",
       "type":"textArea",
@@ -236,12 +285,19 @@
       "shortForm":"false"
     },
     {
+      "id":"7",
+      "type":"section",
+      "value":"Upload up to 5 photos:",
+      "fullForm":"true"
+    },
+    {
       "id":"16",
       "name":"photo",
       "type":"photo",
       "accept":"image/x-png, image/jpeg, image/gif",
       "placeholder":"Profile picture",
       "autocomplete":"photo",
+      "maxLength": "5",
       "fullForm":"true",
       "shortForm":"false"
     }
