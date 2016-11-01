@@ -42,7 +42,23 @@ async function registerPicture(login, filename){
     }
 }
 
+async function registerPictureToDb(login, filename) {
+    let payload = {filename: filename, active: true, date: Date.now(), login}
+    let db = await dbl.connect()
+    try {
+        let res = await db.collection('photos').insert(payload)
+        console.log(res)
+        return filename
+
+    } catch (err) {
+        console.error(err)
+    } finally {
+        db.close()
+    }
+}
+
 export async function uploadPicture(req, res){
+    console.log(req.file)
     if (!req.file) {
         res.send({success: false, message: ERROR.PICTURE_UPLOAD_ERROR})
     }
@@ -55,15 +71,17 @@ export async function uploadPicture(req, res){
                 if (err) {console.error("ERROR: ", err)}
             })
 
-        const result = await registerPicture(req.user.username, req.file.filename + ext)
+        const result = await registerPictureToDb(req.user.username, req.file.filename + ext)
 
-        if (result.modifiedCount === 1){
-
-            res.send({success: true, message: ERROR.PICTURE_UPLOAD_SUCCESS})
+        if (result){
+            console.log("success", result)
+            res.send({success: true, message: ERROR.PICTURE_UPLOAD_SUCCESS, name: result})
         } else {
+            console.log("failure", result)
             res.send({success: false, message: ERROR.PICTURE_REGISTER_ERROR})
         }
     }else{
+        console.log("failure", result)
         res.send({success: false, message: ERROR.PICTURE_UPLOAD_ERROR})
     }
 }

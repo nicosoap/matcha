@@ -531,14 +531,15 @@ async function validateAccount(email){
     return await transporter.sendMail(mailOptions);
 }
 
-export async function isVerified(res, req){
+export async function isVerified(req, res){
     //this method makes sure the user has authorized his account via email
     let email = req.user.email;
     let db = await dbl.connect();
     try{
-        let result = db.collection('users').updateOne({email: email}, {$set: {active: true}});
-            if (result.nmodified === 1) {
-                 res.send({success: true, message: ERROR.ACCOUNT_VALIDATED_INFO})
+        let result = db.collection('users').findOneAndUpdate({email}, {$set: {active: true}});
+            if (result.length === 1) {
+                let user = genToken(result)
+                 res.send(user)
             } else {
                 res.send({success: false, message: ERROR.AUTH_ERROR})
             }
@@ -548,128 +549,35 @@ export async function isVerified(res, req){
 }
 
 export async function updateProfile(req, res){
+    console.log("updating profile for user", req.user.username)
     let db = await dbl.connect()
     try {
         let payload = req.body
+        console.log(payload)
         let login = req.user.username
-        addTag(payload.tags)
-        delete payload.tags
-        await db.collection('users').updateOne({login: login}, {$set: payload})
+        // await addTag(payload.tags)
+        console.log("check")
+        const _id = payload._id
+        console.log("_id", _id)
+        delete payload._id
+        console.log("preload: ", payload)
+        let results = await db.collection('users').update({login},{$set: {...payload}}, (error) => {console.log(error)})
+        console.log(results.nModified)
         res.send({success: true, message:ERROR.PROFILE_UPDATED_INFO})
-    } finally {
-        db.close()
-    }
-}
-
-export const viewAll = async (req, res) => {
-    let query = {
-        netflix: false,
-        rightnow: false,
-        age:{
-            min:18,
-            max: 77
-        },
-        popularity: {
-            min: 0,
-            max: 100
-        },
-        geocode: {
-            lat: 0,
-            lng: 0
-        },
-        tags: [],
-        custom: ''
-    },
-        regexHashtag = /#([a-zA-Z0-9-]*)+/g,
-        regexNetflix = /netflix/i,
-        regexRightNow = /rightnow/i,
-        regexAge = /age-from=([0-9]{1,2}).*age-to=([0-9]{1,2})/i, //min = group1, max = group2
-        regexAgeMin = /age-from=[0-9]{1,2}/i,
-        regexAgeMax = /age-to=[0-9]{1,2}/i,
-        regexPopularity = /popularity-from=([0-9]{1,2}).*popularity-to=([0-9]{1,3})/i, //min = group1, max = group2
-        regexPopularityMin = /popularity-from=[0-9]{1,2}/i,
-        regexPopularityMax = /popularity-to=[0-9]{1,3}/i,
-        regexGeocode = /around-lat=(-?[0-9]{1,2}\.?[0-9]{0,16}).*around-lng=(-?[0-9]{1,2}\.?[0-9]{0,16})/i, //lat = group1, lng = group2
-        regexGeocodeLat = /around-lat=-?[0-9]{1,2}\.?[0-9]{0,16}/i,
-        regexGeocodeLng = /around-lng=-?[0-9]{1,2}\.?[0-9]{0,16}/i,
-
-        queryStr = req.query.query || ''
-
-        query.netflix = regexNetflix.test(queryStr)
-        query.rightnow = regexRightNow.test(queryStr)
-
-    const age = regexAge.exec(queryStr)
-
-    if (age) {
-        query.age.min = age[1]
-        query.age.max = age[2]
-    }
-
-    const popularity = regexPopularity.exec(queryStr)
-
-    if (popularity) {
-        query.popularity.min = popularity[1]
-        query.popularity.max = popularity[2]
-    }
-
-        const geocode = regexGeocode.exec(queryStr)
-
-    if (geocode) {
-        query.geocode.lat = geocode[1]
-        query.geocode.lng = geocode[2]
-    }
-
-    let i = 0,
-        temp = []
-    while ((temp = regexHashtag.exec(queryStr)) !== null) {
-        query.tags[i] = temp[1]
-        i++
-    }
-    query.custom = queryStr.replace(regexGeocodeLng, '')
-        .replace(regexGeocodeLat, '')
-        .replace(regexPopularityMax, '')
-        .replace(regexPopularityMin, '')
-        .replace(regexAgeMax, '')
-        .replace(regexAgeMin, '')
-        .replace(regexRightNow, '')
-        .replace(regexNetflix, '')
-        .replace(regexHashtag, '')
-        .replace(/ (?: *)/, ' ')
-        .split(' ')
-        .filter(e => e !== '')
-
-    const db = await dbl.connect()
-    try {
-        const results = await db.collection('users').find({})
-        try {
-            console.log('sending...')
-                res.send({users: await results.toArray()})
-        } catch (err) {
-            console.error(err)
-        }
-    } finally {
-        db.close()
-    }
-}
-
-export const viewOne = async (req, res) => {
-    console.log("Let's find that user")
-    const login = req.user.username
-    let db = await dbl.connect()
-    try {
-        let user = await db.collection('users').findOne({login, active: true}, {password: false, token: false, fingerprint: false})
-        if (user) {
-            res.send({success: true, data: user})
-        } else {
-            res.send({success: false})
-        }
+        console.log("-----------------------------------------------------------------------------")
     } catch(err) {
         console.error(err)
-    } finally{
+    } finally {
         db.close()
     }
 }
 
-export const me = async (req,res) => {
-    res.send({login: req.user.username})
+
+export const isEnabled = async login => {
+    let db = await dbl.connect()
+    try {
+        return await db.collection('users').findOne({login}, {photo: true}).photo.length != 0
+    } catch (err) { console.error(err) }
+    finally { db.close()
+    }
 }

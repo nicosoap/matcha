@@ -27,6 +27,7 @@ import socketioJwt from 'socketio-jwt'
 import config from './config.json'
 import redis from 'socket.io-redis'
 import cors from 'cors'
+import * as display from './controllers/display'
 
 let corsOptions = {
     origin: 'http://localhost:3000',
@@ -57,7 +58,6 @@ app.use(bodyParser.urlencoded({
 app.use(expressJWT({secret: credentials.jwtSecret}).unless({
     path: ['/login',
         '/retrieve_password',
-        '/activate_account',
         '/user/new',
         '/protected',
         '/public',
@@ -76,14 +76,15 @@ app.get('/', (req, res) => {
     res.send("Welcome dude !!!");
 })
 app.post('/login', user.userLogin)
-app.get('/i', cors(corsOptions), user.me)
-app.get('/user', cors(corsOptions), user.viewAll)
-app.get('/user/:userId', cors(corsOptions), user.viewOne)
+app.get('/i', cors(corsOptions), display.me)
+app.get('/whoami', cors(corsOptions), display.me)
+app.get('/user', cors(corsOptions), display.All)
+app.get('/user/:userId', cors(corsOptions), display.One)
 app.put('/user', user.updateProfile)
 app.post('/image', cors(corsOptions), upload.single('picture'), picture.uploadPicture)
 app.post('/image/delete', picture.deleteOne)
 app.post('/user/new', cors(corsOptions), user.create)
-app.post('/user/update', user.updateProfile)
+app.post('/user/update', cors(corsOptions), user.updateProfile)
 app.get('/tags', tags.tags)
 app.post('/tags', tags.addTag)
 app.get('/test/login/:login', user.checkLogin)
@@ -91,7 +92,7 @@ app.get('/test/email/:email', user.checkEmail)
 app.get('/account/register', user.renderForm)
 app.post('/account/change_password', user.changePassword)
 app.post('/account/retrieve_password', user.retrievePassword)
-app.post('/activate_account', user.isVerified)
+app.get('/activate_account', cors(corsOptions), user.isVerified)
 app.post('/account/reactivate', user.reactivate)
 app.post('/account/delete', user.Delete)
 app.post('/admin/form/',cors(corsOptions), admin.addFormItems)

@@ -64,10 +64,18 @@ var _cors = require('cors');
 
 var _cors2 = _interopRequireDefault(_cors);
 
+var _display = require('./controllers/display');
+
+var display = _interopRequireWildcard(_display);
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var corsOptions = {
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 // import * as interactions from './controllers/interactions'
 // ************************************************************************** //
 //                                                                            //
@@ -80,11 +88,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //   Updated: 2016/09/29 18:27:53 by opichou          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
-
-var corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
 
 var app = require('express')();
 var server = _http2.default.createServer(app);
@@ -108,7 +111,7 @@ app.use(_bodyParser2.default.urlencoded({
 }));
 
 app.use((0, _expressJwt2.default)({ secret: _credentials2.default.jwtSecret }).unless({
-    path: ['/login', '/retrieve_password', '/activate_account', '/user/new', '/protected', '/public', /^\/admin\/userform/i, /^\/images\//i, /^\/test/i] }));
+    path: ['/login', '/retrieve_password', '/user/new', '/protected', '/public', /^\/admin\/userform/i, /^\/images\//i, /^\/test/i] }));
 
 io.use(_socketioJwt2.default.authorize({
     secret: _credentials2.default.jwtSecret,
@@ -121,14 +124,15 @@ app.get('/', function (req, res) {
     res.send("Welcome dude !!!");
 });
 app.post('/login', user.userLogin);
-app.get('/i', (0, _cors2.default)(corsOptions), user.me);
-app.get('/user', (0, _cors2.default)(corsOptions), user.viewAll);
-app.get('/user/:userId', (0, _cors2.default)(corsOptions), user.viewOne);
+app.get('/i', (0, _cors2.default)(corsOptions), display.me);
+app.get('/whoami', (0, _cors2.default)(corsOptions), display.me);
+app.get('/user', (0, _cors2.default)(corsOptions), display.All);
+app.get('/user/:userId', (0, _cors2.default)(corsOptions), display.One);
 app.put('/user', user.updateProfile);
 app.post('/image', (0, _cors2.default)(corsOptions), upload.single('picture'), picture.uploadPicture);
 app.post('/image/delete', picture.deleteOne);
 app.post('/user/new', (0, _cors2.default)(corsOptions), user.create);
-app.post('/user/update', user.updateProfile);
+app.post('/user/update', (0, _cors2.default)(corsOptions), user.updateProfile);
 app.get('/tags', tags.tags);
 app.post('/tags', tags.addTag);
 app.get('/test/login/:login', user.checkLogin);
@@ -136,7 +140,7 @@ app.get('/test/email/:email', user.checkEmail);
 app.get('/account/register', user.renderForm);
 app.post('/account/change_password', user.changePassword);
 app.post('/account/retrieve_password', user.retrievePassword);
-app.post('/activate_account', user.isVerified);
+app.get('/activate_account', (0, _cors2.default)(corsOptions), user.isVerified);
 app.post('/account/reactivate', user.reactivate);
 app.post('/account/delete', user.Delete);
 app.post('/admin/form/', (0, _cors2.default)(corsOptions), admin.addFormItems);

@@ -32,6 +32,11 @@
       "name": "My profile",
       "icon": "settings_applications",
       "rel": "profile"
+    },
+    {
+      "name": "logout",
+      "icon": "exit_to_app",
+      "rel": "logout"
     }
   ],
   "user": [
@@ -58,7 +63,7 @@
       "fullForm":"true",
       "shortForm":"true",
       "login":"false",
-      "valid":"false",
+      
       "error":"",
       "required":"true",
       "validator_type":"http",
@@ -94,7 +99,7 @@
       "placeholder":"Old password",
       "fullForm":"true",
       "shortForm":"false",
-      "valid":"false",
+      
       "error":""
     },
     {
@@ -104,7 +109,7 @@
       "placeholder":"New password",
       "fullForm":"true",
       "shortForm":"false",
-      "valid":"false",
+      
       "error":"",
       "validator_type":"password",
       "validator":"3"
@@ -116,7 +121,7 @@
       "placeholder":"New password again",
       "fullForm":"true",
       "shortForm":"false",
-      "valid":"false",
+      
       "error":"",
       "validator_type":"echo",
       "validator":"newPassword"
@@ -129,7 +134,7 @@
       "autocomplete":"email",
       "fullForm":"true",
       "shortForm":"true",
-      "valid":"false",
+      
       "error":"",
       "required":"true",
       "validator_type":"http",
@@ -142,7 +147,7 @@
       "placeholder":"Password",
       "shortForm":"true",
       "login":"false",
-      "valid":"false",
+      
       "error":"",
       "required":"true",
       "validator_type":"password",
@@ -154,7 +159,7 @@
       "type":"password",
       "placeholder":"Password again",
       "shortForm":"true",
-      "valid":"false",
+      
       "error":"",
       "required":"true",
       "validator_type":"echo",
@@ -203,7 +208,7 @@
       "id":"9",
       "name":"gender",
       "type":"radio",
-      "value":[
+      "radios":[
         {
           "id":"0",
           "label": "female",

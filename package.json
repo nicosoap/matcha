@@ -4,7 +4,7 @@
   "description": "Online dating service",
   "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node src/server.js",
+    "dev": "nodemon --exec babel-node --debug src/server.js",
     "prestart": "babel src --out-dir dist",
     "start": "node dist/server.js"
   },
