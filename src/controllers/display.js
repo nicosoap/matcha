@@ -38,6 +38,10 @@ const decrypt = async text => {
     return dec;
 }
 
+const popularity = async user => {
+    return (49)
+}
+
 export const All = async (req, res) => {
     let query = {
             netflix: false,
@@ -129,12 +133,38 @@ export const All = async (req, res) => {
 }
 
 export const One = async (req, res) => {
-    const login = req.user.username
+    const login = req.params.userId
+    const me = req.user.username
     let db = await dbl.connect()
     try {
-        let user = await db.collection('users').findOne({login, active: true}, {password: false, token: false, fingerprint: false})
+        let user = await db.collection('users').findOne({login, active: true}, {
+            password: false,
+            token: false,
+            fingerprint: false,
+            email: false,
+            firstName: false,
+            lastName: false,
+            _id: false,
+            Lat: false,
+            Lng: false
+        })
         if (user) {
-            res.send({success: true, data: user})
+            let liked = await db.collection('likes').findOne({userId: me, otherId: login, likes: true})
+            let likes_me = await db.collection('likes').findOne({userId: login, otherId: me, likes: true})
+            let connection = await db.collection('connections').findOne({login})
+            let visited = await db.collection('visits').findOne({userId:login, otherId: me})
+            let var_popularity = await popularity(login)
+            await db.collection('visits').insertOne({userId: me, otherId: login, visit: true, date: new Date()})
+            res.send({
+                success: true,
+                user,
+                liked: !!liked,
+                likes_me: !!likes_me,
+                connected: connection.connected,
+                lastConnection: connection.date,
+                visited: !!visited,
+                popularity: var_popularity
+            })
         } else {
             res.send({success: false})
         }
