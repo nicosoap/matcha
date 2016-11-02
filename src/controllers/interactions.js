@@ -87,7 +87,9 @@ module.exports = (io) =>{
             if (user.gender === 'male') { _his = 'his'} else if (user.gender === 'female') { _his = 'her'}
         },
 
-        photo: user => {return (user.photo.filter(e => {e.front})[0].filename)},
+        photo: user => { if (user.photo.length > 0) {
+            return (user.photo[0])
+        }},
 
 
 

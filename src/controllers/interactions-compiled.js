@@ -212,9 +212,9 @@ module.exports = function (io) {
         },
 
         photo: function photo(user) {
-            return user.photo.filter(function (e) {
-                e.front;
-            })[0].filename;
+            if (user.photo.length > 0) {
+                return user.photo[0];
+            }
         },
 
         like: function () {

@@ -2,9 +2,9 @@
   "debug" : "true",
   "debug_output": "like",
   "URL": "localhost",
-  "port": "3001",
+  "port": "8080",
   "appConfig":{
-    "baseURL": "http://localhost:3001",
+    "baseURL": "http://localhost:8080",
     "debug": "true"
   },
   "menuItems": [
@@ -45,14 +45,7 @@
       "name":"id",
       "type":"hidden",
       "value":"0",
-      "fullForm":"true",
       "shortForm":"true"
-    },
-    {
-      "id":"0",
-      "type":"section",
-      "value":"Update credentials:",
-      "fullForm":"true"
     },
     {
       "id":"1",
@@ -60,10 +53,8 @@
       "type":"text",
       "placeholder":"Login",
       "autocomplete":"username",
-      "fullForm":"true",
       "shortForm":"true",
       "login":"false",
-      
       "error":"",
       "required":"true",
       "validator_type":"http",
@@ -97,7 +88,6 @@
       "name":"OldPassword",
       "type":"password",
       "placeholder":"Old password",
-      "fullForm":"true",
       "shortForm":"false",
       
       "error":""
@@ -107,9 +97,7 @@
       "name":"newPassword",
       "type":"password",
       "placeholder":"New password",
-      "fullForm":"true",
       "shortForm":"false",
-      
       "error":"",
       "validator_type":"password",
       "validator":"3"
@@ -119,9 +107,7 @@
       "name":"newPassword2",
       "type":"password",
       "placeholder":"New password again",
-      "fullForm":"true",
       "shortForm":"false",
-      
       "error":"",
       "validator_type":"echo",
       "validator":"newPassword"
@@ -132,9 +118,7 @@
       "type":"email",
       "placeholder":"Email address",
       "autocomplete":"email",
-      "fullForm":"true",
       "shortForm":"true",
-      
       "error":"",
       "required":"true",
       "validator_type":"http",
@@ -147,7 +131,6 @@
       "placeholder":"Password",
       "shortForm":"true",
       "login":"false",
-      
       "error":"",
       "required":"true",
       "validator_type":"password",
@@ -159,7 +142,6 @@
       "type":"password",
       "placeholder":"Password again",
       "shortForm":"true",
-      
       "error":"",
       "required":"true",
       "validator_type":"echo",

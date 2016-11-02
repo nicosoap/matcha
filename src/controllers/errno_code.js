@@ -23,6 +23,8 @@ module.exports = {
     PICTURE_UPLOAD_SUCCESS: "Picture successfully added",
     PICTURE_REGISTER_ERROR: "The picture couldn't be registered in the database",
     PICTURE_UPLOAD_ERROR: "Picture upload failed",
-    REACTIVATION_ERROR: "An error occured during account reactivation"
+    REACTIVATION_ERROR: "An error occured during account reactivation",
+    GEOLOC_FAILURE: "Your Geolocation couldn't be registered, please refresh you page or wait 2 minutes",
+    GEOLOC_SUCCESS: "Your Geolocation has been saved, search results will be updated accordingly"
 
 };

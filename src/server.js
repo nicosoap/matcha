@@ -25,12 +25,11 @@ import socketIo from 'socket.io'
 import http from 'http'
 import socketioJwt from 'socketio-jwt'
 import config from './config.json'
-import redis from 'socket.io-redis'
 import cors from 'cors'
 import * as display from './controllers/display'
 
 let corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: '*',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
@@ -48,7 +47,7 @@ app.use(session({
     saveUninitialized: true,
     secret: credentials.cookieSecret,
 }))
-app.set('port', process.env.PORT || config.port || 3001)
+app.set('port', process.env.PORT || config.port || 8080)
 app.use('/images', express.static(__dirname + '/public/images'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -80,6 +79,7 @@ app.get('/i', cors(corsOptions), display.me)
 app.get('/whoami', cors(corsOptions), display.me)
 app.get('/user', cors(corsOptions), display.All)
 app.get('/user/:userId', cors(corsOptions), display.One)
+app.post('/user/locate', cors(corsOptions), user.locate)
 app.put('/user', user.updateProfile)
 app.post('/image', cors(corsOptions), upload.single('picture'), picture.uploadPicture)
 app.post('/image/delete', picture.deleteOne)
@@ -151,7 +151,7 @@ io.on('connection', socket => {
 
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
-        res.send({error:err.name});
+        res.send({success: false, error: err.name});
     }
 })
 app.use((req, res) =>{

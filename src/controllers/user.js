@@ -50,8 +50,9 @@ const decrypt = async text => {
 
 
 async function genToken (user){
+    delete user.password
     let myToken = await jwt.sign({username: user.login}, credentials.jwtSecret)
-    const db = await dbl.connect()
+    let db = await dbl.connect()
     try {
         const update = await db.collection('users').updateOne({login: user.login},{$set: {token: myToken}})
         if (update.modifiedCount == 1){
@@ -454,37 +455,37 @@ export async function create(req, res){
         if (emailProp.valid) {
             user.email = emailProp.email
             console.log(emailProp)
-        } else {errors.push(emailProp.message)
-            console.log(emailProp)}
+        } else {
+            errors.push(emailProp.message)
+        }
         if (loginProp.valid) {
             user.login = loginProp.login
-            console.log(loginProp)
-        } else {errors.push(loginProp.message)
-            console.log(emailProp)}
+        } else {
+            errors.push(loginProp.message)
+        }
         if (passwordProp.valid) {
             user.password = passwordProp.password
-            console.log(passwordProp)
-        } else {errors.push(passwordProp.message)
-            console.log(emailProp)}
+        } else {
+            errors.push(passwordProp.message)
+        }
         if (errors.length === 0) {
             let db = await dbl.connect()
-            console.log("no error")
             try {
                 const rep = await db.collection('users').insertOne(user);
                 if (rep.insertedCount === 1) {
                     const email = await validateAccount(user.email);
-                    console.log("New user created:", user.login)
+                    console.log('%c New user created:' + user.login, 'color: #green')
                     res.send({success: true, message: "User created, please check your emails"});
                 }
             } finally {
                 db.close();
             }
         } else {
-            console.log("Error creating user:", user.login)
+            console.log("%c Error creating user:" + user.login, 'color: red')
             res.send({success: false, message: "Your account couldn't be created", errors: errors || ""})
         }
     } else {
-    console.log("Error creating user:", user.login)
+    console.log("%c Error creating user", 'color: red')
         res.send({success: false, message: "Your account couldn't be created"})
     }
 } //this method adds a new user to the database
@@ -518,13 +519,13 @@ export async function reactivate(req, res){
 }//this method reactivates a previously desactivated account
 
 async function validateAccount(email){
-    let myToken = jwt.sign({email: email}, credentials.jwtSecret, {expiresIn: 900});
+    let myToken = jwt.sign({email: email}, credentials.jwtSecret, {expiresIn: '7d'});
     let mailOptions = {
         from: '"liveoption" <customer-success@liveoption.io>', // sender address
         to: email, // list of receivers
         subject: 'Pleasee verify your liveoption account',
         html: '<b>Hello,</b></br><p>You just created a liveoption account. Please click the following link within the next 15mins. to verify your email address.</p>' +
-        '<a href="http://www.liveoption.io/account/validate?token=' + myToken + '">Validate account now</a>' +
+        '<a href="http://localhost:3000/validate?token=' + myToken + '">Validate account now</a>' +
         '<p>Thank you for registering liveoption,</p><p>See you soon !</p>' // html body
     };
     console.log("sending email to", email)
@@ -533,13 +534,15 @@ async function validateAccount(email){
 
 export async function isVerified(req, res){
     //this method makes sure the user has authorized his account via email
+    console.log("DEBUG: ", req.user)
     let email = req.user.email;
     let db = await dbl.connect();
     try{
-        let result = db.collection('users').findOneAndUpdate({email}, {$set: {active: true}});
-            if (result.length === 1) {
-                let user = genToken(result)
-                 res.send(user)
+        let result = await db.collection('users').findOneAndUpdate({email}, {$set: {active: true}});
+        console.log(result)
+            if (result.ok === 1) {
+                let user = await genToken(result.value)
+                 res.send({success: true, user})
             } else {
                 res.send({success: false, message: ERROR.AUTH_ERROR})
             }
@@ -579,5 +582,24 @@ export const isEnabled = async login => {
         return await db.collection('users').findOne({login}, {photo: true}).photo.length != 0
     } catch (err) { console.error(err) }
     finally { db.close()
+    }
+}
+
+export const locate = async (req, res) => {
+    let db = await dbl.connect()
+    const login = req.user.username,
+        Lat = req.body.Lat,
+        Lng = req.body.Lng
+    try {
+        let test = await db.collection('users').update({login}, {$set: {Lat, Lng}})
+        if (test.nModified !== 0) {
+            res.send({success: true, message: ERROR.GEOLOC_SUCCESS})
+        } else {
+            res.send({success: false, message: ERROR.GEOLOC_FAILURE})
+        }
+    } catch (err) {
+        console.error(err)
+    } finally {
+        db.close()
     }
 }

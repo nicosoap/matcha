@@ -56,10 +56,6 @@ var _config = require('./config.json');
 
 var _config2 = _interopRequireDefault(_config);
 
-var _socket3 = require('socket.io-redis');
-
-var _socket4 = _interopRequireDefault(_socket3);
-
 var _cors = require('cors');
 
 var _cors2 = _interopRequireDefault(_cors);
@@ -72,10 +68,6 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
 // import * as interactions from './controllers/interactions'
 // ************************************************************************** //
 //                                                                            //
@@ -88,6 +80,11 @@ var corsOptions = {
 //   Updated: 2016/09/29 18:27:53 by opichou          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
+
+var corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 var app = require('express')();
 var server = _http2.default.createServer(app);
@@ -103,7 +100,7 @@ app.use((0, _expressSession2.default)({
     saveUninitialized: true,
     secret: _credentials2.default.cookieSecret
 }));
-app.set('port', process.env.PORT || _config2.default.port || 3001);
+app.set('port', process.env.PORT || _config2.default.port || 8080);
 app.use('/images', _express2.default.static(__dirname + '/public/images'));
 app.use(_bodyParser2.default.json());
 app.use(_bodyParser2.default.urlencoded({
@@ -128,6 +125,7 @@ app.get('/i', (0, _cors2.default)(corsOptions), display.me);
 app.get('/whoami', (0, _cors2.default)(corsOptions), display.me);
 app.get('/user', (0, _cors2.default)(corsOptions), display.All);
 app.get('/user/:userId', (0, _cors2.default)(corsOptions), display.One);
+app.post('/user/locate', (0, _cors2.default)(corsOptions), user.locate);
 app.put('/user', user.updateProfile);
 app.post('/image', (0, _cors2.default)(corsOptions), upload.single('picture'), picture.uploadPicture);
 app.post('/image/delete', picture.deleteOne);
@@ -196,7 +194,7 @@ io.on('connection', function (socket) {
 
 app.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
-        res.send({ error: err.name });
+        res.send({ success: false, error: err.name });
     }
 });
 app.use(function (req, res) {
