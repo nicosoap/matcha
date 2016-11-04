@@ -28,6 +28,10 @@ var _picture = require('./picture');
 
 var picture = _interopRequireWildcard(_picture);
 
+var _chalk = require('chalk');
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
 var _dbConnect = require('./dbConnect');
 
 var dbl = _interopRequireWildcard(_dbConnect);
@@ -203,11 +207,21 @@ module.exports = function (io) {
         }(),
 
         _his: function _his(user) {
-            var _his = 'their';
             if (user.gender === 'male') {
-                _his = 'his';
+                return 'his';
             } else if (user.gender === 'female') {
-                _his = 'her';
+                return 'her';
+            } else {
+                return 'their';
+            }
+        },
+        _him: function _him(user) {
+            if (user.gender === 'male') {
+                return 'him';
+            } else if (user.gender === 'female') {
+                return 'her';
+            } else {
+                return 'them';
             }
         },
 

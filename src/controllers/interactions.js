@@ -8,6 +8,7 @@ import bodyParser from 'body-parser'
 import session from 'express-session'
 import socketIo from 'socket.io'
 import * as picture from './picture'
+import chalk from 'chalk'
 import * as dbl from './dbConnect'
 import config from '../config.json'
 // var io = require('socket.io-emitter')({host:'localhost', port:3001})
@@ -66,13 +67,12 @@ module.exports = (io) =>{
             }
         },
 
-        disconnect: async(login, socket) => {
+        disconnect: async(login) => {
             const db = await dbl.connect()
             try {
                 currentDate = new Date()
                 await db.collection('connections').updateOne({login}, {
                     $set: {
-                        socket,
                         connected: false,
                         date: currentDate
                     }
@@ -83,8 +83,10 @@ module.exports = (io) =>{
         },
 
         _his: (user) =>{
-            let _his = 'their'
-            if (user.gender === 'male') { _his = 'his'} else if (user.gender === 'female') { _his = 'her'}
+            if (user.gender === 'male') { return'his'} else if (user.gender === 'female') { return 'her'} else { return 'their'}
+        },
+        _him: (user) =>{
+            if (user.gender === 'male') { return 'him'} else if (user.gender === 'female') { return 'her'} else {return 'them'}
         },
 
         photo: user => { if (user.photo.length > 0) {

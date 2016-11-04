@@ -16,7 +16,7 @@
     {
       "name": "Search",
       "icon": "search",
-      "rel": "#"
+      "rel": "/"
     },
     {
       "name": "Live options",
@@ -119,6 +119,7 @@
       "placeholder":"Email address",
       "autocomplete":"email",
       "shortForm":"true",
+      "fullForm":"true",
       "error":"",
       "required":"true",
       "validator_type":"http",

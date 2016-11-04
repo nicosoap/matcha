@@ -452,6 +452,8 @@ export async function create(req, res){
             loginProp = await checkLoginHlp(req.body.login),
             passwordProp = await checkPass(req.body.password, req.body.password2)
 
+        user.fingerprint = req.body.fingerprint
+
         if (emailProp.valid) {
             user.email = emailProp.email
             console.log(emailProp)

@@ -10,6 +10,9 @@ import ERROR from './errno_code'
 import match from '../model/match'
 import crypto from 'crypto'
 import * as user from './user'
+import findAll from '../model/findAll'
+import popularity from '../model/popularity'
+
 
 let saltRounds = 10
 
@@ -38,9 +41,6 @@ const decrypt = async text => {
     return dec;
 }
 
-const popularity = async user => {
-    return (49)
-}
 
 export const All = async (req, res) => {
     let query = {
@@ -119,17 +119,10 @@ export const All = async (req, res) => {
         .split(' ')
         .filter(e => e !== '')
 
-    const db = await dbl.connect()
-    try {
-        const results = await db.collection('users').find({})
-        try {
-            res.send({users: await results.toArray()})
-        } catch (err) {
-            console.error(err)
-        }
-    } finally {
-        db.close()
-    }
+
+    let search = await findAll(req.user.username)
+    res.send({success: true, users: search})
+
 }
 
 export const One = async (req, res) => {
@@ -176,5 +169,17 @@ export const One = async (req, res) => {
 }
 
 export const me = async (req,res) => {
-    res.send({login: req.user.username})
+    const login = req.user.username
+    let db = await dbl.connect()
+    try {
+        let user = await db.collection('users').findOne({login, active: true})
+        if (user) {
+            res.send({success: true, login: req.user.username})
+        } else {
+            res.send({success: false, message: ERROR.AUTH_ERROR})
+        }
+    } finally {
+        db.close()
+    }
+
 }

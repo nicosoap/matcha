@@ -11,6 +11,7 @@
 // ************************************************************************** //
 
 import express from 'express'
+import chalk from 'chalk'
 import bodyParser from 'body-parser'
 import session from 'express-session'
 import * as user from './controllers/user'
@@ -29,7 +30,7 @@ import cors from 'cors'
 import * as display from './controllers/display'
 
 let corsOptions = {
-    origin: '*',
+    origin: '',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
@@ -114,56 +115,73 @@ function now(){
 
 io.on('connection', socket => {
     interactions.connect(socket.decoded_token.username, socket.id)
-    console.log(socket.decoded_token.username, 'connected on', now());
+    console.log(chalk.bgGreen(socket.decoded_token.username, 'connected on', now()))
     socket.on('message', body => {
         socket.emit('message', {
             body,
             from: socket.decoded_token.username,
             read: false
         })
-    });
+    })
     socket.on('like', body => {
         socket.broadcast.emit('like', {
             body,
             from: socket.decoded_token.username,
             read: false
         })
-    });
+    })
     socket.on('match', body => {
         socket.broadcast.emit('match', {
             body,
             from: socket.decoded_token.username,
             read: false
         })
-    });
+    })
     socket.on('visit', body => {
         socket.emit('visit', {
             body,
             from: socket.decoded_token.username,
             read: false
         })
-    });
+    })
     socket.on('disconnect', () => {
         interactions.disconnect(socket.decoded_token.username, socket.id)
-        console.log(socket.decoded_token.username, 'disconnected on', now());
+        console.log(chalk.bgRed(socket.decoded_token.username, 'disconnected on', now()))
     })
 });
 
 app.use((err, req, res, next) => {
     if (err.name === 'UnauthorizedError') {
-        res.send({success: false, error: err.name});
+        res.send({success: false, error: err.name})
     }
 })
 app.use((req, res) =>{
-    res.type('text/html');
-    res.status(404);
-    res.send('Error 404 Page');
+    res.type('text/html')
+    res.status(404)
+    res.send('Error 404 Page')
 })
 app.use((err, req, res) =>{
-    console.error(err.stack);
-    res.status(500);
-    res.send('Error 500 Page');
+    console.error(err.stack)
+    res.status(500)
+    res.send('Error 500 Page')
 })
 server.listen(app.get('port'), () => {
+    console.log("     ******       ******")
+    console.log("   **********   **********")
+    console.log(" ************* *************")
+    console.log("*****************************")
+    console.log("*****************************")
+    console.log("*****************************")
+    console.log(" ***************************")
+    console.log("   ***********************")
+    console.log("     *******************")
+    console.log("       ***************")
+    console.log("         ***********")
+    console.log("           *******")
+    console.log("             ***")
+    console.log("              *")
+    console.log(" ")
+    console.log(" ")
+    console.log(" ")
     console.log('Express started on http://localhost:' + app.get('port') + ' press Ctrl-C to terminate');
 })

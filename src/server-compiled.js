@@ -4,6 +4,10 @@ var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
 
+var _chalk = require('chalk');
+
+var _chalk2 = _interopRequireDefault(_chalk);
+
 var _bodyParser = require('body-parser');
 
 var _bodyParser2 = _interopRequireDefault(_bodyParser);
@@ -69,7 +73,10 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // import * as interactions from './controllers/interactions'
-// ************************************************************************** //
+var corsOptions = {
+    origin: '',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}; // ************************************************************************** //
 //                                                                            //
 //                                                        :::      ::::::::   //
 //   server.js                                          :+:      :+:    :+:   //
@@ -80,11 +87,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //   Updated: 2016/09/29 18:27:53 by opichou          ###   ########.fr       //
 //                                                                            //
 // ************************************************************************** //
-
-var corsOptions = {
-    origin: '*',
-    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-};
 
 var app = require('express')();
 var server = _http2.default.createServer(app);
@@ -157,7 +159,7 @@ function now() {
 
 io.on('connection', function (socket) {
     interactions.connect(socket.decoded_token.username, socket.id);
-    console.log(socket.decoded_token.username, 'connected on', now());
+    console.log(_chalk2.default.bgGreen(socket.decoded_token.username, 'connected on', now()));
     socket.on('message', function (body) {
         socket.emit('message', {
             body: body,
@@ -188,7 +190,7 @@ io.on('connection', function (socket) {
     });
     socket.on('disconnect', function () {
         interactions.disconnect(socket.decoded_token.username, socket.id);
-        console.log(socket.decoded_token.username, 'disconnected on', now());
+        console.log(_chalk2.default.bgRed(socket.decoded_token.username, 'disconnected on', now()));
     });
 });
 
@@ -208,6 +210,23 @@ app.use(function (err, req, res) {
     res.send('Error 500 Page');
 });
 server.listen(app.get('port'), function () {
+    console.log("     ******       ******");
+    console.log("   **********   **********");
+    console.log(" ************* *************");
+    console.log("*****************************");
+    console.log("*****************************");
+    console.log("*****************************");
+    console.log(" ***************************");
+    console.log("   ***********************");
+    console.log("     *******************");
+    console.log("       ***************");
+    console.log("         ***********");
+    console.log("           *******");
+    console.log("             ***");
+    console.log("              *");
+    console.log(" ");
+    console.log(" ");
+    console.log(" ");
     console.log('Express started on http://localhost:' + app.get('port') + ' press Ctrl-C to terminate');
 });
 
