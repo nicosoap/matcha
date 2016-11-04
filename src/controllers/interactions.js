@@ -20,7 +20,7 @@ import config from '../config.json'
 
 
 
-module.exports = (io) =>{
+module.exports = (io) => {
 
 
     let self = {

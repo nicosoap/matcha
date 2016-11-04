@@ -25,6 +25,7 @@ module.exports = {
     PICTURE_UPLOAD_ERROR: "Picture upload failed",
     REACTIVATION_ERROR: "An error occured during account reactivation",
     GEOLOC_FAILURE: "Your Geolocation couldn't be registered, please refresh you page or wait 2 minutes",
-    GEOLOC_SUCCESS: "Your Geolocation has been saved, search results will be updated accordingly"
-
+    GEOLOC_SUCCESS: "Your Geolocation has been saved, search results will be updated accordingly",
+    CHAT_SUCCESS: "Your conversation has been synchronized",
+    CHAT_FAILURE: "Your conversation couldn't be synchronized"
 };

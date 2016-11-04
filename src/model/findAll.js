@@ -5,11 +5,10 @@
 import * as dbl from "../controllers/dbConnect"
 import chalk from 'chalk'
 import popularity from './popularity'
+import match from './match'
 
 
-const distance = (userId, otherId) => {
-    return ((userId.Lat - otherId.Lat) ** 2 + (userId.Lng + otherId.Lng) ** 2) ** 0.5
-}
+
 
 const findAll = async login => {
     let result = []
@@ -58,6 +57,8 @@ const findAll = async login => {
                     user.visited = (visits.filter(e => {
                         return (e.userId === doc.login)
                     }).length > 0)
+                    user.matchingRate = match(user, doc)
+                    console.log("Matching rate: ",user.matchingRate)
                     user.popularity = popularity(doc.login)
                     user.password = ''
                     user.token = ''
@@ -74,7 +75,7 @@ const findAll = async login => {
             + ' results'
         ))
         return result.sort((a, b) => {
-            return distance(user, a) - distance(user, b)
+            return b.matchingRate - a.matchingRate
         }).filter(e => {return (!!e)})
 
     } catch (err) {
