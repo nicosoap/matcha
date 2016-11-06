@@ -106,7 +106,6 @@ async function basicAuth(login, password, fingerprint, callback) {
                 active: true
             }]
         })
-        console.log(user)
 
             if (!user) {
                 callback({success: false, message: ERROR.AUTH_ERROR}, {
@@ -119,7 +118,6 @@ async function basicAuth(login, password, fingerprint, callback) {
                 const pass = await encrypt(password)
                 if (user.password === pass) {
                     user = await genToken(user);
-                    console.log("Token received")
                     if (user.fingerprint && contains(user.fingerprint, fingerprint)) {
                         const ret = {
                             auth: {
@@ -132,7 +130,6 @@ async function basicAuth(login, password, fingerprint, callback) {
                         };
                         callback(err, ret);
                     } else {
-                        console.log("New fingerprint will be added to user profile")
                         user = addFingerprint(user, fingerprint)
                         const ret = {
                             auth: {
@@ -146,7 +143,6 @@ async function basicAuth(login, password, fingerprint, callback) {
                         callback(err, ret)
                     }
                 } else {
-                    console.log("wrong password");
                     const ret = {
                         auth: {
                             method: "basic",
@@ -214,13 +210,20 @@ async function tokenAuth(token, fingerprint, callback){
 
 export async function userLogin(req, res) {
     console.log("Authorizing:", req.body)
-    let token = req.headers.authorization.match(/^Bearer (.*)$/)[1]
+    let token = ''
+    if (req.headers.authorization) {
+        let token = req.headers.authorization.match(/^Bearer (.*)$/)[1]
+    } else if (req.body.token) {
+        let token = req.body.token.match(/^Bearer (.*)$/)[1]
+    }
+    console.log(token)
     await authenticate(req.body.login, req.body.password, token, req.body.fingerprint, (err, ret) => {
             if (err || ret.auth.fingerprint == false) {
                 console.error(err)
                 console.log(ret)
                 ret.success = false
             }
+            console.log("AUTHENTICATION: ",ret)
         res.send(ret)
         }
     )

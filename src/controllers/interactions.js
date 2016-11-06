@@ -9,14 +9,9 @@ import session from 'express-session'
 import socketIo from 'socket.io'
 import * as picture from './picture'
 import chalk from 'chalk'
+import ERROR from './errno_code'
 import * as dbl from './dbConnect'
 import config from '../config.json'
-// var io = require('socket.io-emitter')({host:'localhost', port:3001})
-// setInterval(function(){
-//     io.emit('time', new Date)
-// }, 5000)
-
-// const io = socketIo(server)
 
 
 
@@ -104,12 +99,12 @@ module.exports = (io) => {
                 await db.collection('likes').updateOne({userId, otherId}, {$set: {like: true}}, {upsert: true})
                 let user = await db.collection('users').findOne({login: userId})
                 let user2 = await db.collection('users').findOne({login: otherId})
-                let match = await self.doesLike(otherId, userId)
+                let match = await self.doesLike(db, otherId, userId)
                 if (match) {
-                    res.send({success: true, match: true})
+                    self.newChat(db, userId, otherId)
                     const body = userId + ' and you matched ! You can now chat with ' + self._him(user) + '.'
                     const body2 = otherId + ' and you matched ! You can now chat with ' + self._him(user2) + '.'
-
+                    console.log('match')
                     self.sendNotif(otherId, 'match', {
                         body,
                         from: userId,
@@ -122,6 +117,7 @@ module.exports = (io) => {
                         image: self.photo(user2),
                         read: false
                     })
+                    res.send({success: true, match: true})
                 } else {
                     res.send({success: true, match: false})
                     if (config.debug) {
@@ -140,8 +136,6 @@ module.exports = (io) => {
                         read: false
                     })
                 }
-            } catch (err) {
-                console.log(err)
             } finally {
                 db.close()
             }
@@ -190,20 +184,151 @@ module.exports = (io) => {
             }
         },
 
-        doesLike: async(userId, otherId) => {
+        doesLike: async(db, userId, otherId) => {
             //this method checks if a log entry exists for userId liking otherId and fires callback
-            const db = await dbl.connect()
             try {
-                return (db.collection('likes').find({userId, otherId, like: true}).count() === 1)
+                return (await db.collection('likes').find({userId, otherId, like: true}).count() === 1)
+            } catch(err){
+                console.error(err)
+            }
+        },
+
+        match: async(db, userId, otherId) => {
+            //this method checks, giver two user ids if mutual likes exist and fires callback
+            return (await self.doesLike(db, userId, otherId)
+            && await self.doesLike(db, otherId, userId))
+        },
+
+        chats: async (req, res) => {
+            let userId = req.user.username
+            let db = await dbl.connect()
+            try {
+                await db.collection('chats').find({$or: [{userId}, {otherId: userId}]}).toArray((err, chats) => {
+                    res.send({success: true, message: ERROR.CHAT_SUCCESS, chats})
+                })
+            } catch(err) {
+                console.log(err)
             } finally {
                 db.close()
             }
         },
 
-        match: async(userId, otherId) => {
-            //this method checks, giver two user ids if mutual likes exist and fires callback
-            return (await self.doesLike(userId, otherId)
-            && await self.doesLike(otherId, userId))
+        newChat: (db, userId, otherId) => {
+            let err = {}
+            try {
+                let users = db.collection('users').find({$or:[{login: userId}, {login: otherId}]}).toArray((error, results) => {
+                    results.forEach(e => {  if (!e.active) {
+                        err.users = true;
+                        console.log("couldn't initialize chat for "+ userId + " and " + otherId + " --- value = " + e)
+                    }})
+
+                })
+                if (!err.users) {
+                    db.collection('chats').insertOne({userId, otherId})
+                    self.sendNotif(userId,'chatroom',{userId, otherId, messages: []})
+                    self.sendNotif(otherId,'chatroom',{userId, otherId, messages: []})
+                }
+            } catch(err){
+                console.error(err)
+            }
+        },
+
+        chat: async (from, to, body) => {
+            console.log("New message from " + from + " to " + to + " : " + body)
+            const message = {from, to, body}
+            let rslt = await self.insertChat(from, to, message)
+            self.sendNotif(from, 'message', message)
+            self.sendNotif(to, 'message', message)
+            res.send(rslt)
+        },
+
+        insertChat: async (userId, otherId, message) => {
+            let db = await dbl.connect()
+            try {
+                let match = await self.match(db, userId, otherId)
+                if (match) {
+                    let chatExists = await db.collection('chats').find({
+                        $or: [{userId, otherId}, {
+                            userId: otherId,
+                            otherId: userId
+                        }]
+                    }).count()
+                    if (chatExists === 1) {
+                        let rslt = await db.collection('chats').update({
+                            $or: [{userId, otherId}, {
+                                userId: otherId,
+                                otherId: userId
+                            }]
+                        }, {
+                            $push: {
+                                messages: {
+                                    $each: [message]
+                                }
+                            }
+                        }, {upsert: true})
+                        if (rslt.nModified != 0) {
+                            return ({success: true, message: ERROR.CHAT_SUCCESS})
+                        } else {
+                            return ({success: false, message: ERROR.CHAT_FAILURE})
+                        }
+                    } else if (chatExists > 1) {
+                        while (chatExists > 1) {
+                            let one = await db.collection('chats').findOneAndRemove({otherId: userId, userId: otherId})
+                            await db.collection('chats').update({
+                                $or: [{userId, otherId}, {
+                                    userId: otherId,
+                                    otherId: userId
+                                }]
+                            }, {
+                                $push: {
+                                    messages: {
+                                        each: [...one.messages]
+                                    }
+                                }
+                            })
+                            chatExists = await db.collection('chats').find({
+                                $or: [{userId, otherId}, {
+                                    userId: otherId,
+                                    otherId: userId
+                                }]
+                            }).count()
+                        }
+
+                        let rslt = await db.collection('chats').update({
+                            userId, otherId
+                        }, {
+                            $push: {
+                                messages: {
+                                    $each: [message]
+                                }
+                            }
+                        }, {upsert: true})
+                        if (rslt.nModified != 0) {
+                            return ({success: true, message: ERROR.CHAT_SUCCESS})
+                        } else {
+                            return ({success: false, message: ERROR.CHAT_FAILURE})
+                        }
+                    } else if (chatExists === 0) {
+                        let rslt = await db.collection('chats').insert({
+                            userId, otherId, messages: [message]
+                        })
+                        if (rslt.nModified != 0) {
+                            return ({success: true, message: ERROR.CHAT_SUCCESS})
+                        } else {
+                            return ({success: false, message: ERROR.CHAT_FAILURE})
+                        }
+                    } else {
+                        console.log("please check database collection 'chats' form hand created duplicates")
+                    }
+
+                } else {
+                    return ({success: false, message: ERROR.CHAT_FAILURE})
+                }
+            } catch (err) {
+                console.error(err)
+            } finally {
+                db.close()
+            }
         }
     }
     return self

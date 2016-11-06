@@ -41,9 +41,6 @@ const match = (userId, otherId, query) => {
         + (parseInt(max_distance)
         / (parseInt(distance(userId, otherId)) * 111 + 1))
         * parseInt(distance_weight) / parseInt(max_distance) * 2
-    console.log("user LAT LNG: ", userId.Lat, userId.Lng, "OTHER LAT LNG: ", otherId.Lat, otherId.Lng)
-    console.log(distance(userId, otherId))
-    console.log(score)
     return score
 }
 

@@ -38,7 +38,6 @@ const app = require('express')();
 const server = http.createServer(app)
 const io = socketIo(server)
 const interactions =  require('./controllers/interactions')(io)
-const chat = require('./controllers/chat')(io)
 
 const upload = multer({ dest: `${__dirname}/public/images` })
 
@@ -83,9 +82,9 @@ app.get('/whoami', cors(corsOptions), display.me)
 app.get('/user', cors(corsOptions), display.All)
 app.get('/user/:userId', cors(corsOptions), display.One)
 app.post('/user/locate', cors(corsOptions), user.locate)
-app.put('/user', user.updateProfile)
-app.post('/chat', cors(corsOptions), chat.chat)
-app.get('/chats', cors(corsOptions), chat.chats)
+app.put('/user', cors(corsOptions), user.updateProfile)
+app.post('/chat', cors(corsOptions), interactions.chat)
+app.get('/chats', cors(corsOptions), interactions.chats)
 app.post('/image', cors(corsOptions), upload.single('picture'), picture.uploadPicture)
 app.post('/image/delete', picture.deleteOne)
 app.post('/user/new', cors(corsOptions), user.create)
@@ -120,12 +119,9 @@ function now(){
 io.on('connection', socket => {
     interactions.connect(socket.decoded_token.username, socket.id)
     console.log(chalk.bgGreen(socket.decoded_token.username, 'connected on', now()))
-    socket.on('message', body => {
-        socket.emit('message', {
-            body,
-            from: socket.decoded_token.username,
-            read: false
-        })
+    socket.on('message', (message) => {
+        console.log(message)
+        interactions.chat(socket.decoded_token.username ,message.to, message.body)
     })
     socket.on('like', body => {
         socket.broadcast.emit('like', {

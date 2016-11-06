@@ -58,7 +58,7 @@ const findAll = async login => {
                         return (e.userId === doc.login)
                     }).length > 0)
                     user.matchingRate = match(user, doc)
-                    console.log("Matching rate: ",user.matchingRate)
+                    console.log(chalk.blue("Matching rate: ",user.matchingRate))
                     user.popularity = popularity(doc.login)
                     user.password = ''
                     user.token = ''
