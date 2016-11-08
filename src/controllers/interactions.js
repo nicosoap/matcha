@@ -91,7 +91,6 @@ module.exports = (io) => {
 
 
         like: async(req, res) => {
-            console.log('like')
             const userId = req.user.username,
                 otherId = req.params.userId
             let db = await dbl.connect()

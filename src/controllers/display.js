@@ -12,6 +12,7 @@ import crypto from 'crypto'
 import * as user from './user'
 import findAll from '../model/findAll'
 import popularity from '../model/popularity'
+import geolib from 'geolib'
 
 
 let saltRounds = 10
@@ -43,6 +44,8 @@ const decrypt = async text => {
 
 
 export const All = async (req, res) => {
+    const tic = new Date()
+
     let query = {
             netflix: false,
             rightnow: false,
@@ -61,16 +64,20 @@ export const All = async (req, res) => {
             tags: [],
             custom: ''
         },
+        regexExperimentalAge = /([0-9]{2})? ?(?:to)? ?([0-9]{2}) ?(?:yo|years)/i,
+        regexExperimentalLocation = /(?:within|in|around|closer than)(?: about|) ?([0-9]{1,3}) ?(miles|km|m|meters|feet|minutes|min)/i,
+        regexExperimentalPerfect = /perfect/i,
+
         regexHashtag = /#([a-zA-Z0-9-]*)+/g,
         regexNetflix = /netflix/i,
         regexRightNow = /rightnow/i,
-        regexAge = /age-from=([0-9]{1,2}).*age-to=([0-9]{1,2})/i, //min = group1, max = group2
+        regexAge = /age-from=([0-9]{1,2}).*age-to=([0-9]{1,2})/i,
         regexAgeMin = /age-from=[0-9]{1,2}/i,
         regexAgeMax = /age-to=[0-9]{1,2}/i,
-        regexPopularity = /popularity-from=([0-9]{1,2}).*popularity-to=([0-9]{1,3})/i, //min = group1, max = group2
+        regexPopularity = /popularity-from=([0-9]{1,2}).*popularity-to=([0-9]{1,3})/i,
         regexPopularityMin = /popularity-from=[0-9]{1,2}/i,
         regexPopularityMax = /popularity-to=[0-9]{1,3}/i,
-        regexGeocode = /around-lat=(-?[0-9]{1,2}\.?[0-9]{0,16}).*around-lng=(-?[0-9]{1,2}\.?[0-9]{0,16})/i, //lat = group1, lng = group2
+        regexGeocode = /around-lat=(-?[0-9]{1,2}\.?[0-9]{0,16}).*around-lng=(-?[0-9]{1,2}\.?[0-9]{0,16})/i,
         regexGeocodeLat = /around-lat=-?[0-9]{1,2}\.?[0-9]{0,16}/i,
         regexGeocodeLng = /around-lng=-?[0-9]{1,2}\.?[0-9]{0,16}/i,
 
@@ -78,7 +85,6 @@ export const All = async (req, res) => {
 
     query.netflix = regexNetflix.test(queryStr)
     query.rightnow = regexRightNow.test(queryStr)
-
     const age = regexAge.exec(queryStr)
 
     if (age) {
@@ -96,9 +102,36 @@ export const All = async (req, res) => {
     const geocode = regexGeocode.exec(queryStr)
 
     if (geocode) {
-        query.geocode.lat = geocode[1]
-        query.geocode.lng = geocode[2]
+        query.geocode.Lat = geocode[1]
+        query.geocode.Lng = geocode[2]
     }
+
+    //experimental queries
+    const unitMap = {
+        miles: 1609.34,
+        km: 1000,
+        m: 1,
+        meters: 1,
+        feet: 0.3048,
+        minutes : 84,
+        min : 80
+    }
+
+    if (!query.age) {
+        const experimentalAge = regexExperimentalAge.exec(queryStr)
+        if (experimentalAge) {
+            query.age.min = experimentalAge[1]
+            query.age.max = experimentalAge[2]
+        }
+    }
+    if (!query.geocode) {
+        const experimentalLocation = (parseInt(regexExperimentalLocation.exec(queryStr)[1])) * parseInt(unitMap[regexExperimentalLocation.exec(queryStr)[2]])
+        if (experimentalLocation) {
+            query.geocode.distance = parseInt(experimentalLocation[1]) * parseInt(unitMap[experimentalLocation[2]])
+
+        }
+    }
+    query.perfect = regexExperimentalPerfect.test(queryStr)
 
     let i = 0,
         temp = []
@@ -115,12 +148,15 @@ export const All = async (req, res) => {
         .replace(regexRightNow, '')
         .replace(regexNetflix, '')
         .replace(regexHashtag, '')
+        .replace(regexExperimentalAge, '')
+        .replace(regexExperimentalLocation, '')
+        .replace(regexExperimentalPerfect, '')
         .replace(/ (?: *)/, ' ')
         .split(' ')
         .filter(e => e !== '')
 
-
-    let search = await findAll(req.user.username)
+    console.log("query parsed within " + (new Date() - tic) + "ms")
+    let search = await findAll(req.user.username, query)
     res.send({success: true, users: search})
 
 }
@@ -130,18 +166,37 @@ export const One = async (req, res) => {
     const me = req.user.username
     let db = await dbl.connect()
     try {
-        let user = await db.collection('users').findOne({login, active: true}, {
+        let user = null
+        if (login === me) {
+            user = await db.collection('users').findOne({login, active: true}, {
             password: false,
-            token: false,
             fingerprint: false,
-            email: false,
-            firstName: false,
-            lastName: false,
+            token: false,
             _id: false,
             Lat: false,
             Lng: false
-        })
+        })} else {
+            let block = db.collection('blocks').findOne({$or: [{login}, {login: me}]})
+            if (block.length === 0) {
+                user = await db.collection('users').findOne({login, active: true}, {
+                    password: false,
+                    token: false,
+                    fingerprint: false,
+                    email: false,
+                    firstName: false,
+                    lastName: false,
+                    _id: false,
+                    Lat: false,
+                    Lng: false
+                })
+                const date = new Date()
+                await db.collection('visits').insert({userId: me, otherId: login, visit: true, date})
+            } else {
+                res.send({success: false})
+            }
+        }
         if (user) {
+            user.email = (login === me)? user.email:''
             let liked = await db.collection('likes').findOne({userId: me, otherId: login, likes: true})
             let likes_me = await db.collection('likes').findOne({userId: login, otherId: me, likes: true})
             let connection = await db.collection('connections').findOne({login})

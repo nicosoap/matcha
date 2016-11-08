@@ -44,25 +44,21 @@ function contains(a, obj) {
 }
 
 export async function tags(req, res){
-    console.log("tags")
     let db = await dbl.connect()
     const _regex = '.*' + req.query.tag + '.*'
     let response = await db.collection('tags').find({label: {$regex: _regex, $options: 'i'}},{sort:['count', 'desc']}).toArray()
     res.send(response)
 }
 
-export async function addTag(req, res){
-    let tags = await req.body.tags
-    if (tags === ''){console.log({status: "ok", tagsCreated: 0})}
-    const db = await dbl.connect()
-    try{
-        let bulk = await db.collection('tags').initializeUnorderedBulkOp()
-        await tags.filter((n) => n != '').forEach(async(n) => {
-            bulk.find({label: n}).upsert().updateOne({$inc: {count: 1}})
-        })
-        const result = await bulk.execute({w:1})
-        console.error(result)
-    } finally {
-        db.close()
+export async function addTag(tags, db) {
+    if (tags === '') {
+        return ({status: "ok", tagsCreated: 0})
     }
+
+    let bulk = await db.collection('tags').initializeUnorderedBulkOp()
+    await tags.filter((n) => n != '').forEach(async n => {
+        bulk.find({label: n}).upsert().updateOne({$inc: {count: 1}})
+    })
+    await bulk.execute({w: 1})
+
 }

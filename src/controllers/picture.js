@@ -58,17 +58,16 @@ async function registerPictureToDb(login, filename) {
 }
 
 export async function uploadPicture(req, res){
-    console.log(req.file)
     if (!req.file) {
         res.send({success: false, message: ERROR.PICTURE_UPLOAD_ERROR})
     }
     const mimes = ["image/jpeg", "image/gif", "image/png"]
     let ext = req.file.originalname
-    if (mimes.indexOf(req.file.mimetype) != -1){
+    if (mimes.indexOf(req.file.mimetype) !== -1){
         ext = ext.match(/.*(\.gif|\.png|\.jpg|\.jpeg)$/i)[1]
 
             fs.rename(req.file.path, req.file.path + ext, (err) => {
-                if (err) {console.error("ERROR: ", err)}
+                if (err) {res.send({success: false, message: err})}
             })
 
         const result = await registerPictureToDb(req.user.username, req.file.filename + ext)

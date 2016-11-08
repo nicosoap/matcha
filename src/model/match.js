@@ -1,47 +1,55 @@
 /**
  * Created by opichou on 9/27/16.
  */
-
-
-
-const distance = (userId, otherId) => {
-    return ((userId.Lat - otherId.Lat) ** 2 + (userId.Lng - otherId.Lng) ** 2) ** 0.5
-}
+import distance from './distance'
 
 const match = (userId, otherId, query) => {
-    if (!query){
-        query = {tags: [], distanceMax: 5}
-    } else if (!query.tags) {
-        query.tags = []
-    }
-    if (!userId.tags) {
-        userId.tags = []
-    }
-    if (!otherId.tags) {
-        otherId.tags = []
-    }
-    let score = 0
-    const basis_weight = 50,
-        distance_weight = 100 - parseInt(basis_weight),
-        max_distance = query.distanceMax
+    try {
+        if (!query) {
+            const query = {tags: [], geocode: {distance: 5}}
+        } else if (!query.tags) {
+            query.tags = []
+        }
+        if (!userId.tags) {
+            userId.tags = []
+        }
 
-    userId.tags.map(m => {
-        score = parseInt(score) + parseInt((otherId.tags.indexOf(m) !== -1) && 100) / parseInt(basis_weight * (((parseInt(userId.tags.length)
-                + parseInt(query.tags.length))
-                * parseInt(otherId.tags.length))** 0.5) / 10)
-    })
-    console.log(score)
-    query.tags.map(m => {
-        score = parseInt(score) + parseInt((otherId.tags.indexOf(m) !== -1) && 100) / parseInt(basis_weight * (((parseInt(userId.tags.length)
-                + parseInt(query.tags.length))
-                * parseInt(otherId.tags.length))** 0.5) / 10)
-    })
-    console.log(score)
-    score = parseInt(score)
-        + (parseInt(max_distance)
-        / (parseInt(distance(userId, otherId)) * 111 + 1))
-        * parseInt(distance_weight) / parseInt(max_distance) * 2
-    return score
+        if (!otherId.tags) {
+            otherId.tags = []
+        }
+        if (!query.geocode) {
+            query.geocode = {distance: 5}
+        }
+
+        let score = 0
+        const basis_weight = 50,
+            distance_weight = 100 - basis_weight,
+            max_distance = query.geocode.distance
+
+        userId.tags.map(m => {
+            score = parseInt(score, 10) + parseInt((otherId.tags.indexOf(m) !== -1) && 100, 10)
+                / parseInt(basis_weight * (((parseInt(userId.tags.length, 10)
+                    + parseInt(query.tags.length, 10), 10)
+                    * parseInt(otherId.tags.length, 10)) ** 0.5) / 10, 10)
+        })
+        query.tags.map(m => {
+            score = parseInt(score, 10) + parseInt((otherId.tags.indexOf(m) !== -1) && 100, 10) / parseInt(basis_weight * (((parseInt(userId.tags.length, 10)
+                    + parseInt(query.tags.length, 10))
+                    * parseInt(otherId.tags.length, 10)) ** 0.5) / 10, 10)
+        })
+
+        if (!query.geocode.Lat || !query.geocode.Lng) {
+            query.geocode.Lat = userId.Lat
+            query.geocode.Lng = userId.Lng
+        }
+        const dist = distance(query.geocode, otherId)
+
+        score += score * max_distance /  (+dist + 1)  * distance_weight/100
+        return score
+
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 export default match

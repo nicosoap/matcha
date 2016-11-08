@@ -20,6 +20,8 @@ import nodemailer from 'nodemailer'
 import ERROR from './errno_code'
 import match from '../model/match'
 import crypto from 'crypto'
+import * as tags from './tags'
+import chalk from 'chalk'
 
 let saltRounds = 10
 
@@ -48,7 +50,6 @@ const decrypt = async text => {
     return dec;
 }
 
-
 async function genToken (user){
     delete user.password
     let myToken = await jwt.sign({username: user.login}, credentials.jwtSecret)
@@ -57,8 +58,6 @@ async function genToken (user){
         const update = await db.collection('users').updateOne({login: user.login},{$set: {token: myToken}})
         if (update.modifiedCount == 1){
             user.token = myToken
-
-            console.log(user.login + " connected: "+ now())
             return user
         } else {
             console.error(ERROR.TOKEN_ERROR + user.login)
@@ -67,9 +66,9 @@ async function genToken (user){
             return user;
         }
     } catch (err) {
-        console.error(err)
         user.success = false
         user.message = ERROR.TOKEN_ERROR
+        user.error = err
         return user
     } finally {
         db.close();
@@ -108,7 +107,7 @@ async function basicAuth(login, password, fingerprint, callback) {
         })
 
             if (!user) {
-                callback({success: false, message: ERROR.AUTH_ERROR}, {
+                callback({success: false, message: "ta mere"}, {
                     auth: {
                         success: false,
                         message: ERROR.AUTH_ERROR
@@ -130,7 +129,7 @@ async function basicAuth(login, password, fingerprint, callback) {
                         };
                         callback(err, ret);
                     } else {
-                        user = addFingerprint(user, fingerprint)
+                        user = await addFingerprint(user, fingerprint)
                         const ret = {
                             auth: {
                                 method: "basic",
@@ -165,7 +164,6 @@ async function basicAuth(login, password, fingerprint, callback) {
 async function tokenAuth(token, fingerprint, callback){
     let db = await dbl.connect();
     let login = jwt.verify(token, credentials.jwtSecret).username
-    console.log("token auth for user: "+login)
     try {
         let user = await db.collection('users').findOne({login: login, active : true});
         if (!user) {
@@ -185,7 +183,6 @@ async function tokenAuth(token, fingerprint, callback){
                     message: ERROR.LOGIN_SUCCESS_INFO}};
             callback(false, ret);
         } else {
-            console.log(user.fingerprint, fingerprint)
             const ret = {
                 auth:{
                     method: "token",
@@ -209,21 +206,16 @@ async function tokenAuth(token, fingerprint, callback){
 }
 
 export async function userLogin(req, res) {
-    console.log("Authorizing:", req.body)
     let token = ''
     if (req.headers.authorization) {
-        let token = req.headers.authorization.match(/^Bearer (.*)$/)[1]
+        token = req.headers.authorization.match(/^Bearer (.*)$/)[1]
     } else if (req.body.token) {
-        let token = req.body.token.match(/^Bearer (.*)$/)[1]
+        token = req.body.token.match(/^Bearer (.*)$/)[1]
     }
-    console.log(token)
     await authenticate(req.body.login, req.body.password, token, req.body.fingerprint, (err, ret) => {
             if (err || ret.auth.fingerprint == false) {
-                console.error(err)
-                console.log(ret)
                 ret.success = false
             }
-            console.log("AUTHENTICATION: ",ret)
         res.send(ret)
         }
     )
@@ -240,12 +232,10 @@ async function authenticate(login, password, token, fingerprint, callback){
     // containing every info about the authentication and its eventual success, if such, user info and details about
     // device fingerprint status.
 
-    console.log("Connection attempt from: " + login + ' (token: ' + token + ')');
+    console.log(chalk.yellow("Connection attempt from: " + login + ' (token: ' + token + ')'));
     if (login && password && fingerprint) {
-        console.log("using basic strategy")
-        basicAuth(login, password,fingerprint, callback)
+        basicAuth(login, password, fingerprint, callback)
     } else if (token && fingerprint) {
-        console.log("using token strategy")
         tokenAuth(token, fingerprint, callback)
     }else {
         callback({message: ERROR.AUTH_ERROR},
@@ -310,9 +300,7 @@ export async function checkEmail(req, res){
 async function checkPass(pass1, pass2){
     if ((pass1 === pass2) &&
         (pass1.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,48}$/))){
-        console.log("password ", pass1, "is ok")
         let password = await encrypt(pass1)
-        console.log("password ", password, "is ok")
         return ({valid: true, message: "Valid password", password: password})
     } else {
         return({valid: false, message: ERROR.PASSWORD_FORMAT_ERROR})
@@ -322,7 +310,6 @@ async function checkPass(pass1, pass2){
 async function changePasswordHlp(token, password){
     let returnValue = null;
     await jwt.verify(token, credentials.jwtSecret, async function(err, ret){
-        console.log(err.message);
         if (err){
             returnValue = ({ success: false, message: 'token is corrupted' });
         } else {
@@ -351,14 +338,10 @@ export async function changePassword(req, res) {
     if (req.body.password === req.body.password2){
         const password = req.body.password;
         let response = await changePasswordHlp(token, password);
-        console.log(response);
         try {
-            console.log(response);
             res.setHeader('Content-Type', 'application/json');
             res.send(response);
         } catch (err) {
-            console.log(err);
-            console.error(err);
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify(response));
         }
@@ -390,7 +373,6 @@ async function requireNewPassword(email){
             return await transporter.sendMail(mailOptions);
         }
     }catch (err) {
-        console.log(err);
     } finally {
         db.close();
     }
@@ -400,12 +382,9 @@ export async function retrievePassword(req, res){
     let email = req.body.email;
     let response = await requireNewPassword(email, res);
     try {
-        console.log(response);
         res.setHeader('Content-Type', 'application/json');
         res.send(response);
-        console.log(response);
     } catch (err) {
-        console.error(err);
     }
 }
 
@@ -459,7 +438,6 @@ export async function create(req, res){
 
         if (emailProp.valid) {
             user.email = emailProp.email
-            console.log(emailProp)
         } else {
             errors.push(emailProp.message)
         }
@@ -479,18 +457,16 @@ export async function create(req, res){
                 const rep = await db.collection('users').insertOne(user);
                 if (rep.insertedCount === 1) {
                     const email = await validateAccount(user.email);
-                    console.log('%c New user created:' + user.login, 'color: #green')
+                    console.log(chalk.blue(' New user created:' + user.login))
                     res.send({success: true, message: "User created, please check your emails"});
                 }
             } finally {
                 db.close();
             }
         } else {
-            console.log("%c Error creating user:" + user.login, 'color: red')
             res.send({success: false, message: "Your account couldn't be created", errors: errors || ""})
         }
     } else {
-    console.log("%c Error creating user", 'color: red')
         res.send({success: false, message: "Your account couldn't be created"})
     }
 } //this method adds a new user to the database
@@ -502,9 +478,7 @@ export async function reactivate(req, res){
     try {
 
         const user = await db.collection('users').findOneAndUpdate({login: login, password: password, active: false}, {$set: {active: true}})
-        console.log(user)
         if (user.nModified != 1) {
-            console.log("error")
             res.send({success: false, message: ERROR.REACTIVATION_ERROR})
         }else{
             let myToken = jwt.sign({email: user.email}, credentials.jwtSecret, {expiresIn: 9000}),
@@ -533,18 +507,15 @@ async function validateAccount(email){
         '<a href="http://localhost:3000/validate?token=' + myToken + '">Validate account now</a>' +
         '<p>Thank you for registering liveoption,</p><p>See you soon !</p>' // html body
     };
-    console.log("sending email to", email)
     return await transporter.sendMail(mailOptions);
 }
 
 export async function isVerified(req, res){
     //this method makes sure the user has authorized his account via email
-    console.log("DEBUG: ", req.user)
     let email = req.user.email;
     let db = await dbl.connect();
     try{
         let result = await db.collection('users').findOneAndUpdate({email}, {$set: {active: true}});
-        console.log(result)
             if (result.ok === 1) {
                 let user = await genToken(result.value)
                  res.send({success: true, user})
@@ -557,24 +528,18 @@ export async function isVerified(req, res){
 }
 
 export async function updateProfile(req, res){
-    console.log("updating profile for user", req.user.username)
     let db = await dbl.connect()
     try {
         let payload = req.body
-        console.log(payload)
-        let login = req.user.username
-        // await addTag(payload.tags)
-        console.log("check")
-        const _id = payload._id
-        console.log("_id", _id)
-        delete payload._id
-        console.log("preload: ", payload)
-        let results = await db.collection('users').update({login},{$set: {...payload}}, (error) => {console.log(error)})
-        console.log(results.nModified)
-        res.send({success: true, message:ERROR.PROFILE_UPDATED_INFO})
-        console.log("-----------------------------------------------------------------------------")
+        if (payload) {
+            let login = req.user.username
+            if (payload.tags) {await tags.addTag(payload.tags, db)}
+            let results = await db.collection('users').update({login},{$set: {...payload}})
+            res.send({success: true, message:ERROR.PROFILE_UPDATED_INFO})
+        } else {
+            res.send({success: false})
+        }
     } catch(err) {
-        console.error(err)
     } finally {
         db.close()
     }

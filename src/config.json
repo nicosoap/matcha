@@ -1,5 +1,5 @@
 {
-  "debug" : "true",
+  "debug":"true",
   "debug_output": "like",
   "URL": "localhost",
   "port": "8080",
@@ -11,7 +11,7 @@
     {
       "name": "Around me",
       "icon": "near_me",
-      "rel": "#"
+      "rel": "/"
     },
     {
       "name": "Search",
@@ -21,22 +21,22 @@
     {
       "name": "Live options",
       "icon": "bubble_chart",
-      "rel": "#"
+      "rel": "/"
     },
     {
       "name": "Netflix & chill",
       "icon": "weekend",
-      "rel": "#"
+      "rel": "/"
     },
     {
       "name": "My profile",
       "icon": "settings_applications",
-      "rel": "profile"
+      "rel": "/profile"
     },
     {
       "name": "logout",
       "icon": "exit_to_app",
-      "rel": "logout"
+      "rel": "/logout"
     }
   ],
   "user": [
