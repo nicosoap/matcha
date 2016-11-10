@@ -13,6 +13,7 @@ import * as user from './user'
 import findAll from '../model/findAll'
 import popularity from '../model/popularity'
 import geolib from 'geolib'
+import chalk from 'chalk'
 
 
 let saltRounds = 10
@@ -44,6 +45,7 @@ const decrypt = async text => {
 
 
 export const All = async (req, res) => {
+    const login= req.user.username
     const tic = new Date()
 
     let query = {
@@ -58,14 +60,14 @@ export const All = async (req, res) => {
                 max: 100
             },
             geocode: {
-                lat: 0,
-                lng: 0
+                Lat: 0,
+                Lng: 0
             },
             tags: [],
             custom: ''
         },
         regexExperimentalAge = /([0-9]{2})? ?(?:to)? ?([0-9]{2}) ?(?:yo|years)/i,
-        regexExperimentalLocation = /(?:within|in|around|closer than)(?: about|) ?([0-9]{1,3}) ?(miles|km|m|meters|feet|minutes|min)/i,
+        regexExperimentalLocation = /(?:within|in|around|closer than)(?: about|) ?([0-9]{1,3}) ?(miles|km|min|meters|feet|minutes|m)/i,
         regexExperimentalPerfect = /perfect/i,
 
         regexHashtag = /#([a-zA-Z0-9-]*)+/g,
@@ -117,17 +119,20 @@ export const All = async (req, res) => {
         min : 80
     }
 
-    if (!query.age) {
+    if (query.age.min === 18 && query.age.max === 77) {
         const experimentalAge = regexExperimentalAge.exec(queryStr)
         if (experimentalAge) {
             query.age.min = experimentalAge[1]
             query.age.max = experimentalAge[2]
         }
     }
-    if (!query.geocode) {
-        const experimentalLocation = (parseInt(regexExperimentalLocation.exec(queryStr)[1])) * parseInt(unitMap[regexExperimentalLocation.exec(queryStr)[2]])
-        if (experimentalLocation) {
-            query.geocode.distance = parseInt(experimentalLocation[1]) * parseInt(unitMap[experimentalLocation[2]])
+
+    console.log('break')
+    if (query.geocode.Lat === 0 && query.geocode.Lng === 0 ) {
+        const experimentalLocation = regexExperimentalLocation.exec(queryStr)
+        if (experimentalLocation && experimentalLocation[2]) {
+            console.log(chalk.red(experimentalLocation[1] , experimentalLocation[2]))
+            query.geocode.distance = parseInt(experimentalLocation[1]) * unitMap[experimentalLocation[2]]
 
         }
     }
@@ -155,72 +160,10 @@ export const All = async (req, res) => {
         .split(' ')
         .filter(e => e !== '')
 
-    console.log("query parsed within " + (new Date() - tic) + "ms")
-    let search = await findAll(req.user.username, query)
+    console.log("query parsed within " + (new Date() - tic) + "ms", query)
+    let search = await findAll(login, query)
     res.send({success: true, users: search})
 
-}
-
-export const One = async (req, res) => {
-    const login = req.params.userId
-    const me = req.user.username
-    let db = await dbl.connect()
-    try {
-        let user = null
-        if (login === me) {
-            user = await db.collection('users').findOne({login, active: true}, {
-            password: false,
-            fingerprint: false,
-            token: false,
-            _id: false,
-            Lat: false,
-            Lng: false
-        })} else {
-            let block = db.collection('blocks').findOne({$or: [{login}, {login: me}]})
-            if (block.length === 0) {
-                user = await db.collection('users').findOne({login, active: true}, {
-                    password: false,
-                    token: false,
-                    fingerprint: false,
-                    email: false,
-                    firstName: false,
-                    lastName: false,
-                    _id: false,
-                    Lat: false,
-                    Lng: false
-                })
-                const date = new Date()
-                await db.collection('visits').insert({userId: me, otherId: login, visit: true, date})
-            } else {
-                res.send({success: false})
-            }
-        }
-        if (user) {
-            user.email = (login === me)? user.email:''
-            let liked = await db.collection('likes').findOne({userId: me, otherId: login, likes: true})
-            let likes_me = await db.collection('likes').findOne({userId: login, otherId: me, likes: true})
-            let connection = await db.collection('connections').findOne({login})
-            let visited = await db.collection('visits').findOne({userId:login, otherId: me})
-            let var_popularity = await popularity(login)
-            await db.collection('visits').insertOne({userId: me, otherId: login, visit: true, date: new Date()})
-            res.send({
-                success: true,
-                user,
-                liked: !!liked,
-                likes_me: !!likes_me,
-                connected: connection.connected,
-                lastConnection: connection.date,
-                visited: !!visited,
-                popularity: var_popularity
-            })
-        } else {
-            res.send({success: false})
-        }
-    } catch(err) {
-        console.error(err)
-    } finally{
-        db.close()
-    }
 }
 
 export const me = async (req,res) => {

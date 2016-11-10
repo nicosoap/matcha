@@ -251,6 +251,10 @@ export async function checkLogin(req, res, next){
 }
 
 async function checkLoginHlp(login){
+    const routes = ['new', 'update', 'locate']
+    if (routes[login] !== -1) {
+        return {valid: false, message: "Login " + login + " isn't available", login: login}
+    }
     let db = await dbl.connect();
     try {
         const collection = db.collection('users');
@@ -307,48 +311,42 @@ async function checkPass(pass1, pass2){
     }
 }
 
-async function changePasswordHlp(token, password){
-    let returnValue = null;
-    await jwt.verify(token, credentials.jwtSecret, async function(err, ret){
-        if (err){
-            returnValue = ({ success: false, message: 'token is corrupted' });
-        } else {
-            let password2 = await bcrypt.hashSync(password, saltRounds);
-            const email = ret.email;
-            const db = await dbl.connect();
-            let update = await db.collection('users').updateOne({email: email}, {$set: {password: password2}});
-            try {
-                if (update.modifiedCount == 1){
-                    returnValue =({success: true, message: "Password updated successfully"});
-                } else {
-                    returnValue =({success: false, message: "An error happened while updating the password"});
+async function changePasswordHlp(token, password, res){
+    jwt.verify(token, credentials.jwtSecret, async function(err, ret){
+            if (err) {
+                res.send({success: false, message: 'token has expired or is corrupted'})
+            } else {
+                let password2 = await encrypt(password)
+                const email = ret.email
+                const db = await dbl.connect()
+                try {
+                    let update = await db.collection('users').update({email: email}, {$set: {password: password2}})
+                    if (update.result.ok === 1) {
+                        res.send({success: true, message: "Password updated successfully"})
+
+                    } else {
+                        res.send({
+                            success: false,
+                            message: "An error happened while updating the password"
+                        })
+                    }
+                } finally {
+                    db.close()
                 }
-            } catch (err) {
-                returnValue =({success: false, message: "Database error"});
-            } finally {
-                db.close();
             }
-        }
-    });
-    return (returnValue);
+    })
 }
 
 export async function changePassword(req, res) {
-    let token = req.body.token;
-    if (req.body.password === req.body.password2){
-        const password = req.body.password;
-        let response = await changePasswordHlp(token, password);
         try {
-            res.setHeader('Content-Type', 'application/json');
-            res.send(response);
+            let token = req.body.token
+            if (req.body.password === req.body.password2) {
+                const password = req.body.password
+                await changePasswordHlp(token, password, res)
+            }
         } catch (err) {
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify(response));
+            console.log(err)
         }
-    }else {
-        res.setHeader('Content-Type', 'application/json');
-        res.send({success: false, message: "Passwords didn't match"});
-    }
 }
 
 async function requireNewPassword(email){
@@ -357,20 +355,21 @@ async function requireNewPassword(email){
     const db = await dbl.connect();
     const user = await db.collection('users').findOne({email: email});
     try {
-        if (!user || !user.firstName ) {
-            return ({success: "false", message: "User wasn't found"});
+        if (!user || !user.login ) {
+            return ({success: false, message: "User wasn't found"});
         } else {
             let mailOptions = {
                 from: '"liveoption" <customer-success@liveoption.io>', // sender address
-                to: user.email, // list of receivers
+                to: email, // list of receivers
                 subject: 'Password reset requested on liveoption',
                 html: '<b>Hello,</b></br><p>A password recovery procedure has been requested ' +
                 'in your name on liveoption.io. If you requested a new password, please' +
                 ' click on the following link to proceed.</p>' +
-                '<a href="http://www.liveoption.io/change_password?token=' + myToken + '">Change my password now</a>' +
-                '<p>If you didn\'t request a password reset, please disregard this email</p>' // html body
+                '<a href="http://localhost:8080/change-password?token=' + myToken + '">Change my password now</a>' +
+                '<p>If you didn\'t request a password reset, please disregard this message</p>' // html body
             };
-            return await transporter.sendMail(mailOptions);
+            await transporter.sendMail(mailOptions);
+            return ({success: true, message: "Email sent"})
         }
     }catch (err) {
     } finally {
@@ -572,4 +571,16 @@ export const locate = async (req, res) => {
     } finally {
         db.close()
     }
+}
+
+export const report = async (req, res) => {
+    let userId = req.user.username
+    let otherId = req.query.userId
+    let mailOptions = {
+        from: '"liveoption" <customer-success@liveoption.io>', // sender address
+        to: 'olivierpichouparis@gmail.com', // list of receivers
+        subject: 'Report on liveoption',
+        html: '<b>Hello,</b></br><p>' + userId + 'wants to report ' + otherId + '</p>' // html body
+    }
+    return await transporter.sendMail(mailOptions);
 }

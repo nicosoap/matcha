@@ -71,6 +71,25 @@
       "login":"true",
       "error":"",
       "required":"true"
+    },    {
+      "id":"7",
+      "name":"firstName",
+      "type":"text",
+      "placeholder":"First Name",
+      "autocomplete":"given-name",
+      "fullForm":"true",
+      "shortForm":"true",
+      "error":""
+    },
+    {
+      "id":"8",
+      "name":"lastName",
+      "type":"text",
+      "placeholder":"Last Name",
+      "autocomplete":"family-name",
+      "fullForm":"true",
+      "shortForm":"true",
+      "error":""
     },
     {
       "id":"4",
@@ -85,22 +104,23 @@
     },
     {
       "id":"3",
-      "name":"OldPassword",
-      "type":"password",
-      "placeholder":"Old password",
-      "shortForm":"false",
-      
-      "error":""
-    },
-    {
-      "id":"4",
-      "name":"newPassword",
+      "name":"password",
       "type":"password",
       "placeholder":"New password",
-      "shortForm":"false",
+      "passform":"true",
       "error":"",
       "validator_type":"password",
       "validator":"3"
+    },
+    {
+      "id":"4",
+      "name":"password2",
+      "type":"password",
+      "placeholder":"New password again",
+      "passform":"true",
+      "error":"",
+      "validator_type":"echo",
+      "validator":"password"
     },
     {
       "id":"5",
@@ -169,24 +189,7 @@
       "value":"Personal infos:",
       "fullForm":"true"
     },
-    {
-      "id":"7",
-      "name":"firstName",
-      "type":"text",
-      "placeholder":"First Name",
-      "autocomplete":"given-name",
-      "fullForm":"true",
-      "shortForm":"false"
-    },
-    {
-      "id":"8",
-      "name":"lastName",
-      "type":"text",
-      "placeholder":"Last Name",
-      "autocomplete":"family-name",
-      "fullForm":"true",
-      "shortForm":"false"
-    },
+
     {
       "id":"9",
       "name":"gender",

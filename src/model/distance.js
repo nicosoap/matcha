@@ -5,7 +5,8 @@ const distance = (userId, otherId) => {
         {latitude: userId.Lat, longitude: userId.Lng},
         {latitude: otherId.Lat, longitude: otherId.Lng},
         null,
-        {enableHighAccuracy: true
+        {
+            enableHighAccuracy: true
         }
     )
 }

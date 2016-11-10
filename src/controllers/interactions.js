@@ -12,6 +12,7 @@ import chalk from 'chalk'
 import ERROR from './errno_code'
 import * as dbl from './dbConnect'
 import config from '../config.json'
+import popularity from '../model/popularity'
 
 
 
@@ -31,9 +32,16 @@ module.exports = (io) => {
         sendNotif: async(login, type, payload) => {
             const db = await dbl.connect()
             try {
-                const ret = await db.collection('connections').findOne({login}, {socket: true})
-                const socket = ret.socket
-                io.sockets.connected[socket].emit(type, payload)
+                const ret = await db.collection('connections').findOne({login, connected: true}, {socket: true})
+                const user = await db.collection('users').findOne({login: payload.from, active: true})
+                if (user && user.photo && user.photo[0]) {
+                    payload.image = user.photo[0]
+                }
+                if (ret && ret.socket) {
+                    console.log("###############################################################")
+                    const socket = ret.socket
+                    io.sockets.connected[socket].emit(type, payload)
+                }
             } finally {
                 db.close()
             }
@@ -57,24 +65,34 @@ module.exports = (io) => {
                             body: "Connected to Matcha Server on " + self.now()})
                     console.log("BEBUG: user connected and notified as " + config.debug_output + ".")
                 }
+            } catch(err) {
+                console.log(err)
             } finally {
                 db.close()
             }
         },
 
         disconnect: async(login) => {
-            const db = await dbl.connect()
+            let db = await dbl.connect()
             try {
-                currentDate = new Date()
-                await db.collection('connections').updateOne({login}, {
+                const currentDate = new Date()
+                await db.collection('connections').update({login}, {
                     $set: {
                         connected: false,
                         date: currentDate
                     }
-                }, {upsert: true})
-            } finally {
+                })
+                console.log(chalk.bgRed(login, 'disconnected on', now()))
+
+            } catch(err) {
+            }finally {
                 db.close()
             }
+        },
+
+        logout: async (req, res) => {
+            await self.disconnect(req.user.username)
+            res.send({success: true})
         },
 
         _his: (user) =>{
@@ -100,10 +118,9 @@ module.exports = (io) => {
                 let user2 = await db.collection('users').findOne({login: otherId})
                 let match = await self.doesLike(db, otherId, userId)
                 if (match) {
-                    self.newChat(db, userId, otherId)
+                    await self.newChat(db, userId, otherId)
                     const body = userId + ' and you matched ! You can now chat with ' + self._him(user) + '.'
                     const body2 = otherId + ' and you matched ! You can now chat with ' + self._him(user2) + '.'
-                    console.log('match')
                     self.sendNotif(otherId, 'match', {
                         body,
                         from: userId,
@@ -111,7 +128,7 @@ module.exports = (io) => {
                         read: false
                     })
                     self.sendNotif(userId, 'match', {
-                        body2,
+                        body: body2,
                         from: otherId,
                         image: self.photo(user2),
                         read: false
@@ -121,13 +138,14 @@ module.exports = (io) => {
                     res.send({success: true, match: false})
                     if (config.debug) {
                         self.sendNotif(userId, config.debug_output, {
-                            body: "Like notification has been sent to " + otherId + ".",
+                            body: ("Like notification has been sent to " + otherId + "."),
                             from: userId,
                             image:self.photo(user),
                             read: false
                         })
                     }
                     const body = userId + ' is interested in you. Check out ' + self._his(db, userId) + ' profile!'
+                    console.log(body)
                     self.sendNotif(otherId, 'like', {
                         body,
                         from: userId,
@@ -176,9 +194,16 @@ module.exports = (io) => {
                 otherId = req.params.userId
             const db = await dbl.connect()
             try {
-                await db.collection('blocks').upsert({userId, otherId}, {$set: {block: true}})
+                await db.collection('blocks').insert({userId, otherId, block: true})
+                await db.collection('chats').remove({$or: [{userId, otherId}, {otherId: userId, userId: otherId}]})
+                await db.collection('likes').remove({$or: [{userId, otherId}, {otherId: userId, userId: otherId}]})
+                if (config.debug) {
+                    self.sendNotif(userId, 'like', {from: 'service', body: "user " + otherId + " has been blocked"})
+                }
                 res.send({success: true})
-            } finally {
+            } catch(err) {
+                console.log(err)
+            }finally {
                 db.close()
             }
         },
@@ -212,20 +237,22 @@ module.exports = (io) => {
             }
         },
 
-        newChat: (db, userId, otherId) => {
+        newChat: async (db, userId, otherId) => {
             let err = {}
             try {
-                let users = db.collection('users').find({$or:[{login: userId}, {login: otherId}]}).toArray((error, results) => {
+                let users = await db.collection('users').find({$or:[{login: userId}, {login: otherId}]}).toArray((error, results) => {
                     results.forEach(e => {  if (!e.active) {
                         err.users = true;
-                        console.log("couldn't initialize chat for "+ userId + " and " + otherId + " --- value = " + e)
                     }})
 
                 })
                 if (!err.users) {
-                    db.collection('chats').insertOne({userId, otherId})
-                    self.sendNotif(userId,'chatroom',{userId, otherId, messages: []})
-                    self.sendNotif(otherId,'chatroom',{userId, otherId, messages: []})
+                    let chatrooms = await db.collection('chats').findOne({$or: [{userId, otherId}, {userId: otherId, otherId: userId}]})
+                    if (!chatrooms) {
+                        db.collection('chats').insertOne({userId, otherId})
+                        self.sendNotif(userId,'chatroom',{userId, otherId, messages: []})
+                        self.sendNotif(otherId,'chatroom',{userId, otherId, messages: []})
+                    }
                 }
             } catch(err){
                 console.error(err)
@@ -326,6 +353,75 @@ module.exports = (io) => {
             } catch (err) {
                 console.error(err)
             } finally {
+                db.close()
+            }
+        },
+
+        One: async (req, res) => {
+            const login = req.params.userId
+            const me = req.user.username
+            let db = await dbl.connect()
+            try {
+                let user = null
+                if (login === me) {
+                    user = await db.collection('users').findOne({login, active: true}, {
+                        password: false,
+                        fingerprint: false,
+                        token: false,
+                        _id: false,
+                        Lat: false,
+                        Lng: false,
+                        tags: false
+                    })
+                } else {
+                    console.log("access user")
+                    let block = await db.collection('blocks').findOne({$or: [{userId: login, otherId: me}, {userId: me, otherId: login}]})
+                    if (!block) {
+                        user = await db.collection('users').findOne({login, active: true}, {
+                            password: false,
+                            token: false,
+                            fingerprint: false,
+                            email: false,
+                            firstName: false,
+                            lastName: false,
+                            _id: false,
+                            Lat: false,
+                            Lng: false,
+                            tags: false
+                        })
+                    } else {
+                        console.log('blocked')
+                        res.send({success: false, blocked: true})
+                    }
+                    await db.collection('visits').insertOne({userId: me, otherId: login, visit: true, date: new Date()})
+                    await self.sendNotif(login, 'visit', {from: me, body: login + ' has visited your profile!', rel: '/user/login'})
+
+                }
+                if (user) {
+                    let liked = await db.collection('likes').findOne({userId: me, otherId: login, likes: true})
+                    let likes_me = await db.collection('likes').findOne({userId: login, otherId: me, likes: true})
+                    let connection = await db.collection('connections').findOne({login})
+                    let visited = await db.collection('visits').findOne({userId:login, otherId: me})
+                    let var_popularity = await popularity(login, db)
+
+                    console.log(login + "found", user)
+                    res.send({
+                        success: true,
+                        user,
+                        liked: !!liked,
+                        likes_me: !!likes_me,
+                        connected: connection && connection.connected,
+                        lastConnection: connection && connection.date,
+                        visited: !!visited,
+                        popularity: var_popularity
+                    })
+                } else {
+                    res.send({success: false})
+                }
+            } catch(err) {
+                console.log(err)
+                res.send({success: false, message: err})
+            } finally{
                 db.close()
             }
         }

@@ -38,7 +38,6 @@ const app = require('express')();
 const server = http.createServer(app)
 const io = socketIo(server)
 const interactions =  require('./controllers/interactions')(io)
-
 const upload = multer({ dest: `${__dirname}/public/images` })
 
 app.disable('x-powered-by')
@@ -58,7 +57,8 @@ app.use(bodyParser.urlencoded({
 
 app.use(expressJWT({secret: credentials.jwtSecret}).unless({
     path: ['/login',
-        '/retrieve_password',
+        '/retrieve-password',
+        '/change-password',
         '/user/new',
         '/protected',
         '/public',
@@ -80,22 +80,24 @@ app.post('/login', user.userLogin)
 app.get('/i', cors(corsOptions), display.me)
 app.get('/whoami', cors(corsOptions), display.me)
 app.get('/user', cors(corsOptions), display.All)
-app.get('/user/:userId', cors(corsOptions), display.One)
+app.get('/user/:userId', cors(corsOptions), interactions.One)
+app.post('/user/new', cors(corsOptions), user.create)
+app.post('/user/update', cors(corsOptions), user.updateProfile)
 app.post('/user/locate', cors(corsOptions), user.locate)
 app.put('/user', cors(corsOptions), user.updateProfile)
 app.post('/chat', cors(corsOptions), interactions.chat)
 app.get('/chats', cors(corsOptions), interactions.chats)
 app.post('/image', cors(corsOptions), upload.single('picture'), picture.uploadPicture)
 app.post('/image/delete', picture.deleteOne)
-app.post('/user/new', cors(corsOptions), user.create)
-app.post('/user/update', cors(corsOptions), user.updateProfile)
+app.get('report/:userId', cors(corsOptions), user.report)
+app.get('/block:userId', cors(corsOptions), interactions.block)
 app.get('/tags', tags.tags)
 app.post('/tags', tags.addTag)
 app.get('/test/login/:login', user.checkLogin)
 app.get('/test/email/:email', user.checkEmail)
 app.get('/account/register', user.renderForm)
-app.post('/account/change_password', user.changePassword)
-app.post('/account/retrieve_password', user.retrievePassword)
+app.post('/change-password', cors(corsOptions), user.changePassword)
+app.post('/retrieve-password', cors(corsOptions), user.retrievePassword)
 app.get('/activate_account', cors(corsOptions), user.isVerified)
 app.post('/account/reactivate', user.reactivate)
 app.post('/account/delete', user.Delete)
@@ -106,6 +108,7 @@ app.get('/admin/appConfig', cors(corsOptions), admin.getAppConfig)
 app.get('/like/:userId', cors(corsOptions), interactions.like)
 app.get('/dislike/:userId', cors(corsOptions), interactions.dislike)
 app.get('/block/:userId', cors(corsOptions), interactions.block)
+app.get('/sign-out', cors(corsOptions), interactions.logout)
 //--ROUTES--/ />
 
 function now(){
@@ -145,7 +148,7 @@ io.on('connection', socket => {
         })
     })
     socket.on('disconnect', () => {
-        interactions.disconnect(socket.decoded_token.username, socket.id)
+        interactions.disconnect(socket.decoded_token.username)
         console.log(chalk.bgRed(socket.decoded_token.username, 'disconnected on', now()))
     })
 });
