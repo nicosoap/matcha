@@ -56,15 +56,15 @@ app.use(bodyParser.urlencoded({
 }))
 
 app.use(expressJWT({secret: credentials.jwtSecret}).unless({
-    path: ['/login',
-        '/retrieve-password',
-        '/change-password',
-        '/user/new',
-        '/protected',
-        '/public',
-        /^\/admin\/userform/i,
-        /^\/images\//i,
-        /^\/test/i]}))
+    path: ['/', '/api/login',
+        '/api/retrieve-password',
+        '/api/change-password',
+        '/api/user/new',
+        '/api/protected',
+        '/api/public',
+        /^\/api\/admin\/userform/i,
+        /^\/api\/images\//i,
+        /^\/api\/test/i]}))
 
 io.use(socketioJwt.authorize({
     secret: credentials.jwtSecret,
@@ -76,39 +76,41 @@ io.use(socketioJwt.authorize({
 app.get('/', (req, res) => {
     res.send("Welcome dude !!!");
 })
-app.post('/login', user.userLogin)
-app.get('/i', cors(corsOptions), display.me)
-app.get('/whoami', cors(corsOptions), display.me)
-app.get('/user', cors(corsOptions), display.All)
-app.get('/user/:userId', cors(corsOptions), interactions.One)
-app.post('/user/new', cors(corsOptions), user.create)
-app.post('/user/update', cors(corsOptions), user.updateProfile)
-app.post('/user/locate', cors(corsOptions), user.locate)
-app.put('/user', cors(corsOptions), user.updateProfile)
-app.post('/chat', cors(corsOptions), interactions.chat)
-app.get('/chats', cors(corsOptions), interactions.chats)
-app.post('/image', cors(corsOptions), upload.single('picture'), picture.uploadPicture)
-app.post('/image/delete', picture.deleteOne)
-app.get('report/:userId', cors(corsOptions), user.report)
-app.get('/block:userId', cors(corsOptions), interactions.block)
-app.get('/tags', tags.tags)
-app.post('/tags', tags.addTag)
-app.get('/test/login/:login', user.checkLogin)
-app.get('/test/email/:email', user.checkEmail)
-app.get('/account/register', user.renderForm)
-app.post('/change-password', cors(corsOptions), user.changePassword)
-app.post('/retrieve-password', cors(corsOptions), user.retrievePassword)
-app.get('/activate_account', cors(corsOptions), user.isVerified)
-app.post('/account/reactivate', user.reactivate)
-app.post('/account/delete', user.Delete)
-app.post('/admin/form/',cors(corsOptions), admin.addFormItems)
-app.get('/admin/userform', cors(corsOptions), admin.getUserForm)
-app.get('/config', cors(corsOptions), admin.getParams)
-app.get('/admin/appConfig', cors(corsOptions), admin.getAppConfig)
-app.get('/like/:userId', cors(corsOptions), interactions.like)
-app.get('/dislike/:userId', cors(corsOptions), interactions.dislike)
-app.get('/block/:userId', cors(corsOptions), interactions.block)
-app.get('/sign-out', cors(corsOptions), interactions.logout)
+app.post('/api/login', user.userLogin)
+app.get('/api/i', cors(corsOptions), display.me)
+app.get('/api/whoami', cors(corsOptions), display.me)
+app.get('/api/user', cors(corsOptions), display.All)
+app.get('/api/user/:userId', cors(corsOptions), interactions.One)
+app.post('/api/user/new', cors(corsOptions), user.create)
+app.post('/api/user/update', cors(corsOptions), user.updateProfile)
+app.post('/api/user/locate', cors(corsOptions), user.locate)
+app.put('/api/user', cors(corsOptions), user.updateProfile)
+app.post('/api/chat', cors(corsOptions), interactions.chat)
+app.get('/api/chats', cors(corsOptions), interactions.chats)
+app.post('/api/image', cors(corsOptions), upload.single('picture'), picture.uploadPicture)
+app.post('/api/image/delete', picture.deleteOne)
+app.get('/api/report/:userId', cors(corsOptions), user.report)
+app.get('/api/block:userId', cors(corsOptions), interactions.block)
+app.get('/api/tags', tags.tags)
+app.post('/api/tags', tags.addTag)
+app.get('/api/test/login/:login', user.checkLogin)
+app.get('/api/test/email/:email', user.checkEmail)
+app.get('/api/account/register', user.renderForm)
+app.post('/api/change-password', cors(corsOptions), user.changePassword)
+app.post('/api/retrieve-password', cors(corsOptions), user.retrievePassword)
+app.get('/api/activate_account', cors(corsOptions), user.isVerified)
+app.post('/api/account/reactivate', user.reactivate)
+app.post('/api/account/delete', user.Delete)
+app.post('/api/admin/form/',cors(corsOptions), admin.addFormItems)
+app.get('/api/admin/userform', cors(corsOptions), admin.getUserForm)
+app.get('/api/config', cors(corsOptions), admin.getParams)
+app.get('/api/admin/appConfig', cors(corsOptions), admin.getAppConfig)
+app.get('/api/like/:userId', cors(corsOptions), interactions.like)
+app.get('/api/dislike/:userId', cors(corsOptions), interactions.dislike)
+app.get('/api/block/:userId', cors(corsOptions), interactions.block)
+app.get('/api/sign-out', cors(corsOptions), interactions.logout)
+app.get('/api/sujet42', cors(corsOptions), display.sujet42)
+app.get('*', (req, res) => { res.sendFile(path.join(__dirname + '/index.html'))})
 //--ROUTES--/ />
 
 function now(){

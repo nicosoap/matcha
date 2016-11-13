@@ -1,14 +1,3 @@
-// ************************************************************************** //
-//                                                                            //
-//                                                        :::      ::::::::   //
-//   user.js                                            :+:      :+:    :+:   //
-//                                                    +:+ +:+         +:+     //
-//   By: opichou <marvin@42.fr>                     +#+  +:+       +#+        //
-//                                                +#+#+#+#+#+   +#+           //
-//   Created: 2016/09/19 18:27:53 by opichou           #+#    #+#             //
-//   Updated: 2016/09/29 18:27:53 by opichou          ###   ########.fr       //
-//                                                                            //
-// ************************************************************************** //
 
 import fs from 'fs'
 import session from 'express-session'
@@ -51,7 +40,6 @@ const decrypt = async text => {
 }
 
 async function genToken (user){
-    delete user.password
     let myToken = await jwt.sign({username: user.login}, credentials.jwtSecret)
     let db = await dbl.connect()
     try {
@@ -69,6 +57,7 @@ async function genToken (user){
         user.success = false
         user.message = ERROR.TOKEN_ERROR
         user.error = err
+        user.password=''
         return user
     } finally {
         db.close();

@@ -14,19 +14,9 @@
       "rel": "/"
     },
     {
-      "name": "Search",
-      "icon": "search",
-      "rel": "/"
-    },
-    {
-      "name": "Live options",
+      "name": "Stalk",
       "icon": "bubble_chart",
-      "rel": "/"
-    },
-    {
-      "name": "Netflix & chill",
-      "icon": "weekend",
-      "rel": "/"
+      "rel": "/stalk"
     },
     {
       "name": "My profile",

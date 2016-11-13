@@ -14,7 +14,7 @@ import credentials from '../credentials';
 
 var MongoClient = mongodb.MongoClient;
 
-export async function connect(){
+export async function connect() {
     var MongoClient = mongodb.MongoClient;
     return await MongoClient.connect("mongodb://" + credentials.username + ":" + credentials.password + "@liveoption.io:" + credentials.port + "/" + credentials.dbName);
 }

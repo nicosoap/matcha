@@ -40,12 +40,12 @@ const match = (userId, otherId, query) => {
 
         userId.tags.map(m => {
             if (otherId.tags.indexOf(m) !== -1) {
-                score += 100 * userTagRatio * otherTagRatio * tags_weight
+                score += parseInt(100, 10) * userTagRatio * otherTagRatio * tags_weight
             }
         })
         query.tags.map(m => {
             if (query.tags.indexOf(m) !== -1) {
-                score += 100 * queryTagRatio * userTagRatio * tags_weight
+                score += parseInt(100, 10) * queryTagRatio * userTagRatio * tags_weight
             }
         })
 
@@ -55,7 +55,7 @@ const match = (userId, otherId, query) => {
         }
         const dist = distance(query.geocode, otherId)
 
-        score += max_distance /  (+dist + 1)  * distance_weight/1000
+        score += max_distance /  (parseInt(dist, 10) + 1)  * distance_weight/1000
         return score
 
     } catch (err) {

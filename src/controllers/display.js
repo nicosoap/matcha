@@ -161,7 +161,7 @@ export const All = async (req, res) => {
         .filter(e => e !== '')
 
     console.log("query parsed within " + (new Date() - tic) + "ms", query)
-    let search = await findAll(login, query)
+    let search = await findAll(login, {})
     res.send({success: true, users: search})
 
 }
@@ -180,4 +180,20 @@ export const me = async (req,res) => {
         db.close()
     }
 
+}
+
+export const sujet42 = async (req, res) => {
+    const userId = req.user.username
+    console.log("Stalking " + userId)
+    const db = await dbl.connect()
+    try {
+        let likes = await db.collection('likes').find({otherId: userId}).toArray()
+        let visits = await db.collection('visits').find({otherId: userId}).toArray()
+        let chats = await db.collection('chats').find({$or: [{userId}, {otherId: userId}]}).toArray()
+        res.send({success: true, chats, likes, visits, userId})
+    } catch(err) {
+        console.log(err)
+    } finally {
+        db.close()
+    }
 }

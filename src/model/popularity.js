@@ -1,28 +1,26 @@
-import * as dbl from '../controllers/dbConnect'
-
-const popularity = async (Id, db) => {
-        try {
-                console.log("popularity evaluation:")
-                let users = await db.collection('users').count()
-                console.log("user count " + users)
-                await db.collection('likes').find({otherId: Id, like: true}).count()
-                console.log("likes " + likes)
-                let visits = await db.collection('visits').find({otherId: Id, visit: true}).count()
-                console.log("visits " + visits)
-                let match = await db.collection('chats').find({$or: [{otherId: Id}, {userId: Id}]}).count()
-                console.log("match " + match)
-                let likesPerUserRatio = likes / users
-                console.log("likes per visit " + likesPerUserRatio)
-                let matchPerLikeRatio = match / likes
-                console.log("match per likes" + matchPerLikeRatio)
-                let visitPerUsersRatio = visits / users
-                console.log("visit per user " + visitPerUsersRatio)
-                let popularity = 100 * ((3 * matchPerLikeRatio * likesPerUserRatio) + (2 * likesPerUserRatio) + visitPerUsersRatio) / (users * 6)
-                console.log('popularity' + popularity)
-                return popularity
-        } catch(err) {
-                console.log("popularity errors: ", err)
-        }
+const popularity = (Id, liked, visits, users, chats) => {
+    try {
+        let likes = liked.filter(e => {
+            return (e.otherId === Id && e.like === true)
+        }).length
+        let tested = []
+        let visited = visits.filter(e => {
+            if (e.otherId === Id && tested.indexOf(e.userId) === -1) {
+                tested.push(e.userId)
+                return true
+            }
+        }).length
+        let match = chats.filter(e => {
+            return (e.userId === Id || e.otherId === Id)
+        }).length
+        let likesPerUserRatio = likes / users
+        let matchPerLikeRatio = match / likes
+        let visitPerUsersRatio = visited/ users
+        return 50 * ((matchPerLikeRatio) + (0.5 * likesPerUserRatio) + (0.5 * visitPerUsersRatio))
+    } catch
+        (err) {
+        console.log("popularity errors: ", err)
+    }
 }
 
 export default  popularity

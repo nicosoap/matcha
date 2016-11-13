@@ -145,7 +145,6 @@ module.exports = (io) => {
                         })
                     }
                     const body = userId + ' is interested in you. Check out ' + self._his(db, userId) + ' profile!'
-                    console.log(body)
                     self.sendNotif(otherId, 'like', {
                         body,
                         from: userId,
@@ -161,7 +160,6 @@ module.exports = (io) => {
         dislike: async(req, res) => {
             const userId = req.user.username,
                 otherId = req.params.userId
-            console.log(userId, otherId)
             let db = await dbl.connect()
             try {
                 db.collection('likes').updateOne({userId, otherId}, {$set: {like: false}}, {upsert: true})
@@ -260,7 +258,6 @@ module.exports = (io) => {
         },
 
         chat: async (from, to, body) => {
-            console.log("New message from " + from + " to " + to + " : " + body)
             const message = {from, to, body}
             let rslt = await self.insertChat(from, to, message)
             self.sendNotif(from, 'message', message)
@@ -344,7 +341,7 @@ module.exports = (io) => {
                             return ({success: false, message: ERROR.CHAT_FAILURE})
                         }
                     } else {
-                        console.log("please check database collection 'chats' form hand created duplicates")
+                        console.log("please check database collection 'chats' for manually-created duplicates")
                     }
 
                 } else {
@@ -369,12 +366,10 @@ module.exports = (io) => {
                         fingerprint: false,
                         token: false,
                         _id: false,
-                        Lat: false,
-                        Lng: false,
-                        tags: false
                     })
+                    res.send({success: true, user})
+                    return 0
                 } else {
-                    console.log("access user")
                     let block = await db.collection('blocks').findOne({$or: [{userId: login, otherId: me}, {userId: me, otherId: login}]})
                     if (!block) {
                         user = await db.collection('users').findOne({login, active: true}, {
@@ -382,15 +377,9 @@ module.exports = (io) => {
                             token: false,
                             fingerprint: false,
                             email: false,
-                            firstName: false,
-                            lastName: false,
-                            _id: false,
-                            Lat: false,
-                            Lng: false,
-                            tags: false
+                            _id: false
                         })
                     } else {
-                        console.log('blocked')
                         res.send({success: false, blocked: true})
                     }
                     await db.collection('visits').insertOne({userId: me, otherId: login, visit: true, date: new Date()})
@@ -398,22 +387,30 @@ module.exports = (io) => {
 
                 }
                 if (user) {
-                    let liked = await db.collection('likes').findOne({userId: me, otherId: login, likes: true})
-                    let likes_me = await db.collection('likes').findOne({userId: login, otherId: me, likes: true})
-                    let connection = await db.collection('connections').findOne({login})
-                    let visited = await db.collection('visits').findOne({userId:login, otherId: me})
-                    let var_popularity = await popularity(login, db)
+                    let liked = await db.collection('likes').find().toArray()
+                    let liked_prop = (liked.filter(e => { return (e.userId === me && e.otherId === login &&  e.like === true)}).length > 0)
+                    let likes_me = (liked.filter( e => { return (e.userId === login && e.otherId === me && e.likes === true)}).length > 0)
+                    let blocs = await db.collection('blocks').find({$or: [{userId: login}, {otherId: login}]}).toArray()
+                    let connections = await db.collection('connections').find().toArray()
+                    let connection = connections.filter(e => { return e.login === login })
+                    let visits = await db.collection('visits').find().toArray()
+                    let visited = (visits.filter(e => {return (e.userId === login && e.otherId === me)}).length > 0)
+                    let users = await db.collection('users').count()
+                    let chats = await db.collection('chats').find({},{userId: true, otherId: true}).toArray()
 
-                    console.log(login + "found", user)
+
+                    let var_popularity = popularity(login, liked, visits, users, chats)
+
                     res.send({
                         success: true,
                         user,
-                        liked: !!liked,
+                        liked: !!liked_prop,
                         likes_me: !!likes_me,
-                        connected: connection && connection.connected,
-                        lastConnection: connection && connection.date,
+                        connected: connection[0] && connection[0].connected,
+                        lastConnection: connection[0] && connection[0].date,
                         visited: !!visited,
-                        popularity: var_popularity
+                        popularity: var_popularity,
+                        blocked: !!blocs
                     })
                 } else {
                     res.send({success: false})

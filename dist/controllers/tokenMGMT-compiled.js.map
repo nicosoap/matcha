@@ -1,1 +1,0 @@
-{"version":3,"sources":["tokenMGMT.js"],"names":[],"mappings":";;AAGA;;;;AACA;;IAAY,G;;AACZ","file":"tokenMGMT-compiled.js","sourcesContent":["/**\n * Created by opichou on 9/25/16.\n */\nimport bcrypt from 'bcrypt';\nimport * as dbl from \"./dbConnect\";\nimport credentials from '../credentials';"]}
